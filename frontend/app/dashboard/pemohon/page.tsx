@@ -5,12 +5,12 @@ import Header from '../../../components/Header';
 import Menu from '../../../components/Menu';
 
 
-const App: React.FC = () => {
+const dashboardPemohon: React.FC = () => {
    return (
     <div>
       <Menu />
         <div style={{ display: 'flex', justifyContent: 'flex-start' , marginTop : '50px', marginLeft : '50px' }}>
-            <h3 >Selamat datang Nama , M.Biotech. 👋🏻  </h3>
+            <h3 >Selamat datang 👋🏻  </h3>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop : '50px',height: '100%' }}>
             <Card
@@ -34,4 +34,4 @@ const App: React.FC = () => {
    );
 };
 
-export default App;
+export default dashboardPemohon;
