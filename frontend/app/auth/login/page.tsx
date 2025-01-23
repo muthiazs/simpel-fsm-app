@@ -25,7 +25,7 @@ const App: React.FC = () => (
     <Header />
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
     <Card style={{ width: 500, textAlign: 'center' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}>
-        <Title level={2} style={{ color: '#1677ff', fontWeight: 'bold' }}>SIMPEL-FSM</Title>
+        <Title level={2} style={{ color: '#001529', fontWeight: 'bold' }}>SIMPEL-FSM</Title>
         <Text style={{ color: '#6b7280', display: 'block' }}>Sistem Informasi Pengajuan Surat Permohonan PDLN</Text>
         <Form
           name="basic"

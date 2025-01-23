@@ -2,23 +2,16 @@
 import React from 'react';
 import {
   Button,
-  DatePicker,
   Form,
   Input,
-  InputNumber,
   Row,
   Col,
   Upload,
 } from 'antd';
-import {PlusOutlined } from '@ant-design/icons';
-import Header from '../../../components/Header';
+import { PlusOutlined } from '@ant-design/icons';
 import Menu from '../../../components/Menu';
-import { Color } from 'antd/es/color-picker';
 
 const { TextArea } = Input;
-const { RangePicker } = DatePicker;
-
-type SizeType = Parameters<typeof Form>[0]['size'];
 
 const formItemLayout = {
   labelCol: {
@@ -35,6 +28,10 @@ const datadiripemohon: React.FC = () => {
   const [form] = Form.useForm();
   const variant = Form.useWatch('variant', form);
 
+  const handleSubmit = (values: any) => {
+    console.log('Form values:', values);
+  };
+
   return (
     <div>
       <Menu />
@@ -48,13 +45,14 @@ const datadiripemohon: React.FC = () => {
           variant={variant || 'filled'}
           style={{ width: '100%' }}
           initialValues={{ variant: 'filled' }}
+          onFinish={handleSubmit}
         >
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 label="Nama + Gelar Lengkap"
                 name="nama"
-                rules={[{ required: true, message: 'Masukkan nama1' }]}
+                rules={[{ required: true, message: 'Masukkan nama!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
               >
@@ -75,7 +73,7 @@ const datadiripemohon: React.FC = () => {
           </Row>
           <Row gutter={16}>
             <Col span={12}>
-            <Form.Item
+              <Form.Item
                 label="NIK"
                 name="nik"
                 rules={[{ required: true, message: 'Masukkan NIK!' }]}
@@ -86,45 +84,45 @@ const datadiripemohon: React.FC = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-                <Form.Item
-                    label="Program Studi"
-                    name="prodi"
-                    rules={[{ required: true, message: 'Masukkan program studi!' }]}
-                    labelCol={{ span: 24 }}
-                    wrapperCol={{ span: 24 }}
-                >
-                    <Input placeholder="Masukkan prodi" />
-                </Form.Item>
+              <Form.Item
+                label="Program Studi"
+                name="prodi"
+                rules={[{ required: true, message: 'Masukkan program studi!' }]}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Input placeholder="Masukkan prodi" />
+              </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
-                <Form.Item
-                    label="NIP/NIM"
-                    name="nipnim"
-                    rules={[{ required: true, message: 'Masukkan NIP atau NIM!' }]}
-                    labelCol={{ span: 24 }}
-                    wrapperCol={{ span: 24 }}
-                >
-                    <Input placeholder="Masukkan nip/nim" />
-                </Form.Item>
-                <Form.Item
+              <Form.Item
+                label="NIP/NIM"
+                name="nipnim"
+                rules={[{ required: true, message: 'Masukkan NIP atau NIM!' }]}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <Input placeholder="Masukkan nip/nim" />
+              </Form.Item>
+              <Form.Item
                 label="Pangkat/Gol"
                 name="pangkatgol"
                 rules={[{ required: true, message: 'Masukkan pangkat/Gol!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
               >
-                <Input  placeholder='Masukkan pangkat/gol' />
+                <Input placeholder='Masukkan pangkat/gol' />
               </Form.Item>
               <Form.Item
                 label="Jabatan(Lektor/Guru Besar/Supervisor/Mahasiswa dll )"
                 name="jabatan"
-                rules={[{ required: true, message: 'Masukkan pangkat/Gol!' }]}
+                rules={[{ required: true, message: 'Masukkan jabatan!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
               >
-                <Input  placeholder='Masukkan jabatan' />
+                <Input placeholder='Masukkan jabatan' />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -138,49 +136,55 @@ const datadiripemohon: React.FC = () => {
                 <Input placeholder="Masukkan no paspor" />
               </Form.Item>
               <Row gutter={16}>
-                <Form.Item 
-                label="Scan KTP (PDF)" 
-                valuePropName="fileList"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }} >
-                    <Upload action="/upload.do" listType="picture-card">
-                        <button style={{ border: 0, background: 'none' }} type="button">
-                        <PlusOutlined style={{ color: 'black' }} />
-                        <div style={{ marginTop: 8 , color: 'black' }}>Upload</div>
-                        </button>
-                    </Upload>
+                <Form.Item
+                  label="Scan KTP (PDF)"
+                  valuePropName="fileList"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
+                >
+                  <Upload action="/upload.do" listType="picture-card">
+                    <button style={{ border: 0, background: 'none' }} type="button">
+                      <PlusOutlined style={{ color: 'black' }} />
+                      <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
+                    </button>
+                  </Upload>
                 </Form.Item>
-                <Form.Item 
-                label="Scan Kartu Pegawai (PDF)" 
-                valuePropName="fileList"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }} >
-                    <Upload action="/upload.do" listType="picture-card">
-                        <button style={{ border: 0, background: 'none' }} type="button">
-                        <PlusOutlined style={{ color: 'black' }} />
-                        <div style={{ marginTop: 8 , color: 'black' }}>Upload</div>
-                        </button>
-                    </Upload>
+                <Form.Item
+                  label="Scan Kartu Pegawai (PDF)"
+                  valuePropName="fileList"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
+                >
+                  <Upload action="/upload.do" listType="picture-card">
+                    <button style={{ border: 0, background: 'none' }} type="button">
+                      <PlusOutlined style={{ color: 'black' }} />
+                      <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
+                    </button>
+                  </Upload>
                 </Form.Item>
-                <Form.Item 
-                label="Scan Paspor (PDF)" 
-                valuePropName="fileList"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }} >
-                    <Upload action="/upload.do" listType="picture-card">
-                        <button style={{ border: 0, background: 'none' }} type="button">
-                        <PlusOutlined style={{ color: 'black' }} />
-                        <div style={{ marginTop: 8 , color: 'black' }}>Upload</div>
-                        </button>
-                    </Upload>
+                <Form.Item
+                  label="Scan Paspor (PDF)"
+                  valuePropName="fileList"
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
+                >
+                  <Upload action="/upload.do" listType="picture-card">
+                    <button style={{ border: 0, background: 'none' }} type="button">
+                      <PlusOutlined style={{ color: 'black' }} />
+                      <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
+                    </button>
+                  </Upload>
                 </Form.Item>
-                </Row>
+              </Row>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={24}>
-              
-              
+              <Form.Item wrapperCol={{ span: 24, offset: 0 }}>
+                <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+                  Simpan Data Diri
+                </Button>
+              </Form.Item>
             </Col>
           </Row>
         </Form>
