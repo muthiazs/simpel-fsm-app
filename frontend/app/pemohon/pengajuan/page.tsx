@@ -181,6 +181,13 @@ const pengajuanpermohonan: React.FC = () => {
                 </Row>
             </Col>
           </Row>
+          <Col span={24}>
+           <Form.Item wrapperCol={{ span: 24, offset: 0 }}>
+            <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+                Ajukan Permohonan
+            </Button>
+           </Form.Item>
+         </Col>
         </Form>
       </div>
     </div>

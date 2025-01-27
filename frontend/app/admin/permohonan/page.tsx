@@ -3,11 +3,12 @@ import React from 'react';
 import { Space, Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
 import Header from '../../../components/Header';
-import Menu from '../../../components/Menu';
+import Menu from '../../../components/MenuAdmin';
 
 interface DataType {
     key: string;
     no: number;
+    namaPemohon: string;
     tanggalPengajuan: string;
     negaraTujuan: string;
     instansiTujuan: string;
@@ -21,6 +22,11 @@ const columns: TableProps<DataType>['columns'] = [
         title: 'No',
         dataIndex: 'no',
         key: 'no',
+    },
+    {
+        title: 'Nama Pemohon',
+        dataIndex: 'namaPemohon',
+        key: 'namaPemohon',
     },
     {
         title: 'Tanggal Pengajuan',
@@ -66,8 +72,7 @@ const columns: TableProps<DataType>['columns'] = [
         render: (_, record) => (
             <Space size="middle">
                 <a>Detail</a>
-                <a>Delete</a>
-                <a>Upload Surat Kemensetneg</a>
+                <a>Upload Dokumen</a>
             </Space>
         ),
     },
@@ -77,6 +82,7 @@ const data: DataType[] = [
     {
         key: '1',
         no: 1,
+        namaPemohon: 'John Doe',
         tanggalPengajuan: '2023-01-01',
         negaraTujuan: 'USA',
         instansiTujuan: 'Harvard University',
@@ -87,6 +93,7 @@ const data: DataType[] = [
     {
         key: '2',
         no: 2,
+        namaPemohon: 'Jane Smith',
         tanggalPengajuan: '2023-01-05',
         negaraTujuan: 'UK',
         instansiTujuan: 'Oxford University',
@@ -97,6 +104,7 @@ const data: DataType[] = [
     {
         key: '3',
         no: 3,
+        namaPemohon: 'Alice Johnson',
         tanggalPengajuan: '2023-01-10',
         negaraTujuan: 'Australia',
         instansiTujuan: 'University of Sydney',

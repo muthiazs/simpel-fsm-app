@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
-import { HomeOutlined, FileOutlined, FileDoneOutlined, UserOutlined, DownloadOutlined } from '@ant-design/icons';
+import { HomeOutlined, FileOutlined, FileDoneOutlined, UserOutlined , FileSyncOutlined } from '@ant-design/icons';
 import Header from './Header';
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -28,9 +28,9 @@ const MainMenu: React.FC = () => {
       icon: <FileDoneOutlined />,
     },
     {
-      label: 'Download Surat',
-      key: 'surat',
-      icon: <DownloadOutlined />,
+      label: 'Generate Surat',
+      key: 'generate',
+      icon: <FileSyncOutlined />,
     },
   ];
 
