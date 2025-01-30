@@ -9,26 +9,26 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 // Main Menu Component
 const MainMenu: React.FC = () => {
-  const [current, setCurrent] = useState('beranda');
+  const [current, setCurrent] = useState('');
 
   const items: MenuItem[] = [
     {
-      label: 'Beranda',
+      label: <a href="/admin/dashboard">Beranda</a>,
       key: 'beranda',
       icon: <HomeOutlined />,
     },
     {
-      label: 'Permohonan PDLN',
+      label: <a href="/admin/permohonan">Permohonan PDLN</a>,
       key: 'permohonan',
       icon: <FileOutlined />,
     },
     {
-      label: 'Laporan',
+      label: <a href="/admin/laporan">Laporan</a>,
       key: 'laporan',
       icon: <FileDoneOutlined />,
     },
     {
-      label: 'Generate Surat',
+      label: <a href="/admin/generatesurat">GenerateSurat</a>,
       key: 'generate',
       icon: <FileSyncOutlined />,
     },

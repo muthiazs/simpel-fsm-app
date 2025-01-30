@@ -5,7 +5,7 @@ import type { MenuProps } from 'antd';
 import { HomeOutlined, FileOutlined, FileDoneOutlined, UserOutlined, DownloadOutlined } from '@ant-design/icons';
 import Header from './Header';
 
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = Exclude<Required<MenuProps>['items'], undefined>[number];
 
 // Main Menu Component
 const MainMenu: React.FC = () => {
@@ -13,22 +13,22 @@ const MainMenu: React.FC = () => {
 
   const items: MenuItem[] = [
     {
-      label: 'Beranda',
+      label: <a href="/pemohon/dashboard">Beranda</a>,
       key: 'beranda',
       icon: <HomeOutlined />,
     },
     {
-      label: 'Permohonan PDLN',
+      label: <a href="/pemohon/permohonan">Permohonan PDLN</a>,
       key: 'permohonan',
       icon: <FileOutlined />,
     },
     {
-      label: 'Laporan',
+      label: <a href="/pemohon/laporan">Laporan</a>,
       key: 'laporan',
       icon: <FileDoneOutlined />,
     },
     {
-      label: 'Download Surat',
+      label: <a href="/pemohon/unduhSurat">Download Surat</a>,
       key: 'surat',
       icon: <DownloadOutlined />,
     },

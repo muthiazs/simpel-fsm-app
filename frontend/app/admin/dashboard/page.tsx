@@ -68,7 +68,7 @@ const DashboardAdmin: React.FC = () => {
                                 </Space>
                                 <Button 
                                     type="link" 
-                                    icon={<RightOutlined />}
+                                    icon={<RightOutlined style={{ color: '#52c41a' }} />}
                                     style={{ width: '100%', marginTop: '16px' }}
                                 >
                                     Lihat Detail
