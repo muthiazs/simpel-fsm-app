@@ -11,7 +11,9 @@
   "dependencies": {
     "@ant-design/cssinjs": "^1.22.1",
     "@ant-design/icons": "^5.5.2",
+    "@elysiajs/cors": "^1.2.0",
     "antd": "^5.23.1",
+    "axios": "^1.7.9",
     "next": "^15.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

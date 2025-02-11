@@ -162,19 +162,6 @@ const datadiripemohon: React.FC = () => {
                     </button>
                   </Upload>
                 </Form.Item>
-                <Form.Item
-                  label="Scan Paspor (PDF)"
-                  valuePropName="fileList"
-                  labelCol={{ span: 24 }}
-                  wrapperCol={{ span: 24 }}
-                >
-                  <Upload action="/upload.do" listType="picture-card">
-                    <button style={{ border: 0, background: 'none' }} type="button">
-                      <PlusOutlined style={{ color: 'black' }} />
-                      <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
-                    </button>
-                  </Upload>
-                </Form.Item>
               </Row>
             </Col>
           </Row>

@@ -1,0 +1,21 @@
+{
+  "name": "simpelfsm",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prisma": "^6.3.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.2.0",
+    "@prisma/client": "6.3.0",
+    "elysia": "^1.2.11",
+    "pg": "^8.13.1"
+  },
+  "scripts": {
+    "seed": "bun run prisma/seed.ts"
+  }
+}
