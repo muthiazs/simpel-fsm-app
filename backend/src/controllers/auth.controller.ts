@@ -6,6 +6,13 @@ export const loginUser = async (email: string, password: string) => {
     console.log('Attempting login for email:', email);
     const user = await prisma.user.findUnique({
       where: { email },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        role: true,       
+        password: true,
+      },
     });
 
     if (!user) {
@@ -27,8 +34,20 @@ export const loginUser = async (email: string, password: string) => {
     // Setelah itu baru bisa menggunakan bcrypt.compare
     const isValidPassword = await bcrypt.compare(password, hashedPassword);
 
+    // Tentukan redirect URL berdasarkan role
+    let redirectUrl = '/dashboard'; // default redirect
+    
+    switch (user.role) {
+      case 'ADMIN':
+        redirectUrl = '/admin/dashboard';
+        break;
+      case 'PEMOHON':
+        redirectUrl = '/pemohon/dashboard';
+        break;
+    }
+
     const { password: _, ...userData } = user;
-    return { success: true, user: userData };
+    return { success: true, user: userData , redirectUrl };
     
   } catch (error) {
     console.error('Error during login:', error);

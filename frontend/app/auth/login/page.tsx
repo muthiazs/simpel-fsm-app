@@ -1,10 +1,10 @@
 'use client'
 
-import React from 'react';
-import { Form, Input, Button, Checkbox, Card, Typography, message } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, Button, Card, Typography, message } from 'antd';
 import type { FormProps } from 'antd';
-import Header from '../../../components/Header';
 import { useRouter } from 'next/navigation';
+import Header from '../../../components/Header';
 
 const { Title, Text } = Typography;
 
@@ -15,8 +15,10 @@ type FieldType = {
 
 const App: React.FC = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    setLoading(true);
     try {
       const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
@@ -27,19 +29,31 @@ const App: React.FC = () => {
       });
 
       const data = await response.json();
+      console.log('Response data:', data); // Untuk debugging
+      console.log('Full response:', data);
+      console.log('Redirect URL:', data.redirectUrl);
 
       if (data.success) {
         message.success('Login berhasil!');
-        // Simpan data user ke localStorage jika diperlukan
+        // Simpan data user ke localStorage
         localStorage.setItem('user', JSON.stringify(data.user));
-        // Redirect ke halaman dashboard atau halaman utama
-        router.push('/dashboard/pemohon'); // Sesuaikan dengan route yang Anda inginkan
+        
+        // Redirect ke URL yang sesuai
+        if (data.redirectUrl) {
+          console.log('Redirecting to:', data.redirectUrl); // Untuk debugging
+          router.push(data.redirectUrl); // Gunakan URL redirect langsung dari response
+        } else {
+          // Default fallback jika tidak ada redirectUrl
+          router.push('/dashboard');
+        }
       } else {
         message.error(data.message || 'Login gagal');
       }
     } catch (error) {
       console.error('Login error:', error);
       message.error('Terjadi kesalahan saat login');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -85,7 +99,7 @@ const App: React.FC = () => {
             </Form.Item>
 
             <Form.Item label={null}>
-              <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+              <Button type="primary" htmlType="submit" loading={loading} style={{ width: '100%' }}>
                 Masuk
               </Button>
             </Form.Item>
