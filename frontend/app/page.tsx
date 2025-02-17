@@ -2,20 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { getUsers } from "../utils/services/api"; // Sesuaikan path
+import '@ant-design/v5-patch-for-react-19';
+
 
 export default function Page() {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getUsers();
-      if (data?.success) {
-        setUsers(data.data);
-      }
-    };
-    fetchData();
-  }, []);
-
   return (
     <div>
       <h1>Selamat datang di fsm

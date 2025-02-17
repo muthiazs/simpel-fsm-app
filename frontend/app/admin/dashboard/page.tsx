@@ -12,6 +12,7 @@ import {
     RightOutlined
 } from '@ant-design/icons';
 import Menu from '../../../components/MenuAdmin';
+import '@ant-design/v5-patch-for-react-19';
 
 const { Title, Text } = Typography;
 

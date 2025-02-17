@@ -10,6 +10,7 @@ import {
     RightOutlined
 } from '@ant-design/icons';
 import Menu from '../../../components/Menu';
+import '@ant-design/v5-patch-for-react-19';
 
 const { Title, Text } = Typography;
 
@@ -20,7 +21,7 @@ const DashboardPemohon: React.FC = () => {
             <div style={{ padding: '24px' }}>
                 <Space direction="vertical" size="large" style={{ width: '100%' }}>
                     {/* Welcome Section */}
-                    <Card bordered={false}>
+                    <Card variant="outlined">
                         <Space align="center" size="middle">
                                 <Title level={2} style={{ margin: 0 }}>Selamat datang, John Doe 👋🏻</Title>
                         </Space>
@@ -36,7 +37,7 @@ const DashboardPemohon: React.FC = () => {
                                         <span>Profil Singkat</span>
                                     </Space>
                                 }
-                                bordered={false}
+                                variant="outlined"
                             >
                                 <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                                     <Row gutter={[16, 16]}>
@@ -69,7 +70,7 @@ const DashboardPemohon: React.FC = () => {
                                         <span>Prosedur</span>
                                     </Space>
                                 }
-                                bordered={false}
+                                variant="outlined"
                             >
                                 <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                                     <div>
@@ -98,7 +99,7 @@ const DashboardPemohon: React.FC = () => {
                                 <Col xs={24} sm={8}>
                                     <Card
                                         hoverable
-                                        bordered={false}
+                                        variant="outlined"
                                         style={{ height: '100%' }}
                                     >
                                         <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
@@ -114,7 +115,7 @@ const DashboardPemohon: React.FC = () => {
                                 <Col xs={24} sm={8}>
                                     <Card
                                         hoverable
-                                        bordered={false}
+                                        variant="outlined"
                                         style={{ height: '100%' }}
                                     >
                                         <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
@@ -130,7 +131,7 @@ const DashboardPemohon: React.FC = () => {
                                 <Col xs={24} sm={8}>
                                     <Card
                                         hoverable
-                                        bordered={false}
+                                        variant="outlined"
                                         style={{ height: '100%' }}
                                     >
                                         <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
