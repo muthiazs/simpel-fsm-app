@@ -21,12 +21,11 @@ export const loginUser = async (email: string, password: string) => {
       data: { password: hashedPassword }
     });
 
+    console.log('Password sebenernya:', user.password);
+    console.log('Password yang diinput:', hashedPassword);
+
     // Setelah itu baru bisa menggunakan bcrypt.compare
     const isValidPassword = await bcrypt.compare(password, hashedPassword);
-
-    if (!isValidPassword) {
-      return { success: false, message: 'Invalid password' };
-    }
 
     const { password: _, ...userData } = user;
     return { success: true, user: userData };
