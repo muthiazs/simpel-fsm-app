@@ -12,6 +12,7 @@
   "dependencies": {
     "@elysiajs/cors": "^1.2.0",
     "@prisma/client": "6.3.0",
+    "bcrypt": "^5.1.1",
     "elysia": "^1.2.11",
     "pg": "^8.13.1"
   },

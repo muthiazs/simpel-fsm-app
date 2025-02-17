@@ -18,18 +18,8 @@ export default function Page() {
 
   return (
     <div>
-      <h1>List of Users</h1>
-      <ul>
-        {users.length > 0 ? (
-          users.map((user: any) => (
-            <li key={user.id_user}>
-              {user.username} - {user.email}
-            </li>
-          ))
-        ) : (
-          <p>Loading users...</p>
-        )}
-      </ul>
+      <h1>Selamat datang di fsm
+      </h1>
     </div>
   );
 }
