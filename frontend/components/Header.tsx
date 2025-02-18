@@ -2,6 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Layout, Typography } from 'antd';
+import '@ant-design/v5-patch-for-react-19';
 
 const { Header: AntHeader } = Layout;
 const { Title } = Typography;

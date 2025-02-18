@@ -1,5 +1,6 @@
 'use client'
-import React from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { Card, Button, Typography, Space, Row, Col, Badge } from 'antd';
 import { 
     FileAddOutlined, 
@@ -14,16 +15,55 @@ import '@ant-design/v5-patch-for-react-19';
 
 const { Title, Text } = Typography;
 
+
 const DashboardPemohon: React.FC = () => {
+    const [userData, setUserData] = useState(null);
+  
+    useEffect(() => {
+      const fetchUserData = async () => {
+        const token = localStorage.getItem('authToken'); // Ambil token dari localStorage
+  
+        if (!token) {
+          console.error('No token found!');
+          return;
+        }
+  
+        try {
+          console.log('Fetching user data with token:', token); // Debug log untuk token
+  
+          const response = await axios.get('http://localhost:3001/api/users', {
+            headers: {
+              'Authorization': `Bearer ${token}`, // Kirim token JWT di header
+            },
+          });
+  
+          console.log('Response:', response); // Debug log untuk respons API
+  
+          if (response.data.success) {
+            setUserData(response.data.user); // Simpan data user yang berhasil diambil
+          } else {
+            console.error('Failed to fetch user data:', response.data.message);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+  
+      fetchUserData();
+    }, []);
+  
+    if (!userData) {
+      return <div>Loading...</div>;
+    }
     return (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', background: '#f0f2f5' }}>
             <Menu />
             <div style={{ padding: '24px' }}>
                 <Space direction="vertical" size="large" style={{ width: '100%' }}>
                     {/* Welcome Section */}
-                    <Card variant="outlined">
+                    <Card>
                         <Space align="center" size="middle">
-                                <Title level={2} style={{ margin: 0 }}>Selamat datang, John Doe 👋🏻</Title>
+                            <Title level={2} style={{ margin: 0 }}>Selamat datang, {userData.username} 👋🏻</Title>
                         </Space>
                     </Card>
 
@@ -37,30 +77,24 @@ const DashboardPemohon: React.FC = () => {
                                         <span>Profil Singkat</span>
                                     </Space>
                                 }
-                                variant="outlined"
                             >
                                 <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                                     <Row gutter={[16, 16]}>
                                         <Col span={12}>
                                             <Text type="secondary">Nama</Text>
-                                            <div><Text strong>John Doe</Text></div>
+                                            <div><Text strong>{userData.username}</Text></div>
                                         </Col>
                                         <Col span={12}>
                                             <Text type="secondary">Email</Text>
-                                            <div><Text>john.doe@example.com</Text></div>
+                                            <div><Text>{userData.email}</Text></div>
                                         </Col>
                                     </Row>
-                                    <div>
-                                        <Text type="secondary">Status Dokumen</Text>
-                                        <div><Text>Lengkapi data diri dan upload KTP, Karpeg, dan Paspor</Text></div>
-                                    </div>
                                     <Button type="primary" icon={<RightOutlined />}>
                                         Lengkapi Data Diri
                                     </Button>
                                 </Space>
                             </Card>
                         </Col>
-
                         {/* Procedure Card */}
                         <Col xs={24} lg={12}>
                             <Card
@@ -151,5 +185,6 @@ const DashboardPemohon: React.FC = () => {
         </div>
     );
 };
+
 
 export default DashboardPemohon;

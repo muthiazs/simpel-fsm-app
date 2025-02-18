@@ -12,8 +12,12 @@
   "dependencies": {
     "@elysiajs/cors": "^1.2.0",
     "@prisma/client": "6.3.0",
+    "@types/express-session": "^1.18.1",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
     "elysia": "^1.2.11",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1"
   },
   "scripts": {

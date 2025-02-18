@@ -23,7 +23,7 @@ const DashboardAdmin: React.FC = () => {
             <div style={{ padding: '24px' }}>
                 <Space direction="vertical" size="large" style={{ width: '100%' }}>
                     {/* Header Section */}
-                    <Card bordered={false}>
+                    <Card variant='outlined'>
                         <Space align="center" size="middle">
                                 <Title level={2} style={{ margin: 0 }}>Dashboard Admin 👩🏻‍💻</Title>
                         </Space>
@@ -34,7 +34,7 @@ const DashboardAdmin: React.FC = () => {
                         <Col xs={24} md={8}>
                             <Card
                                 hoverable
-                                bordered={false}
+                                variant='outlined'
                             >
                                 <Space direction="horizontal" size="large" style={{ width: '100%', justifyContent: 'center' }}>
                                     <FileExclamationOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
@@ -57,7 +57,7 @@ const DashboardAdmin: React.FC = () => {
                         <Col xs={24} md={8}>
                             <Card
                                 hoverable
-                                bordered={false}
+                                variant='outlined'
                             >
                                 <Space direction="horizontal" size="large" style={{ width: '100%', justifyContent: 'center' }}>
                                     <FileDoneOutlined  style={{ fontSize: '36px', color: '#1890ff' }} />
@@ -80,7 +80,7 @@ const DashboardAdmin: React.FC = () => {
                         <Col xs={24} md={8}>
                             <Card
                                 hoverable
-                                bordered={false}
+                                variant='outlined'
                             >
                                 <Space direction="horizontal" size="large" style={{ width: '100%', justifyContent: 'center' }}>
                                     <FileExcelOutlined style={{ fontSize: '36px', color: '#1890ff' }}  />
@@ -111,7 +111,7 @@ const DashboardAdmin: React.FC = () => {
                                         <span>Generate Surat</span>
                                     </Space>
                                 }
-                                bordered={false}
+                                variant='outlined'
                             >
                                 <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                                     <Row gutter={[16, 16]}>

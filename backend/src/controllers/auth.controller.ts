@@ -1,5 +1,6 @@
 import prisma from '../../prisma/client';
 import * as bcrypt from 'bcrypt';
+import { createToken } from '../middleware/jwtUtils';
 
 export const loginUser = async (email: string, password: string) => {
   try {
@@ -46,8 +47,21 @@ export const loginUser = async (email: string, password: string) => {
         break;
     }
 
+    // Membuat JWT token setelah login berhasil
+    const token = createToken(user);
+    
+    // Menampilkan token dan data user di console
+    console.log('Login successful for email:', email);
+    console.log('Generated JWT Token:', token);
+    console.log('User Data:', {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+    });
+
     const { password: _, ...userData } = user;
-    return { success: true, user: userData , redirectUrl };
+    return { success: true, user: userData , redirectUrl , token}
     
   } catch (error) {
     console.error('Error during login:', error);

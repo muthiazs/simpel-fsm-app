@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
 import { HomeOutlined, FileOutlined, FileDoneOutlined, UserOutlined , FileSyncOutlined , UserAddOutlined } from '@ant-design/icons';
-import Header from './Header';
+import Header from './Header';import '@ant-design/v5-patch-for-react-19';
 
 type MenuItem = Required<MenuProps>['items'][number];
 

@@ -5,6 +5,7 @@ import { Table, Button, Input, Select, Space, Typography } from 'antd';
 import Menu from '../../../components/MenuAdmin';
 import Header from '../../../components/Header';
 import axios from 'axios';
+import '@ant-design/v5-patch-for-react-19';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -23,7 +24,7 @@ const UserPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/users/');
+      const response = await axios.get('http://localhost:3001/api/users/all');
       if (Array.isArray(response.data.data)) {
         setUsers(response.data.data);
       } else {

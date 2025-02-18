@@ -4,7 +4,7 @@ import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
 import { HomeOutlined, FileOutlined, FileDoneOutlined, UserOutlined, DownloadOutlined } from '@ant-design/icons';
 import Header from './Header';
-
+import '@ant-design/v5-patch-for-react-19';
 type MenuItem = Exclude<Required<MenuProps>['items'], undefined>[number];
 
 // Main Menu Component

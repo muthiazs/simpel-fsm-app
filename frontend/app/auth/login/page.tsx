@@ -37,6 +37,8 @@ const App: React.FC = () => {
         message.success('Login berhasil!');
         // Simpan data user ke localStorage
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('authToken', data.token);
+        console.log("token : " , data.token);
         
         // Redirect ke URL yang sesuai
         if (data.redirectUrl) {
