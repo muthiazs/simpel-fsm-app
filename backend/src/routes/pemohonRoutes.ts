@@ -13,7 +13,7 @@ pemohonRouter.get('/', authMiddleware(async (context) => {
     
     // Ambil data pemohon berdasarkan id yang sudah terverifikasi
     const pemohonData = await prisma.pemohon.findUnique({
-        where: { id_pemohon: user.id }, // ID user yang sudah terverifikasi
+        where: { id_user: user.id }, // ID user yang sudah terverifikasi
         select: {
             id_pemohon: true,
             nipnim: true,
@@ -26,6 +26,7 @@ pemohonRouter.get('/', authMiddleware(async (context) => {
             nohp: true,
             filektp: true,
             filekarpeg: true,
+            // prodi: true, // Include the new field
             createdat: true,
             updatedat: true,
         },
@@ -48,21 +49,23 @@ pemohonRouter.get('/:id', async (req) => {
 pemohonRouter.get('/all', async () => await getPemohon());
 
 // Route to update pemohon
-pemohonRouter.put('/:id', async (req) => {
+pemohonRouter.patch('/:id', async (req) => {
     try {
         const { id } = req.params;
-        const options = req.body as { nipnim?: string; nama?: string; nik?: string; jabatan?: string; pangkatgol?: string; nopaspor?: string; nohp?: string; filektp?: string; filekarpeg?: string };
+        const options = req.body as { nipnim?: string; nama?: string; nik?: string; jabatan?: string; pangkatgol?: string; nopaspor?: string; nohp?: string; filektp?: string; filekarpeg?: string; prodi?: string };
 
         // Log data yang diterima
         console.log(`Request received to update pemohon with ID: ${id}`, options);
 
         // Pastikan setidaknya ada satu field yang diupdate
-        if (!options.nipnim && !options.nama && !options.nik && !options.jabatan && !options.pangkatgol && !options.nopaspor && !options.nohp && !options.filektp && !options.filekarpeg) {
+        if (!options.nipnim && !options.nama && !options.nik && !options.jabatan && !options.pangkatgol && !options.nopaspor && !options.nohp && !options.filektp && !options.filekarpeg && !options.prodi) {
             return { success: false, message: "At least one field is required to update" };
         }
 
         // Log bahwa data sudah lengkap sebelum mengupdate pemohon
         console.log("Fields are present. Updating pemohon...");
+        console.log(`ID yang diterima: ${id}`);
+        console.log(`Data yang diterima:`, options);
 
         // Update pemohon
         return await updatePemohon(id, options);

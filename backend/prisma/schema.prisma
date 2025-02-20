@@ -47,6 +47,7 @@ model pemohon {
   pangkatgol  String?
   nopaspor    String?
   nohp        String?
+  prodi       String?
   filektp     String?
   filekarpeg  String?
   createdat   DateTime @default(now())

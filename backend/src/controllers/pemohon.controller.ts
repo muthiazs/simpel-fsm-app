@@ -5,7 +5,24 @@ import prisma from '../../prisma/client';
  */
 export async function getPemohon() {
     try {
-        const pemohon = await prisma.pemohon.findMany({ orderBy: { createdat: 'desc' } });
+        const pemohon = await prisma.pemohon.findMany({ 
+            orderBy: { createdat: 'desc' },
+            select: {
+                id_pemohon: true,
+                nipnim: true,
+                nama: true,
+                nik: true,
+                jabatan: true,
+                pangkatgol: true,
+                nopaspor: true,
+                nohp: true,
+                filektp: true,
+                filekarpeg: true,
+                // prodi: true, // Include prodi in the selection
+                createdat: true,
+                updatedat: true,
+            }
+        });
 
         return {
             success: true,
@@ -18,16 +35,14 @@ export async function getPemohon() {
     }
 }
 
-
-
 /**
  * Get pemohon by id
  */
-export async function getPemohonById(id: string) {
+export async function getPemohonById(id_user: string) {
     try {
         // Convert id to number and validate
-        const pemohonId = parseInt(id);
-        console.log(`ID received in getPemohonById: ${id}`);
+        const pemohonId = parseInt(id_user);
+        console.log(`ID received in getPemohonById: ${id_user}`);
         if (isNaN(pemohonId)) {
             return {
                 success: false,
@@ -38,7 +53,22 @@ export async function getPemohonById(id: string) {
 
         // Get pemohon by id
         const pemohon = await prisma.pemohon.findUnique({
-            where: { id_pemohon: pemohonId },
+            where: { id_user: pemohonId },
+            select: {
+                id_pemohon: true,
+                nipnim: true,
+                nama: true,
+                nik: true,
+                jabatan: true,
+                pangkatgol: true,
+                nopaspor: true,
+                nohp: true,
+                filektp: true,
+                filekarpeg: true,
+                // prodi: true, // Include prodi in the selection
+                createdat: true,
+                updatedat: true,
+            }
         });
 
         // If pemohon not found
@@ -53,7 +83,7 @@ export async function getPemohonById(id: string) {
         // Return response json
         return {
             success: true,
-            message: `Pemohon details for ID: ${id}`,
+            message: `Pemohon details for ID: ${id_user}`,
             data: pemohon,
         };
     } catch (e: unknown) {
@@ -65,7 +95,7 @@ export async function getPemohonById(id: string) {
 /**
  * Updating a pemohon
  */
-export async function updatePemohon(id: string, options: { nipnim?: string; nama?: string; nik?: string; jabatan?: string; pangkatgol?: string; nopaspor?: string; nohp?: string; filektp?: string; filekarpeg?: string }) {
+export async function updatePemohon(id: string, options: { nipnim?: string; nama?: string; nik?: string; jabatan?: string; pangkatgol?: string; nopaspor?: string; nohp?: string; filektp?: string; filekarpeg?: string; prodi?: string }) {
     try {
         // Convert id to number and validate
         const pemohonId = parseInt(id);
@@ -76,6 +106,17 @@ export async function updatePemohon(id: string, options: { nipnim?: string; nama
                 data: null,
             };
         }
+
+        const existingPemohon = await prisma.pemohon.findUnique({
+            where: { id_pemohon: pemohonId },
+          });
+          
+          if (!existingPemohon) {
+            return {
+              success: false,
+              message: "Pemohon tidak ditemukan",
+            };
+          }
 
         // Update pemohon with prisma
         const pemohon = await prisma.pemohon.update({
@@ -90,6 +131,7 @@ export async function updatePemohon(id: string, options: { nipnim?: string; nama
                 ...(options.nohp ? { nohp: options.nohp } : {}),
                 ...(options.filektp ? { filektp: options.filektp } : {}),
                 ...(options.filekarpeg ? { filekarpeg: options.filekarpeg } : {}),
+                ...(options.prodi ? { prodi: options.prodi } : {}),
                 updatedat: new Date(),
             },
         });
