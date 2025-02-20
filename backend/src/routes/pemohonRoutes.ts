@@ -7,6 +7,9 @@ import { authMiddleware } from '../middleware/authMiddleware';
 // Menggunakan Elysia router dengan prefix '/pemohon'
 const pemohonRouter = new Elysia({ prefix: '/pemohon' });
 
+// Middleware untuk mengaktifkan CORS
+pemohonRouter.use(cors());
+
 // Route untuk mendapatkan data pemohon berdasarkan token JWT yang dikirim di header Authorization
 pemohonRouter.get('/', authMiddleware(async (context) => {
     const user = context.user; // Mendapatkan data user dari context (hasil verifikasi token)
