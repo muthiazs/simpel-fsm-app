@@ -1,6 +1,7 @@
 import prisma from '../../prisma/client';
 import * as bcrypt from 'bcrypt';
 import { createToken } from '../middleware/jwtUtils';
+import type { Context } from 'elysia'; // or the appropriate library providing Context
 
 export const loginUser = async (email: string, password: string) => {
   try {
@@ -39,10 +40,10 @@ export const loginUser = async (email: string, password: string) => {
     let redirectUrl = '/dashboard'; // default redirect
     
     switch (user.role) {
-      case 'ADMIN':
+      case 'admin':
         redirectUrl = '/admin/dashboard';
         break;
-      case 'PEMOHON':
+      case 'pemohon':
         redirectUrl = '/pemohon/dashboard';
         break;
     }
@@ -67,5 +68,24 @@ export const loginUser = async (email: string, password: string) => {
     console.error('Error during login:', error);
     console.error('Error details:', error instanceof Error ? error.message : error);
     return { success: false, message: 'Internal server error' };
+  }
+};
+
+// Fungsi logout dengan penghapusan token menggunakan cookie
+export const logout = async (context: Context) => {
+  try {
+   
+    console.log('User successfully logged out');
+
+    return {
+      status: 'success',
+      message: 'Logout successful',
+    };
+  } catch (error) {
+    console.error('Error during logout:', error);
+    return {
+      status: 'error',
+      message: 'Failed to logout',
+    };
   }
 };

@@ -5,7 +5,7 @@ import prisma from '../../prisma/client';
  */
 export async function getUsers() {
     try {
-        const users = await prisma.user.findMany({ orderBy: { createdAt: 'desc' } });
+        const users = await prisma.user.findMany({ orderBy: { createdat: 'desc' } });
 
         return {
             success: true,
@@ -31,7 +31,7 @@ export async function createUser(options: { username: string, email: string, pas
                 username: username, // Jangan lupa untuk menyertakan username
                 email: email,
                 password: password,
-                role: 'PEMOHON', // Add the role property
+                role: 'pemohon', // Add the role property
             },
         });
 

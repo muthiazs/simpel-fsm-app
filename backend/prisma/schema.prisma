@@ -15,71 +15,71 @@ datasource db {
 
 
 // ENUM untuk Role
-enum Role {
-  ADMIN
-  PEMOHON
+enum role {
+  admin
+  pemohon
 }
 
-// Model Users
-model User {
-  id       Int    @id @default(autoincrement())
-  username String
-  email    String @unique
-  password String
-  role     Role
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// Model user
+model user {
+  id        Int     @id @default(autoincrement())
+  username  String
+  email     String  @unique
+  password  String
+  role      role
+  createdat DateTime @default(now())
+  updatedat DateTime @updatedAt
 
-  // Relasi ke Pemohon dan Admin
-  pemohon Pemohon?
-  admin   Admin?
+  // Relasi ke pemohon dan admin
+  pemohon pemohon?
+  admin   admin?
 }
 
-// Model Pemohon
-model Pemohon {
-  id_pemohon Int    @id @default(autoincrement())
-  nipnim     String @unique
-  id_user    Int    @unique
-  user       User   @relation(fields: [id_user], references: [id])
-  nama       String
-  nik        String
-  jabatan    String
-  pangkatgol String
-  NoPaspor   String?
-  NoHP       String
-  fileKTP    String
-  fileKarpeg String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+// Model pemohon
+model pemohon {
+  id_pemohon  Int     @id @default(autoincrement())
+  nipnim      String?
+  id_user     Int     @unique
+  user        user    @relation(fields: [id_user], references: [id])
+  nama        String?
+  nik         String?
+  jabatan     String?
+  pangkatgol  String?
+  nopaspor    String?
+  nohp        String?
+  filektp     String?
+  filekarpeg  String?
+  createdat   DateTime @default(now())
+  updatedat   DateTime @updatedAt
 
-  // Relasi ke Permohonan
-  permohonan Permohonan[]
+  // Relasi ke permohonan
+  permohonan permohonan[]
 }
 
-// Model Permohonan
-model Permohonan {
-  id_permohonan Int      @id @default(autoincrement())
-  id_pemohon    Int
-  pemohon       Pemohon  @relation(fields: [id_pemohon], references: [id_pemohon])
-  negaratujuan  String
+// Model permohonan
+model permohonan {
+  id_permohonan  Int     @id @default(autoincrement())
+  id_pemohon     Int
+  pemohon        pemohon @relation(fields: [id_pemohon], references: [id_pemohon])
+  negaratujuan   String
   instansitujuan String
-  keperluan     String
-  tglMulai      DateTime
-  tglSelesai    DateTime
-  biaya         String
-  rencana       String
-  undangan      String
-  agenda        String
-  tor           String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  keperluan      String
+  tglmulai       DateTime
+  tglselesai     DateTime
+  biaya          String
+  rencana        String
+  undangan       String
+  agenda         String
+  tor            String
+  createdat      DateTime @default(now())
+  updatedat      DateTime @updatedAt
 }
 
-// Model Admin
-model Admin {
+// Model admin
+model admin {
   nip      String @id
   id_admin Int    @unique
-  user     User   @relation(fields: [id_admin], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user     user   @relation(fields: [id_admin], references: [id])
+  createdat DateTime @default(now())
+  updatedat DateTime @updatedAt
 }

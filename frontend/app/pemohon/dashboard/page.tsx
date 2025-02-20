@@ -90,7 +90,7 @@ const DashboardPemohon: React.FC = () => {
                                         </Col>
                                     </Row>
                                     <Button type="primary" icon={<RightOutlined />}>
-                                        Lengkapi Data Diri
+                                        <a href="/pemohon/datadiri">Lengkapi Data Diri </a>
                                     </Button>
                                 </Space>
                             </Card>
@@ -140,7 +140,7 @@ const DashboardPemohon: React.FC = () => {
                                             <FileAddOutlined style={{ fontSize: '32px', color: '#1890ff' }} />
                                             <Title level={4} style={{ margin: 0 }}>Ajukan Permohonan Baru</Title>
                                             <Button type="primary" icon={<RightOutlined />}>
-                                                Ajukan Sekarang
+                                                <a href="/pemohon/pengajuan">Ajukan Sekarang</a>
                                             </Button>
                                         </Space>
                                     </Card>
@@ -156,7 +156,7 @@ const DashboardPemohon: React.FC = () => {
                                             <HistoryOutlined style={{ fontSize: '32px', color: '#1890ff' }} />
                                             <Title level={4} style={{ margin: 0 }}>Riwayat Pengajuan</Title>
                                             <Button type="primary" icon={<RightOutlined />}>
-                                                Lihat Riwayat
+                                                <a href="/pemohon/permohonan">Lihat Riwayat</a>
                                             </Button>
                                         </Space>
                                     </Card>

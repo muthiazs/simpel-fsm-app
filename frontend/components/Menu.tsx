@@ -70,7 +70,7 @@ const CombinedMenu: React.FC = () => {
       <Header />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <MainMenu />
-        <UserMenu />
+        {/* <UserMenu /> */}
       </div>
     </div>
   );

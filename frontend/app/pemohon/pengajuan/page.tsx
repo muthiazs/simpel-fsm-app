@@ -14,6 +14,7 @@ import {PlusOutlined } from '@ant-design/icons';
 import Header from '../../../components/Header';
 import Menu from '../../../components/Menu';
 import { Color } from 'antd/es/color-picker';
+import '@ant-design/v5-patch-for-react-19';
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
