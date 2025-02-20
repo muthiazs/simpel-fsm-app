@@ -40,7 +40,7 @@ model pemohon {
   id_pemohon  Int     @id @default(autoincrement())
   nipnim      String?
   id_user     Int     @unique
-  user        user    @relation(fields: [id_user], references: [id])
+  user        user    @relation(fields: [id_user], references: [id] , onDelete: Cascade)
   nama        String?
   nik         String?
   jabatan     String?
