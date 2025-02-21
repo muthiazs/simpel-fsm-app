@@ -11,13 +11,19 @@ interface AuthContext extends Context {
   export const authMiddleware = (handler: (context: AuthContext) => Promise<any>) => async (context: AuthContext) => {
     const authHeader = context.request.headers.get('authorization'); // Menggunakan get() untuk mengambil header
   
+    if (!context.headers.authorization) {
+      console.warn("❌ No Authorization header found.");
+      return { success: false, message: "Unauthorized" };
+    }
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return { success: false, message: 'Unauthorized' };
     }
   
     const token = authHeader.split(' ')[1];
+    console.log("🔹 Extracted Token:", token);
     const userData = verifyToken(token);
-  
+
     if (!userData) {
       return { success: false, message: 'Invalid token' };
     }

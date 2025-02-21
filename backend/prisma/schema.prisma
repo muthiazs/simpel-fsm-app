@@ -60,7 +60,7 @@ model pemohon {
 // Model permohonan
 model permohonan {
   id_permohonan  Int     @id @default(autoincrement())
-  id_pemohon     Int
+  id_pemohon     Int 
   pemohon        pemohon @relation(fields: [id_pemohon], references: [id_pemohon])
   negaratujuan   String
   instansitujuan String

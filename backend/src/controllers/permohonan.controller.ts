@@ -1,94 +1,120 @@
 import prisma from '../../prisma/client';
 
+
 /**
- * Get all permohonan
+ * ✅ Get all permohonan (Tanpa filter)
  */
 export async function getPermohonan() {
     try {
+        console.log("Fetching all permohonan...");
         const permohonan = await prisma.permohonan.findMany({
             orderBy: { createdat: 'desc' },
             select: {
                 id_permohonan: true,
-                id_pemohon: true,
                 negaratujuan: true,
                 instansitujuan: true,
                 keperluan: true,
                 tglmulai: true,
                 tglselesai: true,
                 biaya: true,
-                rencana: true,
-                undangan: true,
-                agenda: true,
-                tor: true,
                 createdat: true,
                 updatedat: true,
+                pemohon: {
+                    select: { nama: true }
+                }
             }
         });
 
+        console.log("Success fetching all permohonan:", permohonan);
+
         return {
             success: true,
-            message: "List Data Permohonan!",
+            message: "List Data Permohonan",
             data: permohonan,
         };
     } catch (error) {
-        console.error(`Error getting permohonan: ${error}`);
+        console.error(`Error getting all permohonan: ${error}`);
         return { success: false, message: "Error fetching permohonan" };
     }
 }
 
 /**
- * Get permohonan by id
+ * ✅ Get permohonan berdasarkan ID Permohonan
  */
 export async function getPermohonanById(id_permohonan: string) {
     try {
-        // Convert id to number and validate
         const permohonanId = parseInt(id_permohonan);
         if (isNaN(permohonanId)) {
-            return {
-                success: false,
-                message: "Invalid permohonan ID format",
-                data: null,
-            };
+            return { success: false, message: "Invalid permohonan ID format", data: null };
         }
 
-        // Get permohonan by id
         const permohonan = await prisma.permohonan.findUnique({
             where: { id_permohonan: permohonanId },
             select: {
                 id_permohonan: true,
-                id_pemohon: true,
                 negaratujuan: true,
                 instansitujuan: true,
                 keperluan: true,
                 tglmulai: true,
                 tglselesai: true,
                 biaya: true,
-                rencana: true,
-                undangan: true,
-                agenda: true,
-                tor: true,
                 createdat: true,
                 updatedat: true,
+                pemohon: {
+                    select: { nama: true }
+                }
             }
         });
 
-        // If permohonan not found
         if (!permohonan) {
-            return {
-                success: false,
-                message: "Permohonan not found!",
-                data: null,
-            };
+            return { success: false, message: "Permohonan not found!", data: null };
         }
 
-        // Return response json
-        return {
-            success: true,
-            message: `Permohonan details for ID: ${id_permohonan}`,
-            data: permohonan,
-        };
-    } catch (e: unknown) {
-        console.error(`Error finding permohonan: ${e}`);
+        return { success: true, message: "Detail Permohonan", data: permohonan };
+    } catch (error) {
+        console.error(`Error fetching permohonan by ID: ${error}`);
+        return { success: false, message: "Error fetching permohonan" };
+    }
+}
+
+/**
+ * ✅ Get permohonan berdasarkan ID User (Login)
+ */
+export async function getPermohonanByUserId(id_user: number) {
+    try {
+        // Cari pemohon berdasarkan id_user
+        const pemohon = await prisma.pemohon.findUnique({
+            where: { id_user },
+            select: { id_pemohon: true }
+        });
+
+        if (!pemohon) {
+            return { success: false, message: "Pemohon tidak ditemukan", data: null };
+        }
+
+        // Ambil permohonan berdasarkan id_pemohon
+        const permohonanData = await prisma.permohonan.findMany({
+            where: { id_pemohon: pemohon.id_pemohon },
+            select: {
+                id_permohonan: true,
+                negaratujuan: true,
+                instansitujuan: true,
+                keperluan: true,
+                tglmulai: true,
+                tglselesai: true,
+                biaya: true,
+                createdat: true,
+                updatedat: true,
+                pemohon: {
+                    select: { nama: true }
+                }
+            },
+            orderBy: { createdat: 'desc' }
+        });
+
+        return { success: true, message: "Permohonan berdasarkan user", data: permohonanData };
+    } catch (error) {
+        console.error(`Error fetching permohonan by user ID: ${error}`);
         return { success: false, message: "Error fetching permohonan" };
     }
 }

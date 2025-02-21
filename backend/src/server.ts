@@ -7,6 +7,7 @@ import prisma from '../prisma/client';
 import { authMiddleware } from './middleware/authMiddleware';
 import { protectedRoutes } from './routes/protectedRoutes';
 import pemohonRouter from './routes/pemohonRoutes';
+import permohonanRouter from './routes/permohonanRouter';
 
 const app = new Elysia()
   .use(cors({
@@ -26,6 +27,7 @@ app.group('/api', (app) => {
   app.use(router);    // user routes
   app.use(authRouter); // auth routes sekarang akan menjadi /api/auth/*
   app.use(pemohonRouter); // pemohon routes
+  app.use(permohonanRouter)
   return app;
 });
 

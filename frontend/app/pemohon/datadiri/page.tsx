@@ -1,17 +1,17 @@
 'use client'
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Button,
   Form,
   Input,
   Row,
   Col,
-  Upload,
+  message
 } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import Menu from '../../../components/Menu';
-
-const { TextArea } = Input;
+import axios from 'axios';
+import '@ant-design/v5-patch-for-react-19';
+import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
 
 const formItemLayout = {
   labelCol: {
@@ -28,8 +28,63 @@ const datadiripemohon: React.FC = () => {
   const [form] = Form.useForm();
   const variant = Form.useWatch('variant', form);
 
-  const handleSubmit = (values: any) => {
-    console.log('Form values:', values);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('authToken'); // Ambil token dari localStorage
+
+      if (!token) {
+        message.error('Token tidak ditemukan! Silakan login kembali.');
+        return;
+      }
+
+      try {
+        const response = await axios.get('http://localhost:3001/api/pemohon', {
+          headers: {
+            'Authorization': `Bearer ${token}`, // Kirim token di header
+          },
+        });
+
+        if (response.data.success) {
+          const userData = response.data.pemohon;
+          form.setFieldsValue(userData); // Isi form dengan data user
+        } else {
+          message.error('Gagal mengambil data pemohon.');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        message.error('Terjadi kesalahan saat mengambil data.');
+      }
+    };
+
+    fetchUserData();
+  }, [form]);
+
+  const updatePemohon = async (values: any) => {
+    const token = localStorage.getItem('authToken'); // Ambil token dari localStorage
+
+    if (!token) {
+      message.error('Token tidak ditemukan! Silakan login kembali.');
+      return;
+    }
+
+    try {
+      console.log('Payload yang dikirim:', values);
+      const response = await axios.patch('http://localhost:3001/api/pemohon/', values, {
+        headers: {
+          'Authorization': `Bearer ${token}`, // Kirim token di header
+        },
+      });
+
+      if (response.data.success) {
+        message.success('Data diri berhasil diperbarui.');
+      } else {
+        message.error('Gagal memperbarui data diri.');
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      message.error('Terjadi kesalahan saat memperbarui data.');
+    }
   };
 
   return (
@@ -45,7 +100,7 @@ const datadiripemohon: React.FC = () => {
           variant={variant || 'filled'}
           style={{ width: '100%' }}
           initialValues={{ variant: 'filled' }}
-          onFinish={handleSubmit}
+          onFinish={updatePemohon}
         >
           <Row gutter={16}>
             <Col span={12}>
@@ -62,7 +117,7 @@ const datadiripemohon: React.FC = () => {
             <Col span={12}>
               <Form.Item
                 label="Nomer WhatsApp"
-                name="nomerWhatsApp"
+                name="nohp"
                 rules={[{ required: true, message: 'Masukkan nomer Whatsapp!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -85,13 +140,13 @@ const datadiripemohon: React.FC = () => {
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Program Studi"
-                name="prodi"
-                rules={[{ required: true, message: 'Masukkan program studi!' }]}
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
+              label="Program Studi"
+              name= 'prodi'
+              rules={[{ required: true, message: 'Masukkan program studi!' }]}
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
               >
-                <Input placeholder="Masukkan prodi" />
+               <Input placeholder="Masukkan Program Studi" />
               </Form.Item>
             </Col>
           </Row>
@@ -128,7 +183,7 @@ const datadiripemohon: React.FC = () => {
             <Col span={12}>
               <Form.Item
                 label="No Paspor"
-                name="noPaspor"
+                name="nopaspor"
                 rules={[{ required: true, message: 'Masukkan nomer paspor!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -138,29 +193,35 @@ const datadiripemohon: React.FC = () => {
               <Row gutter={16}>
                 <Form.Item
                   label="Scan KTP (PDF)"
-                  valuePropName="fileList"
+                  name= 'filektp'
+                  valuePropName="filektp"
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
                 >
-                  <Upload action="/upload.do" listType="picture-card">
+                  <Input placeholder="Masukkan file ktp" />
+                  
+                  {/* <Upload action="/upload.do" listType="picture-card">
                     <button style={{ border: 0, background: 'none' }} type="button">
                       <PlusOutlined style={{ color: 'black' }} />
                       <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
                     </button>
-                  </Upload>
+                  </Upload> */}
+
                 </Form.Item>
                 <Form.Item
                   label="Scan Kartu Pegawai (PDF)"
-                  valuePropName="fileList"
+                  name={'filekarpeg'}
+                  valuePropName="filekarpeg"
                   labelCol={{ span: 24 }}
                   wrapperCol={{ span: 24 }}
                 >
-                  <Upload action="/upload.do" listType="picture-card">
+                  {/* buat testing update sebelum urus object storage */}
+                  {/* valuePropName="fileList"
                     <button style={{ border: 0, background: 'none' }} type="button">
                       <PlusOutlined style={{ color: 'black' }} />
                       <div style={{ marginTop: 8, color: 'black' }}>Upload</div>
-                    </button>
-                  </Upload>
+                    </button> */}
+                  <Input placeholder="Masukkan file karpeg" />
                 </Form.Item>
               </Row>
             </Col>
@@ -168,8 +229,8 @@ const datadiripemohon: React.FC = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item wrapperCol={{ span: 24, offset: 0 }}>
-                <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-                  Simpan Data Diri
+                <Button type="primary" htmlType="submit" style={{ width: '100%' }} onClick={() => form.submit()}>
+                  Update Data Diri
                 </Button>
               </Form.Item>
             </Col>
@@ -181,3 +242,4 @@ const datadiripemohon: React.FC = () => {
 };
 
 export default datadiripemohon;
+

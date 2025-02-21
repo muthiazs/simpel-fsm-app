@@ -2,6 +2,7 @@ import { Elysia } from 'elysia';
 import {
     getPermohonan,
     getPermohonanById,
+    getPermohonanByUserId,
     createPermohonan,
     updatePermohonan,
     deletePermohonan
@@ -15,28 +16,20 @@ const permohonanRouter = new Elysia({ prefix: '/permohonan' });
 // Middleware untuk mengaktifkan CORS
 permohonanRouter.use(cors());
 
-// Route untuk mendapatkan semua permohonan
-permohonanRouter.get('/', authMiddleware(async () => {
-    try {
-        const response = await getPermohonan();
-        return response;
-    } catch (error) {
-        console.error(`Error fetching permohonan: ${error}`);
-        return { success: false, message: 'Internal server error' };
-    }
+// 🔹 **1. GET /permohonan/user → Get berdasarkan id_user (Login)**
+permohonanRouter.get('/user', authMiddleware(async (context) => {
+    return await getPermohonanByUserId(context.user.id);
 }));
 
-// Route untuk mendapatkan permohonan berdasarkan ID
-permohonanRouter.get('/:id', authMiddleware(async (req) => {
-    const { id } = req.params;
-    try {
-        const response = await getPermohonanById(id);
-        return response;
-    } catch (error) {
-        console.error(`Error fetching permohonan by ID: ${error}`);
-        return { success: false, message: 'Internal server error' };
-    }
-}));
+// 🔹 **2. GET /permohonan/:id → Get berdasarkan id_permohonan**
+permohonanRouter.get('/:id', async (req) => {
+    return await getPermohonanById(req.params.id);
+});
+
+// 🔹 **3. GET /permohonan → Get semua permohonan (tanpa filter)**
+permohonanRouter.get('/', async () => {
+    return await getPermohonan();
+});
 
 // Route untuk membuat permohonan baru
 permohonanRouter.post('/', authMiddleware(async (req) => {

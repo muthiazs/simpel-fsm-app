@@ -1,9 +1,10 @@
 'use client'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Space, Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
 import Header from '../../../components/Header';
 import Menu from '../../../components/Menu';
+import axios from 'axios';
 
 interface DataType {
     key: string;
@@ -73,50 +74,52 @@ const columns: TableProps<DataType>['columns'] = [
     },
 ];
 
-const data: DataType[] = [
-    {
-        key: '1',
-        no: 1,
-        tanggalPengajuan: '2023-01-01',
-        negaraTujuan: 'USA',
-        instansiTujuan: 'Harvard University',
-        waktuDimulai: '2023-02-01',
-        waktuBerakhir: '2023-02-10',
-        status: 'Approved',
-    },
-    {
-        key: '2',
-        no: 2,
-        tanggalPengajuan: '2023-01-05',
-        negaraTujuan: 'UK',
-        instansiTujuan: 'Oxford University',
-        waktuDimulai: '2023-03-01',
-        waktuBerakhir: '2023-03-15',
-        status: 'Pending',
-    },
-    {
-        key: '3',
-        no: 3,
-        tanggalPengajuan: '2023-01-10',
-        negaraTujuan: 'Australia',
-        instansiTujuan: 'University of Sydney',
-        waktuDimulai: '2023-04-01',
-        waktuBerakhir: '2023-04-10',
-        status: 'Rejected',
-    },
-];
+const App: React.FC = () => {
+    const [data, setData] = useState<DataType[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
-const App: React.FC = () => (
-    <>
-        <Menu />
-        <div style={{ display: 'flex', justifyContent: 'flex-start' , marginTop : '50px', marginLeft : '50px' }}>
-            <h1 >Permohonan PDLN</h1>
-        </div>
-        <div style={{ marginTop : '50px', marginLeft : '50px', marginRight : '50px' }}>
-            <Table<DataType> columns={columns} dataSource={data} />
-        </div>
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/api/permohonan', {
+                    withCredentials: true, // Jika backend pakai auth berbasis cookie/session
+                });
         
-    </>
-);
+                console.log('Response data:', response.data); // Debugging
+        
+                const formattedData = response.data.map((item: any, index: number) => ({
+                    key: item.id_permohonan,
+                    no: index + 1,
+                    tanggalPengajuan: new Date(item.createdat).toLocaleDateString(),
+                    negaraTujuan: item.negaratujuan,
+                    instansiTujuan: item.instansitujuan,
+                    waktuDimulai: new Date(item.tglmulai).toLocaleDateString(),
+                    waktuBerakhir: new Date(item.tglselesai).toLocaleDateString(),
+                    status: 'Pending', // Bisa diganti sesuai status di database
+                }));
+        
+                setData(formattedData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+            fetchData();
+        }, []);
+
+    return (
+        <>
+            <Menu />
+            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '50px', marginLeft: '50px' }}>
+                <h1>Permohonan PDLN</h1>
+            </div>
+            <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}>
+                <Table<DataType> columns={columns} dataSource={data} loading={loading} />
+            </div>
+        </>
+    );
+};
 
 export default App;
