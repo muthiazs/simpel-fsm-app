@@ -17,13 +17,16 @@ const permohonanRouter = new Elysia({ prefix: '/permohonan' });
 permohonanRouter.use(cors());
 
 // 🔹 **1. GET /permohonan/user → Get berdasarkan id_user (Login)**
-permohonanRouter.get('/user', authMiddleware(async (context) => {
+permohonanRouter.get('/:id_user', authMiddleware(async (context) => {
+    console.log(`Fetching permohonan with id user : ${context.user.id}`);
     return await getPermohonanByUserId(context.user.id);
 }));
 
 // 🔹 **2. GET /permohonan/:id → Get berdasarkan id_permohonan**
 permohonanRouter.get('/:id', async (req) => {
-    return await getPermohonanById(req.params.id);
+    console.log(`Fetching pemohon with ID: ${req.params.id}`);
+    const id = req.params.id;
+    return await getPermohonanById(id);
 });
 
 // 🔹 **3. GET /permohonan → Get semua permohonan (tanpa filter)**
