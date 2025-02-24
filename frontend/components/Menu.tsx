@@ -2,16 +2,24 @@
 import React, { useState } from 'react';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
-import { HomeOutlined, FileOutlined, FileDoneOutlined, UserOutlined, DownloadOutlined } from '@ant-design/icons';
+import { 
+  HomeOutlined, 
+  FileOutlined, 
+  FileDoneOutlined, 
+  UserOutlined, 
+  DownloadOutlined,
+  LogoutOutlined 
+} from '@ant-design/icons';
 import Header from './Header';
 import '@ant-design/v5-patch-for-react-19';
+
 type MenuItem = Exclude<Required<MenuProps>['items'], undefined>[number];
 
-// Main Menu Component
+// Combined Menu Component
 const MainMenu: React.FC = () => {
   const [current, setCurrent] = useState('beranda');
 
-  const items: MenuItem[] = [
+  const leftItems: MenuItem[] = [
     {
       label: <a href="/pemohon/dashboard">Beranda</a>,
       key: 'beranda',
@@ -34,6 +42,22 @@ const MainMenu: React.FC = () => {
     },
   ];
 
+  const rightItems: MenuItem[] = [
+    {
+      label: <a href="/pemohon/profile">Edit Profile</a>,
+      key: 'profile',
+      icon: <UserOutlined />,
+      style: { marginLeft: 'auto' }
+    },
+    {
+      label: <a href="/logout">Logout</a>,
+      key: 'logout',
+      icon: <LogoutOutlined />,
+    },
+  ];
+
+  const allItems = [...leftItems, ...rightItems];
+
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
     setCurrent(e.key);
@@ -44,33 +68,19 @@ const MainMenu: React.FC = () => {
       onClick={onClick} 
       selectedKeys={[current]} 
       mode="horizontal" 
-      items={items} 
+      items={allItems} 
       style={{ flex: 1 }}
     />
   );
 };
 
-// User Menu Component (Fixed)
-const UserMenu: React.FC = () => {
-  const items: MenuItem[] = [
-    {
-      label: 'Edit Profile',
-      key: 'profile',
-      icon: <UserOutlined />,
-    },
-  ];
-
-  return <Menu items={items} />;
-};
-
-// Combined Menu Component
+// Combined Menu Component with Header
 const CombinedMenu: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       <Header />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <MainMenu />
-        {/* <UserMenu /> */}
       </div>
     </div>
   );

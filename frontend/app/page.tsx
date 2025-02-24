@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getUsers } from "../utils/services/api"; // Sesuaikan path
 import '@ant-design/v5-patch-for-react-19';
 
 
 export default function Page() {
-  return (
-    <div>
-      <h1>Selamat datang di fsm
-      </h1>
-    </div>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect ke /auth/login
+    router.push("/auth/login");
+  }, [router]);
+  
 }

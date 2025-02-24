@@ -1,7 +1,10 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Tag } from 'antd';
-import type { TableProps } from 'antd';
+import { Space, Table, Tag, Button , Card } from 'antd';
+import {
+    PlusOutlined    
+  } from '@ant-design/icons';
+import type { TableProps  } from 'antd';
 import Header from '../../../components/Header';
 import Menu from '../../../components/Menu';
 import axios from 'axios';
@@ -77,46 +80,59 @@ const columns: TableProps<DataType>['columns'] = [
 const App: React.FC = () => {
     const [data, setData] = useState<DataType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchUserPermohonan = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/permohonan', {
-                    withCredentials: true, // Jika backend pakai auth berbasis cookie/session
+                const response = await axios.get('http://localhost:3001/api/permohonan/${id_user}', {
+                    withCredentials: true, // Pastikan autentikasi diterapkan
                 });
-        
+    
                 console.log('Response data:', response.data); // Debugging
-        
-                const formattedData = response.data.map((item: any, index: number) => ({
-                    key: item.id_permohonan,
-                    no: index + 1,
-                    tanggalPengajuan: new Date(item.createdat).toLocaleDateString(),
-                    negaraTujuan: item.negaratujuan,
-                    instansiTujuan: item.instansitujuan,
-                    waktuDimulai: new Date(item.tglmulai).toLocaleDateString(),
-                    waktuBerakhir: new Date(item.tglselesai).toLocaleDateString(),
-                    status: 'Pending', // Bisa diganti sesuai status di database
-                }));
-        
-                setData(formattedData);
+    
+                if (response.data.success) {
+                    const formattedData = response.data.data.map((item: any, index: number) => ({
+                        key: item.id_permohonan,
+                        no: index + 1,
+                        tanggalPengajuan: new Date(item.createdat).toLocaleDateString(),
+                        negaraTujuan: item.negaratujuan,
+                        instansiTujuan: item.instansitujuan,
+                        waktuDimulai: new Date(item.tglmulai).toLocaleDateString(),
+                        waktuBerakhir: new Date(item.tglselesai).toLocaleDateString(),
+                        status: 'Pending', // Bisa diubah sesuai database
+                    }));
+    
+                    setData(formattedData);
+                } else {
+                    console.error('Failed to fetch user permohonan:', response.data.message);
+                }
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching user permohonan:', error);
             } finally {
                 setLoading(false);
             }
         };
-        
-            fetchData();
-        }, []);
+    
+        fetchUserPermohonan();
+    }, []);
+
+    const handleAdd = () => {
+        // Handle the logic for adding a new application
+        console.log('Add new application');
+    };
 
     return (
         <>
             <Menu />
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '50px', marginLeft: '50px' }}>
-                <h1>Permohonan PDLN</h1>
-            </div>
             <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}>
-                <Table<DataType> columns={columns} dataSource={data} loading={loading} />
+                <Card title="Pemohonan"  style={{ width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}>
+                {/* <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '10px', marginLeft: '50px' }}>
+                    <h1>Permohonan PDLN</h1>
+                </div> */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginLeft: '50px', marginRight: '50px'  , marginBottom: '20px' }}>
+                    <Button type="primary" onClick={() => window.location.href = '/pemohon/pengajuan'} icon={<PlusOutlined />}>Tambahkan Pengajuan Permohonan</Button>
+                </div>
+                    <Table<DataType> columns={columns} dataSource={data} loading={loading} />
+                </Card>
             </div>
         </>
     );

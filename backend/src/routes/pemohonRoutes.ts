@@ -29,7 +29,7 @@ pemohonRouter.get('/', authMiddleware(async (context) => {
             nohp: true,
             filektp: true,
             filekarpeg: true,
-            // prodi: true, // Include the new field
+            prodi: true, // Include the new field
             createdat: true,
             updatedat: true,
         },

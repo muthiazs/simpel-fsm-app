@@ -78,21 +78,19 @@ export async function getPermohonanById(id_permohonan: string) {
 }
 
 /**
- * ✅ Get permohonan berdasarkan ID User (Login)
+ * Get permohonan by user ID (Login)
  */
 export async function getPermohonanByUserId(id_user: number) {
     try {
-        // Cari pemohon berdasarkan id_user
         const pemohon = await prisma.pemohon.findUnique({
             where: { id_user },
             select: { id_pemohon: true }
         });
 
         if (!pemohon) {
-            return { success: false, message: "Pemohon tidak ditemukan", data: null };
+            return { success: false, message: "Pemohon not found", data: null };
         }
 
-        // Ambil permohonan berdasarkan id_pemohon
         const permohonanData = await prisma.permohonan.findMany({
             where: { id_pemohon: pemohon.id_pemohon },
             select: {
@@ -112,7 +110,7 @@ export async function getPermohonanByUserId(id_user: number) {
             orderBy: { createdat: 'desc' }
         });
 
-        return { success: true, message: "Permohonan berdasarkan user", data: permohonanData };
+        return { success: true, message: "User's permohonan retrieved successfully", data: permohonanData };
     } catch (error) {
         console.error(`Error fetching permohonan by user ID: ${error}`);
         return { success: false, message: "Error fetching permohonan" };
@@ -120,23 +118,25 @@ export async function getPermohonanByUserId(id_user: number) {
 }
 
 /**
- * Creating a permohonan
+ * Create a new permohonan
  */
-export async function createPermohonan(data: { id_pemohon: number; negaratujuan: string; instansitujuan: string; keperluan: string; tglmulai: Date; tglselesai: Date; biaya: string; rencana: string; undangan: string; agenda: string; tor: string }) {
+export async function createPermohonan(data: {
+    id_pemohon: number;
+    negaratujuan: string;
+    instansitujuan: string;
+    keperluan: string;
+    tglmulai: Date;
+    tglselesai: Date;
+    biaya: string;
+    rencana: string;
+    undangan: string;
+    agenda: string;
+    tor: string;
+}) {
     try {
         const permohonan = await prisma.permohonan.create({
             data: {
-                id_pemohon: data.id_pemohon,
-                negaratujuan: data.negaratujuan,
-                instansitujuan: data.instansitujuan,
-                keperluan: data.keperluan,
-                tglmulai: data.tglmulai,
-                tglselesai: data.tglselesai,
-                biaya: data.biaya,
-                rencana: data.rencana,
-                undangan: data.undangan,
-                agenda: data.agenda,
-                tor: data.tor,
+                ...data,
                 createdat: new Date(),
                 updatedat: new Date(),
             },
@@ -144,28 +144,35 @@ export async function createPermohonan(data: { id_pemohon: number; negaratujuan:
 
         return {
             success: true,
-            message: "Permohonan Created Successfully!",
+            message: "Permohonan created successfully",
             data: permohonan,
         };
-    } catch (e: unknown) {
-        console.error(`Error creating permohonan: ${e}`);
+    } catch (error) {
+        console.error(`Error creating permohonan: ${error}`);
         return { success: false, message: "Error creating permohonan" };
     }
 }
 
 /**
- * Updating a permohonan
+ * Update a permohonan
  */
-export async function updatePermohonan(id: string, data: { id_pemohon?: number; negaratujuan?: string; instansitujuan?: string; keperluan?: string; tglmulai?: Date; tglselesai?: Date; biaya?: string; rencana?: string; undangan?: string; agenda?: string; tor?: string }) {
+export async function updatePermohonan(id: string, data: {
+    id_pemohon?: number;
+    negaratujuan?: string;
+    instansitujuan?: string;
+    keperluan?: string;
+    tglmulai?: Date;
+    tglselesai?: Date;
+    biaya?: string;
+    rencana?: string;
+    undangan?: string;
+    agenda?: string;
+    tor?: string;
+}) {
     try {
-        // Convert id to number and validate
         const permohonanId = parseInt(id);
         if (isNaN(permohonanId)) {
-            return {
-                success: false,
-                message: "Invalid permohonan ID format",
-                data: null,
-            };
+            return { success: false, message: "Invalid permohonan ID format" };
         }
 
         const existingPermohonan = await prisma.permohonan.findUnique({
@@ -173,69 +180,53 @@ export async function updatePermohonan(id: string, data: { id_pemohon?: number; 
         });
 
         if (!existingPermohonan) {
-            return {
-                success: false,
-                message: "Permohonan tidak ditemukan",
-            };
+            return { success: false, message: "Permohonan not found" };
         }
 
-        // Update permohonan with prisma
         const permohonan = await prisma.permohonan.update({
             where: { id_permohonan: permohonanId },
             data: {
-                ...(data.id_pemohon ? { id_pemohon: data.id_pemohon } : {}),
-                ...(data.negaratujuan ? { negaratujuan: data.negaratujuan } : {}),
-                ...(data.instansitujuan ? { instansitujuan: data.instansitujuan } : {}),
-                ...(data.keperluan ? { keperluan: data.keperluan } : {}),
-                ...(data.tglmulai ? { tglmulai: data.tglmulai } : {}),
-                ...(data.tglselesai ? { tglselesai: data.tglselesai } : {}),
-                ...(data.biaya ? { biaya: data.biaya } : {}),
-                ...(data.rencana ? { rencana: data.rencana } : {}),
-                ...(data.undangan ? { undangan: data.undangan } : {}),
-                ...(data.agenda ? { agenda: data.agenda } : {}),
-                ...(data.tor ? { tor: data.tor } : {}),
+                ...data,
                 updatedat: new Date(),
             },
         });
 
-        // Return response json
         return {
             success: true,
-            message: "Permohonan Updated Successfully!",
+            message: "Permohonan updated successfully",
             data: permohonan,
         };
-    } catch (e: unknown) {
-        console.error(`Error updating permohonan: ${e}`);
+    } catch (error) {
+        console.error(`Error updating permohonan: ${error}`);
         return { success: false, message: "Error updating permohonan" };
     }
 }
 
 /**
- * Deleting a permohonan
+ * Delete a permohonan
  */
 export async function deletePermohonan(id: string) {
     try {
-        // Convert id to number and validate
         const permohonanId = parseInt(id);
         if (isNaN(permohonanId)) {
-            return {
-                success: false,
-                message: "Invalid permohonan ID format",
-            };
+            return { success: false, message: "Invalid permohonan ID format" };
         }
 
-        // Delete permohonan with prisma
+        const existingPermohonan = await prisma.permohonan.findUnique({
+            where: { id_permohonan: permohonanId },
+        });
+
+        if (!existingPermohonan) {
+            return { success: false, message: "Permohonan not found" };
+        }
+
         await prisma.permohonan.delete({
             where: { id_permohonan: permohonanId },
         });
 
-        // Return response json
-        return {
-            success: true,
-            message: "Permohonan Deleted Successfully!",
-        };
-    } catch (e: unknown) {
-        console.error(`Error deleting permohonan: ${e}`);
+        return { success: true, message: "Permohonan deleted successfully" };
+    } catch (error) {
+        console.error(`Error deleting permohonan: ${error}`);
         return { success: false, message: "Error deleting permohonan" };
     }
 }

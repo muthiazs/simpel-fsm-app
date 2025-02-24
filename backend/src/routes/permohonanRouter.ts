@@ -10,61 +10,79 @@ import {
 import { cors } from '@elysiajs/cors';
 import { authMiddleware } from '../middleware/authMiddleware';
 
-// Membuat router untuk permohonan
+// Create router for permohonan
 const permohonanRouter = new Elysia({ prefix: '/permohonan' });
 
-// Middleware untuk mengaktifkan CORS
+// Enable CORS middleware
 permohonanRouter.use(cors());
 
-// 🔹 **1. GET /permohonan/user → Get berdasarkan id_user (Login)**
-permohonanRouter.get('/:id_user', authMiddleware(async (context) => {
-    console.log(`Fetching permohonan with id user : ${context.user.id}`);
-    return await getPermohonanByUserId(context.user.id);
+// Get permohonan by user ID (requires authentication)
+permohonanRouter.get('/user', authMiddleware(async ({ user }) => {
+    console.log(`Fetching permohonan for user ID: ${user.id}`);
+    return await getPermohonanByUserId(user.id);
 }));
 
-// 🔹 **2. GET /permohonan/:id → Get berdasarkan id_permohonan**
-permohonanRouter.get('/:id', async (req) => {
-    console.log(`Fetching pemohon with ID: ${req.params.id}`);
-    const id = req.params.id;
+// Get permohonan by ID
+permohonanRouter.get('/:id', async ({ params: { id } }) => {
+    console.log(`Fetching permohonan with ID: ${id}`);
     return await getPermohonanById(id);
 });
 
-// 🔹 **3. GET /permohonan → Get semua permohonan (tanpa filter)**
+// Get all permohonan
 permohonanRouter.get('/', async () => {
     return await getPermohonan();
 });
 
-// Route untuk membuat permohonan baru
-permohonanRouter.post('/', authMiddleware(async (req) => {
+// Create new permohonan (requires authentication)
+permohonanRouter.post('/', authMiddleware(async ({ body }) => {
     try {
-        const data = req.body as { id_pemohon: number; negaratujuan: string; instansitujuan: string; keperluan: string; tglmulai: Date; tglselesai: Date; biaya: string; rencana: string; undangan: string; agenda: string; tor: string };
-        const response = await createPermohonan(data);
-        return response;
+        const data = body as {
+            id_pemohon: number;
+            negaratujuan: string;
+            instansitujuan: string;
+            keperluan: string;
+            tglmulai: Date;
+            tglselesai: Date;
+            biaya: string;
+            rencana: string;
+            undangan: string;
+            agenda: string;
+            tor: string;
+        };
+        return await createPermohonan(data);
     } catch (error) {
         console.error(`Error creating permohonan: ${error}`);
         return { success: false, message: 'Internal server error' };
     }
 }));
 
-// Route untuk memperbarui permohonan berdasarkan ID
-permohonanRouter.patch('/:id', authMiddleware(async (req) => {
-    const { id } = req.params;
+// Update permohonan by ID (requires authentication)
+permohonanRouter.patch('/:id', authMiddleware(async ({ params: { id }, body }) => {
     try {
-        const data = req.body as { id_pemohon?: number; negaratujuan?: string; instansitujuan?: string; keperluan?: string; tglmulai?: Date; tglselesai?: Date; biaya?: string; rencana?: string; undangan?: string; agenda?: string; tor?: string };
-        const response = await updatePermohonan(id, data);
-        return response;
+        const data = body as {
+            id_pemohon?: number;
+            negaratujuan?: string;
+            instansitujuan?: string;
+            keperluan?: string;
+            tglmulai?: Date;
+            tglselesai?: Date;
+            biaya?: string;
+            rencana?: string;
+            undangan?: string;
+            agenda?: string;
+            tor?: string;
+        };
+        return await updatePermohonan(id, data);
     } catch (error) {
         console.error(`Error updating permohonan: ${error}`);
         return { success: false, message: 'Internal server error' };
     }
 }));
 
-// Route untuk menghapus permohonan berdasarkan ID
-permohonanRouter.delete('/:id', authMiddleware(async (req) => {
-    const { id } = req.params;
+// Delete permohonan by ID (requires authentication)
+permohonanRouter.delete('/:id', authMiddleware(async ({ params: { id } }) => {
     try {
-        const response = await deletePermohonan(id);
-        return response;
+        return await deletePermohonan(id);
     } catch (error) {
         console.error(`Error deleting permohonan: ${error}`);
         return { success: false, message: 'Internal server error' };

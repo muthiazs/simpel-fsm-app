@@ -3,6 +3,14 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, Typography, message } from 'antd';
 import type { FormProps } from 'antd';
+import {
+  AlipayCircleOutlined,
+  LockOutlined,
+  MobileOutlined,
+  TaobaoCircleOutlined,
+  UserOutlined,
+  WeiboCircleOutlined,
+} from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
 
@@ -70,7 +78,7 @@ const App: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
         <Card style={{ width: 500, textAlign: 'center', boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}>
           <Title level={2} style={{ color: '#001529', fontWeight: 'bold' }}>SIMPEL-FSM</Title>
-          <Text style={{ color: '#6b7280', display: 'block' }}>Sistem Informasi Pengajuan Surat Permohonan PDLN</Text>
+          <Text style={{ color: '#6b7280', display: 'block' }}>Sistem Informasi Pengajuan Surat Permohonan PDLN FSM</Text>
           <Form
             name="basic"
             labelCol={{ span: 5 }}
@@ -82,27 +90,48 @@ const App: React.FC = () => {
             style={{ marginTop: 20 }}
           >
             <Form.Item<FieldType>
-              label="Email"
               name="email"
               rules={[
-                { required: true, message: 'Masukkan email anda' },
-                { type: 'email', message: 'Email tidak valid' }
+              {
+                required: true,
+                message: 'Masukkan email anda',
+              },
+              {
+                type: 'email',
+                message: 'Email tidak valid',
+              },
               ]}
+              wrapperCol={{ span: 24 }}
             >
-              <Input />
+              <Input
+              size="large"
+              prefix={<UserOutlined />}
+              placeholder="Masukkan email"
+              style={{ textAlign: 'center' }}
+              />
             </Form.Item>
 
             <Form.Item<FieldType>
-              label="Kata Sandi"
               name="password"
-              rules={[{ required: true, message: 'Masukkan password anda' }]}
+              rules={[
+              {
+                required: true,
+                message: 'Masukkan password anda',
+              },
+              ]}
+              wrapperCol={{ span: 24 }}
             >
-              <Input.Password />
+              <Input.Password
+              size="large"
+              prefix={<LockOutlined />}
+              placeholder="Masukkan password"
+              style={{ textAlign: 'center' }}
+              />
             </Form.Item>
 
-            <Form.Item label={null}>
+            <Form.Item wrapperCol={{ span: 24 }}>
               <Button type="primary" htmlType="submit" loading={loading} style={{ width: '100%' }}>
-                Masuk
+              Masuk
               </Button>
             </Form.Item>
           </Form>

@@ -2,8 +2,17 @@
 import React, { useState } from 'react';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
-import { HomeOutlined, FileOutlined, FileDoneOutlined, UserOutlined , FileSyncOutlined , UserAddOutlined, LogoutOutlined } from '@ant-design/icons';
-import Header from './Header';import '@ant-design/v5-patch-for-react-19';
+import {
+  HomeOutlined,
+  FileOutlined,
+  FileDoneOutlined,
+  UserOutlined,
+  FileSyncOutlined,
+  UserAddOutlined,
+  LogoutOutlined
+} from '@ant-design/icons';
+import Header from './Header';
+import '@ant-design/v5-patch-for-react-19';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -11,7 +20,7 @@ type MenuItem = Required<MenuProps>['items'][number];
 const MainMenu: React.FC = () => {
   const [current, setCurrent] = useState('');
 
-  const items: MenuItem[] = [
+  const leftItems: MenuItem[] = [
     {
       label: <a href="/admin/dashboard">Beranda</a>,
       key: 'beranda',
@@ -39,33 +48,31 @@ const MainMenu: React.FC = () => {
     },
   ];
 
+  const rightItems: MenuItem[] = [
+    {
+      label: <a href="/logout">Logout</a>,
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      style: { marginLeft: 'auto' } // This pushes the logout to the right
+    },
+  ];
+
+  const allItems = [...leftItems, ...rightItems];
+
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
     setCurrent(e.key);
   };
 
   return (
-    <Menu 
-      onClick={onClick} 
-      selectedKeys={[current]} 
-      mode="horizontal" 
-      items={items} 
+    <Menu
+      onClick={onClick}
+      selectedKeys={[current]}
+      mode="horizontal"
+      items={allItems}
       style={{ flex: 1 }}
     />
   );
-};
-
-// User Menu Component (Fixed)
-const UserMenu: React.FC = () => {
-  const items: MenuItem[] = [
-    {
-      label: 'Logout',
-      key: 'keluar',
-      icon: <LogoutOutlined/>,
-    },
-  ];
-
-  return <Menu items={items} />;
 };
 
 // Combined Menu Component
@@ -75,7 +82,6 @@ const CombinedMenu: React.FC = () => {
       <Header />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <MainMenu />
-        <UserMenu />
       </div>
     </div>
   );
