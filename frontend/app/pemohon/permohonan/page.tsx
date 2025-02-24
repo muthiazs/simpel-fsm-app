@@ -124,7 +124,7 @@ const App: React.FC = () => {
         <>
             <Menu />
             <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}>
-                <Card title="Pemohonan"  style={{ width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}>
+                <Card title="Daftar Pemohonan"  style={{ width: '100%' , boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}>
                 {/* <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '10px', marginLeft: '50px' }}>
                     <h1>Permohonan PDLN</h1>
                 </div> */}

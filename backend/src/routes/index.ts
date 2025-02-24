@@ -13,7 +13,7 @@ router.get('/', authMiddleware(async (context) => {
   
   // Ambil data pengguna berdasarkan id yang sudah terverifikasi
   const userData = await prisma.user.findUnique({
-    where: { id: user.id }, // ID user yang sudah terverifikasi
+    where: { id: user?.id    },// ID user yang sudah terverifikasi       },
     select: {
       id: true,
       email: true,

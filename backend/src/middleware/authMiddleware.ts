@@ -5,7 +5,7 @@ import type { Context } from 'elysia'; // Menggunakan import type
 
 // Modifikasi tipe Context agar mendukung data user
 interface AuthContext extends Context {
-    user?: any; // Menambahkan user sebagai properti opsional
+    user?: { id: number; email?: string }; // Pastikan ada ID user
   }
   
   export const authMiddleware = (handler: (context: AuthContext) => Promise<any>) => async (context: AuthContext) => {
@@ -28,8 +28,12 @@ interface AuthContext extends Context {
       return { success: false, message: 'Invalid token' };
     }
   
-    // Menyimpan data user di context agar bisa diakses handler
-    context.user = userData;
+     // Sekarang TypeScript yakin bahwa userData memiliki 'id'
+    context.user = {
+        id: userData.id,
+        email: userData.email,
+    };
+    console.log("🔐 User data:", userData);
   
     // Lanjutkan ke handler berikutnya
     return handler(context);

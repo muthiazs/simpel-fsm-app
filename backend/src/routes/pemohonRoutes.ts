@@ -16,7 +16,7 @@ pemohonRouter.get('/', authMiddleware(async (context) => {
     
     // Ambil data pemohon berdasarkan id yang sudah terverifikasi
     const pemohonData = await prisma.pemohon.findUnique({
-        where: { id_user: user.id }, // ID user yang sudah terverifikasi
+        where: { id_user : user?.id }, // yang sudah terverifikasi
         select: {
             id_pemohon: true,
             nipnim: true,
@@ -52,30 +52,42 @@ pemohonRouter.get('/:id', async (req) => {
 pemohonRouter.get('/all', async () => await getPemohon());
 
 // Route to update pemohon
-pemohonRouter.patch('/:id', async (req) => {
-    try {
-        const { id } = req.params;
-        const options = req.body as { nipnim?: string; nama?: string; nik?: string; jabatan?: string; pangkatgol?: string; nopaspor?: string; nohp?: string; filektp?: string; filekarpeg?: string; prodi?: string };
+pemohonRouter.patch('/', async (context) => {
+    return authMiddleware(async (ctx) => {
+        try {
+            if (!ctx.user || !ctx.user.id) {
+                return { success: false, message: "User not found" };
+            }
+            
+            const userId = ctx.user.id;
+            const options = ctx.body as { 
+                nama?: string, 
+                nik?: string, 
+                jabatan?: string, 
+                pangkatgol?: string, 
+                nopaspor?: string, 
+                nohp?: string, 
+                filektp?: string, 
+                filekarpeg?: string, 
+                prodi?: string 
+            };
+            
+            console.log("Request received with data:", options);
 
-        // Log data yang diterima
-        console.log(`Request received to update pemohon with ID: ${id}`, options);
+            // Periksa apakah ada setidaknya satu field yang akan diupdate
+            if (Object.keys(options).length === 0) {
+                return { success: false, message: "At least one field is required to update" };
+            }
 
-        // Pastikan setidaknya ada satu field yang diupdate
-        if (!options.nipnim && !options.nama && !options.nik && !options.jabatan && !options.pangkatgol && !options.nopaspor && !options.nohp && !options.filektp && !options.filekarpeg && !options.prodi) {
-            return { success: false, message: "At least one field is required to update" };
+            console.log("Fields are present. Updating pemohon...");
+            console.log("Data yang diterima:", options);
+            
+            return await updatePemohon(userId.toString(), options);
+        } catch (error) {
+            console.error(`Error handling PATCH request: ${error}`);        
+            return { success: false, message: "Internal server error" };
         }
-
-        // Log bahwa data sudah lengkap sebelum mengupdate pemohon
-        console.log("Fields are present. Updating pemohon...");
-        console.log(`ID yang diterima: ${id}`);
-        console.log(`Data yang diterima:`, options);
-
-        // Update pemohon
-        return await updatePemohon(id, options);
-    } catch (error) {
-        console.error(`Error handling PUT request: ${error}`);
-        return { success: false, message: "Internal server error" };
-    }
+    })(context); // Jangan lupa untuk memanggil fungsi middleware dengan context
 });
 
 // Route to delete pemohon

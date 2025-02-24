@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react';
+import React, { useEffect , useState } from 'react';
 import {
   Button,
   Form,
@@ -13,6 +13,7 @@ import Menu from '../../../components/Menu';
 import axios from 'axios';
 import '@ant-design/v5-patch-for-react-19';
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
+import { UserOutlined } from '@ant-design/icons';
 
 const formItemLayout = {
   labelCol: {
@@ -66,14 +67,15 @@ const DataDiriPemohon: React.FC = () => {
 
   const updatePemohon = async (values: any) => {
     const token = localStorage.getItem('authToken');
+   
 
-    if (!token) {
-      message.error('Token tidak ditemukan! Silakan login kembali.');
+    if (!token ) {
+      message.error('Token atau ID pengguna tidak ditemukan! Silakan login kembali.');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/pemohon', {
+      const response = await fetch(`http://localhost:3001/api/pemohon`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -82,18 +84,24 @@ const DataDiriPemohon: React.FC = () => {
         body: JSON.stringify(values),
       });
 
+      if (!response.ok) {
+        throw new Error('Gagal memperbarui data diri');
+      }
+
       const data = await response.json();
 
       if (data.success) {
         message.success('Data diri berhasil diperbarui.');
+        form.resetFields();
       } else {
-        message.error(data.message || 'Gagal memperbarui data diri.');
+        throw new Error(data.message || 'Gagal memperbarui data diri.');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating user data:', error);
-      message.error('Terjadi kesalahan saat memperbarui data.');
-    }
+      message.error(error.message || 'Terjadi kesalahan.');
+    } 
   };
+
 
 
   return (

@@ -95,10 +95,10 @@ export async function getPemohonById(id_user: string) {
 /**
  * Updating a pemohon
  */
-export async function updatePemohon(id: string, options: { nipnim?: string; nama?: string; nik?: string; jabatan?: string; pangkatgol?: string; nopaspor?: string; nohp?: string; filektp?: string; filekarpeg?: string; prodi?: string }) {
+export async function updatePemohon(id_user: string, options: { nipnim?: string; nama?: string; nik?: string; jabatan?: string; pangkatgol?: string; nopaspor?: string; nohp?: string; filektp?: string; filekarpeg?: string; prodi?: string }) {
     try {
         // Convert id to number and validate
-        const pemohonId = parseInt(id);
+        const pemohonId = Number(id_user);
         if (isNaN(pemohonId)) {
             return {
                 success: false,
@@ -108,7 +108,7 @@ export async function updatePemohon(id: string, options: { nipnim?: string; nama
         }
 
         const existingPemohon = await prisma.pemohon.findUnique({
-            where: { id_pemohon: pemohonId },
+            where: { id_user: pemohonId },
           });
           
           if (!existingPemohon) {
@@ -120,7 +120,7 @@ export async function updatePemohon(id: string, options: { nipnim?: string; nama
 
         // Update pemohon with prisma
         const pemohon = await prisma.pemohon.update({
-            where: { id_pemohon: pemohonId },
+            where: { id_user: pemohonId },
             data: {
                 ...(options.nipnim ? { nipnim: options.nipnim } : {}),
                 ...(options.nama ? { nama: options.nama } : {}),
@@ -129,13 +129,13 @@ export async function updatePemohon(id: string, options: { nipnim?: string; nama
                 ...(options.pangkatgol ? { pangkatgol: options.pangkatgol } : {}),
                 ...(options.nopaspor ? { nopaspor: options.nopaspor } : {}),
                 ...(options.nohp ? { nohp: options.nohp } : {}),
-                ...(options.filektp ? { filektp: options.filektp } : {}),
-                ...(options.filekarpeg ? { filekarpeg: options.filekarpeg } : {}),
+                ...(typeof options.filektp === "string" ? { filektp: options.filektp } : { filektp: null }), // 🔹 Pastikan string/null
+                ...(typeof options.filekarpeg === "string" ? { filekarpeg: options.filekarpeg } : { filekarpeg: null }), // 🔹 Pastikan string/null
                 ...(options.prodi ? { prodi: options.prodi } : {}),
                 updatedat: new Date(),
             },
         });
-
+        
         // Return response json
         return {
             success: true,
