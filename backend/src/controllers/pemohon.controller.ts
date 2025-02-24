@@ -129,13 +129,13 @@ export async function updatePemohon(id_user: string, options: { nipnim?: string;
                 ...(options.pangkatgol ? { pangkatgol: options.pangkatgol } : {}),
                 ...(options.nopaspor ? { nopaspor: options.nopaspor } : {}),
                 ...(options.nohp ? { nohp: options.nohp } : {}),
-                ...(typeof options.filektp === "string" ? { filektp: options.filektp } : { filektp: null }), // 🔹 Pastikan string/null
-                ...(typeof options.filekarpeg === "string" ? { filekarpeg: options.filekarpeg } : { filekarpeg: null }), // 🔹 Pastikan string/null
+                ...(options.filektp ? { filektp: options.filektp } : {}),
+                ...(options.filekarpeg ? { filekarpeg: options.filekarpeg } : {}),
                 ...(options.prodi ? { prodi: options.prodi } : {}),
                 updatedat: new Date(),
             },
         });
-        
+
         // Return response json
         return {
             success: true,

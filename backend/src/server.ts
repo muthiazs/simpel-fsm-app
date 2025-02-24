@@ -8,6 +8,7 @@ import { authMiddleware } from './middleware/authMiddleware';
 import { protectedRoutes } from './routes/protectedRoutes';
 import pemohonRouter from './routes/pemohonRoutes';
 import permohonanRouter from './routes/permohonanRouter';
+import { uploadRoutes } from './routes/uploadRoutes';
 
 const app = new Elysia()
   .use(cors({
@@ -28,6 +29,7 @@ app.group('/api', (app) => {
   app.use(authRouter); // auth routes sekarang akan menjadi /api/auth/*
   app.use(pemohonRouter); // pemohon routes
   app.use(permohonanRouter)
+  app.use(uploadRoutes);
   return app;
 });
 

@@ -58,7 +58,7 @@ pemohonRouter.patch('/', async (context) => {
             if (!ctx.user || !ctx.user.id) {
                 return { success: false, message: "User not found" };
             }
-            
+
             const userId = ctx.user.id;
             const options = ctx.body as { 
                 nama?: string, 
@@ -67,12 +67,20 @@ pemohonRouter.patch('/', async (context) => {
                 pangkatgol?: string, 
                 nopaspor?: string, 
                 nohp?: string, 
-                filektp?: string, 
+                filektp?: string,  // Pastikan ini bisa menangani path file yang di-upload
                 filekarpeg?: string, 
                 prodi?: string 
             };
-            
+
             console.log("Request received with data:", options);
+
+            // Jika ada filektp atau filekarpeg, pastikan formatnya benar (string path file)
+            if (options.filektp && typeof options.filektp !== "string") {
+                return { success: false, message: "Invalid filektp format" };
+            }
+            if (options.filekarpeg && typeof options.filekarpeg !== "string") {
+                return { success: false, message: "Invalid filekarpeg format" };
+            }
 
             // Periksa apakah ada setidaknya satu field yang akan diupdate
             if (Object.keys(options).length === 0) {
@@ -81,13 +89,14 @@ pemohonRouter.patch('/', async (context) => {
 
             console.log("Fields are present. Updating pemohon...");
             console.log("Data yang diterima:", options);
-            
+
+            // ✅ Panggil function untuk update data pemohon
             return await updatePemohon(userId.toString(), options);
         } catch (error) {
             console.error(`Error handling PATCH request: ${error}`);        
             return { success: false, message: "Internal server error" };
         }
-    })(context); // Jangan lupa untuk memanggil fungsi middleware dengan context
+    })(context);
 });
 
 // Route to delete pemohon

@@ -7,13 +7,15 @@ import {
   Row,
   Col,
   message,
-  Card
+  Card, Upload
 } from 'antd';
+import type { UploadProps , UploadFile  } from 'antd';
 import Menu from '../../../components/Menu';
 import axios from 'axios';
 import '@ant-design/v5-patch-for-react-19';
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined , UploadOutlined } from '@ant-design/icons';
+
 
 const formItemLayout = {
   labelCol: {
@@ -107,9 +109,6 @@ const DataDiriPemohon: React.FC = () => {
   return (
     <div>
       <Menu />
-      {/* <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '50px', marginLeft: '50px' }}>
-        <h1>Data Diri</h1>
-      </div> */}
       <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '20px', marginLeft: '50px', width: '90%' }}>
       <Card title="Form Data Diri"  style={{ width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}>
           <Form
@@ -199,35 +198,58 @@ const DataDiriPemohon: React.FC = () => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-          label="No Paspor"
-          name="nopaspor"
-          rules={[{ required: true, message: 'Masukkan nomer paspor!' }]}
+          <Form.Item
+              label="No Paspor"
+              name="nopaspor"
+              rules={[{ required: true, message: 'Masukkan nomer paspor!' }]}
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+            >
+            </Form.Item>
+          <Input placeholder="Masukkan no paspor" />
+          <Form.Item
+          label="Scan KTP (PDF)"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => e?.fileList}
           labelCol={{ span: 24 }}
           wrapperCol={{ span: 24 }}
-            >
-          <Input placeholder="Masukkan no paspor" />
-            </Form.Item>
-            <Row gutter={16}>
-          <Form.Item
-            label="Scan KTP (PDF)"
-            name='filektp'
-            valuePropName="filektp"
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
+        >
+          <Upload
+            action="http://localhost:3001/api/upload/ktp" // Perbaiki endpoint backend
+            name="filektp"
+            maxCount={1}
+            accept=".pdf"
+            onChange={(info) => {
+              if (info.file.status === "done") {
+                console.log("File KTP berhasil di-upload:", info.file.response.path);
+              }
+            }}
           >
-            <Input placeholder="Masukkan file ktp" />
-          </Form.Item>
-          <Form.Item
-            label="Scan Kartu Pegawai (PDF)"
-            name='filekarpeg'
-            valuePropName="filekarpeg"
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
+            <Button icon={<UploadOutlined />}>Upload KTP</Button>
+          </Upload>
+        </Form.Item>
+
+        <Form.Item
+          label="Scan Kartu Pegawai (PDF)"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => e?.fileList}
+          labelCol={{ span: 24 }}
+          wrapperCol={{ span: 24 }}
+        >
+          <Upload
+            action="http://localhost:3001/api/upload/karpeg" // Perbaiki endpoint backend
+            name="filekarpeg"
+            maxCount={1}
+            accept=".pdf"
+            onChange={(info) => {
+              if (info.file.status === "done") {
+                console.log("File Kartu Pegawai berhasil di-upload:", info.file.response.path);
+              }
+            }}
           >
-            <Input placeholder="Masukkan file karpeg" />
-          </Form.Item>
-            </Row>
+            <Button icon={<UploadOutlined />}>Upload Kartu Pegawai</Button>
+          </Upload>
+        </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
