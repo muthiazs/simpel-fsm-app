@@ -16,11 +16,10 @@ const permohonanRouter = new Elysia({ prefix: '/permohonan' });
 // Enable CORS middleware
 permohonanRouter.use(cors());
 
-// Get permohonan by user ID (requires authentication)
-permohonanRouter.get('/user', authMiddleware(async ({ user }) => {
-    console.log(`Fetching permohonan for user ID: ${user.id}`);
-    return await getPermohonanByUserId(user.id);
-}));
+// // Get permohonan by user ID (requires authentication)
+// permohonanRouter.get('/user', authMiddleware(async ({ user }) => {
+//     return await getPermohonanByUserId(user?.id);
+// }));
 
 // Get permohonan by ID
 permohonanRouter.get('/:id', async ({ params: { id } }) => {

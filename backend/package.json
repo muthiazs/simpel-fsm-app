@@ -17,8 +17,12 @@
     "cookie-parser": "^1.4.7",
     "elysia": "^1.2.11",
     "express-session": "^1.18.1",
+    "file-type": "^20.3.0",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.13.1"
+    "minio": "^8.0.4",
+    "mino": "^0.0.0",
+    "pg": "^8.13.1",
+    "short-unique-id": "^5.2.0"
   },
   "scripts": {
     "seed": "bun run prisma/seed.ts"

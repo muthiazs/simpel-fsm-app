@@ -1,60 +1,102 @@
-import prisma from "../../prisma/client";
-import { writeFile } from "fs/promises";
-import path from "path";
+import { mkdir, writeFile } from 'fs/promises';
+import { join } from 'path';
+import { existsSync } from 'fs';
+import { Elysia } from 'elysia';
+import ShortUniqueId from 'short-unique-id';
+import { MinioClient } from "../server";
 
-interface UploadBody {
-    file: { filename: string };
-    type: "filektp" | "filekarpeg";
-}
 
-interface UploadContext {
-    body: UploadBody;
-    user?: { id: number };
-}
+const isMetaDataImg = async (buffer: ArrayBuffer): Promise<boolean> => {
+  const signatures = [
+    "89504E47", // PNG
+    "FFD8FF",   // JPG/JPEG
+    "47494638", // GIF
+  ];
 
-const UPLOAD_DIR = "uploads"; // Direktori penyimpanan file
+  const uint8Array = new Uint8Array(buffer);
+  const hexString = Array.from(uint8Array)
+    .slice(0, 4)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("")
+    .toUpperCase();
 
-// Fungsi untuk menyimpan file ke server dan mengembalikan pathnya
-const saveFile = async (file: { filename: string }, folder: string) => {
-    const filePath = `/${UPLOAD_DIR}/${folder}/${file.filename}`;
-    return filePath;
+  return signatures.some((sig) => hexString.startsWith(sig));
 };
 
-// Fungsi upload file KTP
-export const uploadKTP = async (context: UploadContext) => {
-    return uploadFile(context, "filektp");
-};
 
-// Fungsi upload file Karpeg
-export const uploadKarpeg = async (context: UploadContext) => {
-    return uploadFile(context, "filekarpeg");
-};
-
-// Fungsi utama upload file
-export const uploadFile = async (context: UploadContext, type: "filektp" | "filekarpeg") => {
+export const UploadController = {
+  uploadFile: async ({ file }: { file: File }) => {
     try {
-        const { body, user } = context;
+      const fileBuffer = await file.arrayBuffer(); // Convert file to buffer
 
-        if (!user?.id) {
-            return { success: false, message: "Unauthorized" };
-        }
+      const { randomUUID } = new ShortUniqueId({ length: 20 });
 
-        if (!body?.file || !body?.file.filename) {
-            return { success: false, message: "No file uploaded" };
-        }
+      // Cek apakah file adalah gambar atau PDF
+      const isImage = file.type.startsWith("image/");
+      const isPdf = file.type === "application/pdf";
 
-        const folder = type === "filektp" ? "ktp" : "karpeg";
-        const filePath = await saveFile(body.file, folder);
+      if (!isImage && !isPdf) {
+        return {
+          data: null,
+          message: "Uploaded file must be an image (JPG, PNG) or a PDF",
+        };
+      }
 
-        // Update database dengan path file
-        await prisma.pemohon.update({
-            where: { id_user: user.id },
-            data: type === "filektp" ? { filektp: filePath } : { filekarpeg: filePath },
-        });
+      // Tentukan ekstensi file berdasarkan tipe
+      const fileExtension = isPdf ? "pdf" : file.type.split("/")[1]; 
+      const fileName = `${randomUUID()}.${fileExtension}`;
 
-        return { success: true, message: `${type} uploaded successfully`, path: filePath };
+      // Metadata untuk penyimpanan di MinIO
+      const metadata = {
+        "Content-Type": file.type,
+        "Content-Length": file.size.toString(),
+      };
+
+      await MinioClient.putObject(
+        process.env.BUCKET_NAME!,
+        fileName,
+        Buffer.from(fileBuffer),
+        file.size,
+        metadata
+      );
+
+      return {
+        data: `File uploaded successfully to ${process.env.BUCKET_NAME}/${fileName}`,
+        message: "success",
+      };
     } catch (error) {
-        console.error("Upload Error:", error);
-        return { success: false, message: "Internal Server Error" };
+      console.error(error);
+      return {
+        data: "There is something wrong",
+        message: "failed",
+      };
     }
+  },
 };
+
+// Fungsi Upload ke MinIO dengan dukungan PDF dan Image
+export async function uploadToMinio(file: File, bucketName: string): Promise<string> {
+  const fileBuffer = await file.arrayBuffer();
+  
+  // Cek apakah file adalah gambar atau PDF
+  const isImage = file.type.startsWith("image/");
+  const isPdf = file.type === "application/pdf";
+
+  if (!isImage && !isPdf) {
+    throw new Error("Uploaded file must be an image (JPG, PNG) or a PDF");
+  }
+
+  // Tentukan ekstensi file
+  const fileExtension = isPdf ? "pdf" : file.type.split("/")[1];
+  const fileName = `${Date.now()}-${file.name.split(".")[0]}.${fileExtension}`;
+
+  await MinioClient.putObject(
+    bucketName,
+    fileName,
+    Buffer.from(fileBuffer),
+    file.size,
+    { "Content-Type": file.type }
+  );
+
+  return `/${bucketName}/${fileName}`; // Path untuk referensi di database
+}

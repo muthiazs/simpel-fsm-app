@@ -8,7 +8,29 @@ import { authMiddleware } from './middleware/authMiddleware';
 import { protectedRoutes } from './routes/protectedRoutes';
 import pemohonRouter from './routes/pemohonRoutes';
 import permohonanRouter from './routes/permohonanRouter';
-import { uploadRoutes } from './routes/uploadRoutes';
+// import { uploadRoutes } from './routes/uploadRoutes';
+import { Client } from "minio";
+import uploadRouter from './routes/uploadRoutes';
+
+export const MinioClient = new Client({
+  endPoint: "127.0.0.1",
+  port: 9000,
+  useSSL: false,
+  accessKey: process.env.MINIO_ROOT_USER || "admin",
+  secretKey: process.env.MINIO_ROOT_PASSWORD || "admin123",
+  region: "us-east-1",
+});
+
+async function checkBucket() {
+  try {
+    const bucketExists = await MinioClient.bucketExists("ktp-bucket");
+    console.log("Bucket ktp-bucket ada:", bucketExists);
+  } catch (error) {
+    console.error("Error cek bucket:", error);
+  }
+}
+
+checkBucket();
 
 const app = new Elysia()
   .use(cors({
@@ -29,7 +51,7 @@ app.group('/api', (app) => {
   app.use(authRouter); // auth routes sekarang akan menjadi /api/auth/*
   app.use(pemohonRouter); // pemohon routes
   app.use(permohonanRouter)
-  app.use(uploadRoutes);
+  app.use(uploadRouter);
   return app;
 });
 

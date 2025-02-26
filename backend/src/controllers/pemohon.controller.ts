@@ -1,5 +1,6 @@
 import prisma from '../../prisma/client';
-
+import { MinioClient } from '../server';
+import { UploadController , uploadToMinio } from './upload.controller';
 /**
  * Get all pemohon
  */
@@ -18,7 +19,7 @@ export async function getPemohon() {
                 nohp: true,
                 filektp: true,
                 filekarpeg: true,
-                // prodi: true, // Include prodi in the selection
+                prodi: true, // Include prodi in the selection
                 createdat: true,
                 updatedat: true,
             }
@@ -65,7 +66,7 @@ export async function getPemohonById(id_user: string) {
                 nohp: true,
                 filektp: true,
                 filekarpeg: true,
-                // prodi: true, // Include prodi in the selection
+                prodi: true, // Include prodi in the selection
                 createdat: true,
                 updatedat: true,
             }
@@ -92,10 +93,39 @@ export async function getPemohonById(id_user: string) {
     }
 }
 
+const isMetaDataImg = async (buffer: ArrayBuffer): Promise<boolean> => {
+    const signatures = [
+      "89504E47", // PNG
+      "FFD8FF",   // JPG/JPEG
+      "47494638", // GIF
+    ];
+    const uint8Array = new Uint8Array(buffer);
+    const hexString = Array.from(uint8Array)
+      .slice(0, 4)
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("")
+      .toUpperCase();
+  
+    return signatures.some((sig) => hexString.startsWith(sig));
+  };
+
+
+  
 /**
- * Updating a pemohon
+ * Updating a pemohon with file upload handling
  */
-export async function updatePemohon(id_user: string, options: { nipnim?: string; nama?: string; nik?: string; jabatan?: string; pangkatgol?: string; nopaspor?: string; nohp?: string; filektp?: string; filekarpeg?: string; prodi?: string }) {
+export async function updatePemohon(id_user: string, options: { 
+    nipnim?: string; 
+    nama?: string; 
+    nik?: string; 
+    jabatan?: string; 
+    pangkatgol?: string; 
+    nopaspor?: string; 
+    nohp?: string; 
+    filektp?: File; 
+    filekarpeg?: File; 
+    prodi?: string 
+}) {
     try {
         // Convert id to number and validate
         const pemohonId = Number(id_user);
@@ -109,34 +139,69 @@ export async function updatePemohon(id_user: string, options: { nipnim?: string;
 
         const existingPemohon = await prisma.pemohon.findUnique({
             where: { id_user: pemohonId },
-          });
-          
-          if (!existingPemohon) {
+        });
+        
+        if (!existingPemohon) {
             return {
-              success: false,
-              message: "Pemohon tidak ditemukan",
+                success: false,
+                message: "Pemohon tidak ditemukan",
             };
-          }
+        }
 
-        // Update pemohon with prisma
+        const updateData: any = {
+            ...(options.nipnim ? { nipnim: options.nipnim } : {}),
+            ...(options.nama ? { nama: options.nama } : {}),
+            ...(options.nik ? { nik: options.nik } : {}),
+            ...(options.jabatan ? { jabatan: options.jabatan } : {}),
+            ...(options.pangkatgol ? { pangkatgol: options.pangkatgol } : {}),
+            ...(options.nopaspor ? { nopaspor: options.nopaspor } : {}),
+            ...(options.nohp ? { nohp: options.nohp } : {}),
+            ...(options.prodi ? { prodi: options.prodi } : {}),
+            updatedat: new Date(),
+        };
+
+        // Fungsi untuk mengecek apakah file adalah PDF berdasarkan signature
+        async function isPdfFile(buffer: ArrayBuffer): Promise<boolean> {
+            const uint8Array = new Uint8Array(buffer);
+            // PDF memiliki signature "%PDF-" di awal file
+            return uint8Array[0] === 0x25 && uint8Array[1] === 0x50 && uint8Array[2] === 0x44 && uint8Array[3] === 0x46;
+        }
+
+        // Upload files to MinIO if they exist
+        if (options.filektp) {
+            // Validate file is a PDF
+            const ktpBuffer = await options.filektp.arrayBuffer();
+            if (!(await isPdfFile(ktpBuffer))) {
+                return {
+                    success: false,
+                    message: "KTP file is not a valid PDF",
+                };
+            }
+            
+            const ktpPath = await uploadToMinio(options.filektp, "ktp-bucket");
+            updateData.filektp = ktpPath;
+        }
+
+        if (options.filekarpeg) {
+            // Validate file is a PDF
+            const karpegBuffer = await options.filekarpeg.arrayBuffer();
+            if (!(await isPdfFile(karpegBuffer))) {
+                return {
+                    success: false,
+                    message: "Karpeg file is not a valid PDF",
+                };
+            }
+            
+            const karpegPath = await uploadToMinio(options.filekarpeg, "karpeg-bucket");
+            updateData.filekarpeg = karpegPath;
+        }
+
+        // Update pemohon data in database
         const pemohon = await prisma.pemohon.update({
             where: { id_user: pemohonId },
-            data: {
-                ...(options.nipnim ? { nipnim: options.nipnim } : {}),
-                ...(options.nama ? { nama: options.nama } : {}),
-                ...(options.nik ? { nik: options.nik } : {}),
-                ...(options.jabatan ? { jabatan: options.jabatan } : {}),
-                ...(options.pangkatgol ? { pangkatgol: options.pangkatgol } : {}),
-                ...(options.nopaspor ? { nopaspor: options.nopaspor } : {}),
-                ...(options.nohp ? { nohp: options.nohp } : {}),
-                ...(options.filektp ? { filektp: options.filektp } : {}),
-                ...(options.filekarpeg ? { filekarpeg: options.filekarpeg } : {}),
-                ...(options.prodi ? { prodi: options.prodi } : {}),
-                updatedat: new Date(),
-            },
+            data: updateData,
         });
 
-        // Return response json
         return {
             success: true,
             message: "Pemohon Updated Successfully!",

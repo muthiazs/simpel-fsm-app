@@ -8,7 +8,7 @@ export const protectedRoutes = (app: Elysia) => {
     authMiddleware(async (context) => {
       return {
         status: 'success',
-        message: `Welcome, ${context.user?.username || 'Guest'}!`, // Tampilkan nama user jika ada
+        message: `Welcome, ${context.user?.id || 'Guest'}!`, // Tampilkan nama user jika ada
       };
     })
   );

@@ -4,6 +4,7 @@ import { cors } from '@elysiajs/cors';
 import prisma from '../../prisma/client';
 import { authMiddleware } from '../middleware/authMiddleware';
 
+
 // Menggunakan Elysia router dengan prefix '/pemohon'
 const pemohonRouter = new Elysia({ prefix: '/pemohon' });
 
@@ -60,44 +61,35 @@ pemohonRouter.patch('/', async (context) => {
             }
 
             const userId = ctx.user.id;
-            const options = ctx.body as { 
+            const formData = ctx.body as { 
                 nama?: string, 
                 nik?: string, 
                 jabatan?: string, 
                 pangkatgol?: string, 
                 nopaspor?: string, 
-                nohp?: string, 
-                filektp?: string,  // Pastikan ini bisa menangani path file yang di-upload
-                filekarpeg?: string, 
-                prodi?: string 
+                nohp?: string,
+                filektp?: File,
+                filekarpeg?: File,
+                prodi?: string
             };
 
-            console.log("Request received with data:", options);
-
-            // Jika ada filektp atau filekarpeg, pastikan formatnya benar (string path file)
-            if (options.filektp && typeof options.filektp !== "string") {
-                return { success: false, message: "Invalid filektp format" };
-            }
-            if (options.filekarpeg && typeof options.filekarpeg !== "string") {
-                return { success: false, message: "Invalid filekarpeg format" };
-            }
+            console.log("Request received with data:", formData);
 
             // Periksa apakah ada setidaknya satu field yang akan diupdate
-            if (Object.keys(options).length === 0) {
+            if (Object.keys(formData).length === 0) {
                 return { success: false, message: "At least one field is required to update" };
             }
 
             console.log("Fields are present. Updating pemohon...");
-            console.log("Data yang diterima:", options);
 
             // ✅ Panggil function untuk update data pemohon
-            return await updatePemohon(userId.toString(), options);
+            return await updatePemohon(userId.toString(), formData);
         } catch (error) {
             console.error(`Error handling PATCH request: ${error}`);        
             return { success: false, message: "Internal server error" };
         }
     })(context);
-});
+}, { type: "multipart" }); // Add multipart type configuration
 
 // Route to delete pemohon
 pemohonRouter.delete('/:id', async (req) => {
