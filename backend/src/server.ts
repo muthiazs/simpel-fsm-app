@@ -11,15 +11,18 @@ import permohonanRouter from './routes/permohonanRouter';
 // import { uploadRoutes } from './routes/uploadRoutes';
 import { Client } from "minio";
 import uploadRouter from './routes/uploadRoutes';
+import fileRouter from './routes/fileRoutes'
 
 export const MinioClient = new Client({
   endPoint: "127.0.0.1",
   port: 9000,
   useSSL: false,
-  accessKey: process.env.MINIO_ROOT_USER || "admin",
-  secretKey: process.env.MINIO_ROOT_PASSWORD || "admin123",
+  accessKey: process.env.MINIO_ROOT_USER || "minioadmin",
+  secretKey: process.env.MINIO_ROOT_PASSWORD || "minioadmin",
   region: "us-east-1",
 });
+
+
 
 async function checkBucket() {
   try {
@@ -52,6 +55,7 @@ app.group('/api', (app) => {
   app.use(pemohonRouter); // pemohon routes
   app.use(permohonanRouter)
   app.use(uploadRouter);
+  app.use(fileRouter);
   return app;
 });
 
