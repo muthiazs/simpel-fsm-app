@@ -317,7 +317,6 @@ const DataDiriPemohon: React.FC = () => {
                 </Form.Item>
                 <Form.Item
                 label="Scan KTP"
-                name="filektp"
                 valuePropName="fileList"
                 getValueFromEvent={(e) => e?.fileList}
                 labelCol={{ span: 24 }}

@@ -1,5 +1,6 @@
 import prisma from '../../prisma/client';
-
+import { uploadToMinio } from './upload.controller';
+import type { Context } from 'elysia'; // or the appropriate library providing Context
 
 /**
  * ✅ Get all permohonan (Tanpa filter)
@@ -38,61 +39,63 @@ export async function getPermohonan() {
     }
 }
 
-/**
- * ✅ Get permohonan berdasarkan ID Permohonan
- */
-export async function getPermohonanById(id_permohonan: string) {
-    try {
-        const permohonanId = parseInt(id_permohonan);
-        if (isNaN(permohonanId)) {
-            return { success: false, message: "Invalid permohonan ID format", data: null };
-        }
+// /**
+//  * ✅ Get permohonan berdasarkan ID Permohonan
+//  */
+// export async function getPermohonanById(id_permohonan: string) {
+//     try {
+//         const permohonanId = parseInt(id_permohonan);
+//         if (isNaN(permohonanId)) {
+//             return { success: false, message: "Invalid permohonan ID format", data: null };
+//         }
 
-        const permohonan = await prisma.permohonan.findUnique({
-            where: { id_permohonan: permohonanId },
-            select: {
-                id_permohonan: true,
-                negaratujuan: true,
-                instansitujuan: true,
-                keperluan: true,
-                tglmulai: true,
-                tglselesai: true,
-                biaya: true,
-                createdat: true,
-                updatedat: true,
-                pemohon: {
-                    select: { nama: true }
-                }
-            }
-        });
+//         const permohonan = await prisma.permohonan.findUnique({
+//             where: { id_permohonan: permohonanId },
+//             select: {
+//                 id_permohonan: true,
+//                 negaratujuan: true,
+//                 instansitujuan: true,
+//                 keperluan: true,
+//                 tglmulai: true,
+//                 tglselesai: true,
+//                 biaya: true,
+//                 createdat: true,
+//                 updatedat: true,
+//                 pemohon: {
+//                     select: { nama: true }
+//                 }
+//             }
+//         });
 
-        if (!permohonan) {
-            return { success: false, message: "Permohonan not found!", data: null };
-        }
+//         if (!permohonan) {
+//             return { success: false, message: "Permohonan not found!", data: null };
+//         }
 
-        return { success: true, message: "Detail Permohonan", data: permohonan };
-    } catch (error) {
-        console.error(`Error fetching permohonan by ID: ${error}`);
-        return { success: false, message: "Error fetching permohonan" };
-    }
-}
+//         return { success: true, message: "Detail Permohonan", data: permohonan };
+//     } catch (error) {
+//         console.error(`Error fetching permohonan by ID: ${error}`);
+//         return { success: false, message: "Error fetching permohonan" };
+//     }
+// }
 
 /**
  * Get permohonan by user ID (Login)
  */
-export async function getPermohonanByUserId(id_user: number) {
+export const getPermohonanByUserId = async (id_user: number) => {
     try {
+        // 1. Cari id_pemohon dari tabel pemohon berdasarkan id_user
         const pemohon = await prisma.pemohon.findUnique({
             where: { id_user },
-            select: { id_pemohon: true }
+            select: { id_pemohon: true },
         });
 
         if (!pemohon) {
-            return { success: false, message: "Pemohon not found", data: null };
+            return { success: false, message: "Pemohon tidak ditemukan", data: null };
         }
 
+        // 2. Ambil data permohonan berdasarkan id_pemohon
         const permohonanData = await prisma.permohonan.findMany({
-            where: { id_pemohon: pemohon.id_pemohon },
+            where: { id_pemohon: pemohon.id_pemohon }, // Filter berdasarkan id_pemohon
             select: {
                 id_permohonan: true,
                 negaratujuan: true,
@@ -104,41 +107,72 @@ export async function getPermohonanByUserId(id_user: number) {
                 createdat: true,
                 updatedat: true,
                 pemohon: {
-                    select: { nama: true }
-                }
+                    select: { nama: true }, // Ambil nama pemohon jika diperlukan
+                },
             },
-            orderBy: { createdat: 'desc' }
+            orderBy: { createdat: 'desc' }, // Urutkan berdasarkan tanggal pembuatan
         });
 
-        return { success: true, message: "User's permohonan retrieved successfully", data: permohonanData };
+        
+
+        return {
+            success: true,
+            message: "Data permohonan berhasil diambil",
+            data: permohonanData,
+        };
+
     } catch (error) {
-        console.error(`Error fetching permohonan by user ID: ${error}`);
-        return { success: false, message: "Error fetching permohonan" };
+        console.error('Error fetching permohonan:', error);
+        return { success: false, message: "Terjadi kesalahan saat mengambil data permohonan" };
     }
-}
+};
 
 /**
  * Create a new permohonan
  */
-export async function createPermohonan(data: {
-    id_pemohon: number;
+export const createPermohonan = async (options: {
+    id_user: number;
     negaratujuan: string;
     instansitujuan: string;
     keperluan: string;
-    tglmulai: Date;
-    tglselesai: Date;
+    tglmulai: string | Date;
+    tglselesai: string | Date;
     biaya: string;
     rencana: string;
-    undangan: string;
-    agenda: string;
-    tor: string;
-}) {
+    undangan: File;
+    agenda: File;
+    tor: File;
+}) => {
     try {
+        // 🔹 1. Cari id_pemohon berdasarkan id_user
+        const pemohon = await prisma.pemohon.findUnique({
+            where: { id_user: options.id_user },
+            select: { id_pemohon: true },
+        });
+
+        if (!pemohon) return { success: false, message: "Pemohon tidak ditemukan" };
+
+        // 🔹 2. Upload file ke MinIO
+        const [undanganPath, agendaPath, torPath] = await Promise.all([
+            uploadToMinio(options.undangan, "undangan-bucket"),
+            uploadToMinio(options.agenda, "agenda-bucket"),
+            uploadToMinio(options.tor, "tor-bucket"),
+        ]);
+
+        // 🔹 3. Simpan data permohonan ke database
         const permohonan = await prisma.permohonan.create({
             data: {
-                ...data,
-                createdat: new Date(),
-                updatedat: new Date(),
+                id_pemohon: pemohon.id_pemohon,
+                negaratujuan: options.negaratujuan,
+                instansitujuan: options.instansitujuan,
+                keperluan: options.keperluan,
+                tglmulai: new Date(options.tglmulai),
+                tglselesai: new Date(options.tglselesai),
+                biaya: options.biaya,
+                rencana: options.rencana,
+                undangan: undanganPath,
+                agenda: agendaPath,
+                tor: torPath,
             },
         });
 
@@ -151,8 +185,7 @@ export async function createPermohonan(data: {
         console.error(`Error creating permohonan: ${error}`);
         return { success: false, message: "Error creating permohonan" };
     }
-}
-
+};
 /**
  * Update a permohonan
  */

@@ -1,7 +1,7 @@
 import { Elysia } from 'elysia';
 import {
     getPermohonan,
-    getPermohonanById,
+    // getPermohonanById,
     getPermohonanByUserId,
     createPermohonan,
     updatePermohonan,
@@ -10,50 +10,81 @@ import {
 import { cors } from '@elysiajs/cors';
 import { authMiddleware } from '../middleware/authMiddleware';
 
+
 // Create router for permohonan
 const permohonanRouter = new Elysia({ prefix: '/permohonan' });
 
 // Enable CORS middleware
 permohonanRouter.use(cors());
 
-// // Get permohonan by user ID (requires authentication)
-// permohonanRouter.get('/user', authMiddleware(async ({ user }) => {
-//     return await getPermohonanByUserId(user?.id);
-// }));
+// Endpoint untuk mengambil permohonan berdasarkan id_user
+permohonanRouter.get('/:id_user', async ({ params }) => {
+    const { id_user } = params;
+    console.log("mengambil data permohonan dengan id_user" , id_user)
+    return await getPermohonanByUserId(Number(id_user));
+});
 
 // Get permohonan by ID
-permohonanRouter.get('/:id', async ({ params: { id } }) => {
-    console.log(`Fetching permohonan with ID: ${id}`);
-    return await getPermohonanById(id);
-});
+// permohonanRouter.get('/:id', async ({ params: { id } }) => {
+//     console.log(`Fetching permohonan with ID: ${id}`);
+//     return await getPermohonanById(id);
+// });
 
 // Get all permohonan
 permohonanRouter.get('/', async () => {
     return await getPermohonan();
 });
 
+
+
 // Create new permohonan (requires authentication)
-permohonanRouter.post('/', authMiddleware(async ({ body }) => {
-    try {
-        const data = body as {
-            id_pemohon: number;
-            negaratujuan: string;
-            instansitujuan: string;
-            keperluan: string;
-            tglmulai: Date;
-            tglselesai: Date;
-            biaya: string;
-            rencana: string;
-            undangan: string;
-            agenda: string;
-            tor: string;
-        };
-        return await createPermohonan(data);
-    } catch (error) {
-        console.error(`Error creating permohonan: ${error}`);
-        return { success: false, message: 'Internal server error' };
-    }
-}));
+permohonanRouter.post(
+    "/",
+    authMiddleware(async ({ body }) => {
+        try {
+            if (!body) {
+                return { success: false, message: "Invalid request body" };
+            }
+
+            const {
+                id_user,
+                negaratujuan,
+                instansitujuan,
+                keperluan,
+                tglmulai,
+                tglselesai,
+                biaya,
+                rencana,
+                undangan,
+                agenda,
+                tor,
+            } = body as Record<string, any>;
+
+            if (!undangan || !agenda || !tor) {
+                return { success: false, message: "All files are required" };
+            }
+
+            return await createPermohonan({
+                id_user: Number(id_user),
+                negaratujuan,
+                instansitujuan,
+                keperluan,
+                tglmulai,
+                tglselesai,
+                biaya,
+                rencana,
+                undangan,
+                agenda,
+                tor,
+            });
+        } catch (error) {
+            console.error(`Error creating permohonan: ${error}`);
+            return { success: false, message: "Internal server error" };
+        }
+    }),
+    { type: "multipart" }
+);
+
 
 // Update permohonan by ID (requires authentication)
 permohonanRouter.patch('/:id', authMiddleware(async ({ params: { id }, body }) => {

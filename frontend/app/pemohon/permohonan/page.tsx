@@ -83,11 +83,12 @@ const App: React.FC = () => {
     useEffect(() => {
         const fetchUserPermohonan = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/permohonan/${id_user}', {
-                    withCredentials: true, // Pastikan autentikasi diterapkan
-                });
+                const userData = {
+                    id: 2, // ID user yang login
+                };
     
-                console.log('Response data:', response.data); // Debugging
+                const response = await axios.get(`http://localhost:3001/api/permohonan/${userData.id}`);
+                console.log('Response data:', response.data);
     
                 if (response.data.success) {
                     const formattedData = response.data.data.map((item: any, index: number) => ({
@@ -98,15 +99,15 @@ const App: React.FC = () => {
                         instansiTujuan: item.instansitujuan,
                         waktuDimulai: new Date(item.tglmulai).toLocaleDateString(),
                         waktuBerakhir: new Date(item.tglselesai).toLocaleDateString(),
-                        status: 'Pending', // Bisa diubah sesuai database
+                        status: 'Pending',
                     }));
     
                     setData(formattedData);
                 } else {
-                    console.error('Failed to fetch user permohonan:', response.data.message);
+                    console.error('Gagal mengambil data permohonan:', response.data.message);
                 }
             } catch (error) {
-                console.error('Error fetching user permohonan:', error);
+                console.error('Error mengambil data permohonan:', error);
             } finally {
                 setLoading(false);
             }

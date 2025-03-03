@@ -1,41 +1,69 @@
 'use client'
 import React from 'react';
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Row,
-  Col,
-  Upload,
-} from 'antd';
+import { Form, Input, DatePicker, InputNumber, Upload, Button, Row, Col, message } from 'antd';
 import {PlusOutlined } from '@ant-design/icons';
 import Header from '../../../components/Header';
 import Menu from '../../../components/Menu';
 import { Color } from 'antd/es/color-picker';
 import '@ant-design/v5-patch-for-react-19';
+import axios from 'axios';
+
 
 const { TextArea } = Input;
-const { RangePicker } = DatePicker;
 
-type SizeType = Parameters<typeof Form>[0]['size'];
 
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 6 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 14 },
-  },
-};
-
-const pengajuanpermohonan: React.FC = () => {
+const PengajuanPermohonan: React.FC = () => {
   const [form] = Form.useForm();
-  const variant = Form.useWatch('variant', form);
+  const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
 
+  if (!token) {
+    message.error("Anda harus login terlebih dahulu!");
+    return null;
+  }
+
+  const onFinish = async (values: any) => {
+    try {
+      const formData = new FormData();
+      formData.append('negaratujuan', values.negaratujuan);
+      formData.append('instansitujuan', values.instansitujuan);
+      formData.append('keperluan', values.keperluan);
+      formData.append('tglmulai', values.tanggalmulai.format('YYYY-MM-DD'));
+      formData.append('tglselesai', values.tanggalberakhir.format('YYYY-MM-DD'));
+      formData.append('biaya', values.perkiraanbiaya);
+      formData.append('sumberdana', values.sumberdana);
+
+      const files = ['undangan', 'agenda', 'tor'];
+      for (const fileKey of files) {
+        const file = values[fileKey]?.[0]?.originFileObj;
+        if (!file) {
+          message.error(`Harap unggah dokumen ${fileKey}!`);
+          return;
+        }
+        formData.append(fileKey, file);
+      }
+
+      const response = await fetch('http://localhost:3001/api/permohonan', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
+
+      const responseData = await response.json();
+      if (response.ok) {
+        message.success('Permohonan berhasil diajukan!');
+        form.resetFields();
+      } else {
+        message.error('Gagal mengajukan permohonan: ' + responseData.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      message.error('Terjadi kesalahan saat mengajukan permohonan');
+    }
+  };
+
+  
   return (
     <div>
       <Menu />
@@ -43,18 +71,12 @@ const pengajuanpermohonan: React.FC = () => {
         <h1>Permohonan PDLN</h1>
       </div>
       <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '20px', marginLeft: '50px', width: '90%' }}>
-        <Form
-          {...formItemLayout}
-          form={form}
-          variant={variant || 'filled'}
-          style={{ width: '100%' }}
-          initialValues={{ variant: 'filled' }}
-        >
+      <Form form={form} onFinish={onFinish} layout="vertical" style={{ width: '100%' }}>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 label="Negara Tujuan"
-                name="negaraTujuan"
+                name="negaratujuan"
                 rules={[{ required: true, message: 'Masukkan negara tujuan!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -65,7 +87,7 @@ const pengajuanpermohonan: React.FC = () => {
             <Col span={12}>
               <Form.Item
                 label="Instansi Tujuan"
-                name="instansiTujuan"
+                name="instansitujuan"
                 rules={[{ required: true, message: 'Masukkan instansi tujuan!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -89,7 +111,7 @@ const pengajuanpermohonan: React.FC = () => {
             <Col span={12}>
               <Form.Item
                 label="Tanggal Mulai"
-                name="tanggalMulai"
+                name="tanggalmulai"
                 rules={[{ required: true, message: 'Pilih tanggal mulai kegiatan!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -111,7 +133,7 @@ const pengajuanpermohonan: React.FC = () => {
             <Col span={12}>
               <Form.Item
                 label="Sumber Dana"
-                name="sumberDana"
+                name="sumberdana"
                 rules={[{ required: true, message: 'Masukkan sumber dana!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -122,7 +144,7 @@ const pengajuanpermohonan: React.FC = () => {
             <Col span={12}>
               <Form.Item
                 label="Perkiraan Biaya (Rupiah)"
-                name="perkiraanBiaya"
+                name="perkiraanbiaya"
                 rules={[{ required: true, message: 'Masukkan perkiraan biaya!' }]}
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -132,62 +154,21 @@ const pengajuanpermohonan: React.FC = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                label="Rencana Tindak Lanjut"
-                name="tindak lanjut"
-                rules={[{ required: true, message: 'Masukkan rencana tindak lanjut!' }]}
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-              >
-                <TextArea rows={4} placeholder='isi rencana tindak lanjut ' />
-              </Form.Item>
-              <Row gutter={16}>
-                <Form.Item 
-                label="Undangan dari Luar Negeri (PDF)" 
-                valuePropName="fileList"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }} >
-                    <Upload action="/upload.do" listType="picture-card">
-                        <button style={{ border: 0, background: 'none' }} type="button">
-                        <PlusOutlined style={{ color: 'black' }} />
-                        <div style={{ marginTop: 8 , color: 'black' }}>Upload</div>
-                        </button>
-                    </Upload>
+            {['undangan', 'agenda', 'tor'].map(fileKey => (
+              <Col span={8} key={fileKey}>
+                <Form.Item label={fileKey.toUpperCase()} name={fileKey} valuePropName="fileList" rules={[{ required: true }]}
+                  getValueFromEvent={(e) => e?.fileList}>
+                  <Upload beforeUpload={() => false} maxCount={1} accept=".pdf">
+                    <Button icon={<PlusOutlined />}> Upload </Button>
+                  </Upload>
                 </Form.Item>
-                <Form.Item 
-                label="Jadwal Agenda Selama di Luar Negeri (PDF)" 
-                valuePropName="fileList"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }} >
-                    <Upload action="/upload.do" listType="picture-card">
-                        <button style={{ border: 0, background: 'none' }} type="button">
-                        <PlusOutlined style={{ color: 'black' }} />
-                        <div style={{ marginTop: 8 , color: 'black' }}>Upload</div>
-                        </button>
-                    </Upload>
-                </Form.Item>
-                <Form.Item 
-                label="Kerangka Acuan / TOR (PDF)" 
-                valuePropName="fileList"
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }} >
-                    <Upload action="/upload.do" listType="picture-card">
-                        <button style={{ border: 0, background: 'none' }} type="button">
-                        <PlusOutlined style={{ color: 'black' }} />
-                        <div style={{ marginTop: 8 , color: 'black' }}>Upload</div>
-                        </button>
-                    </Upload>
-                </Form.Item>
-                </Row>
-            </Col>
+              </Col>
+            ))}
           </Row>
           <Col span={24}>
-           <Form.Item wrapperCol={{ span: 24, offset: 0 }}>
-            <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-                Ajukan Permohonan
-            </Button>
-           </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" style={{ width: '100%' }}> Ajukan Permohonan </Button>
+          </Form.Item>
          </Col>
         </Form>
       </div>
@@ -195,4 +176,4 @@ const pengajuanpermohonan: React.FC = () => {
   );
 };
 
-export default pengajuanpermohonan;
+export default PengajuanPermohonan;
