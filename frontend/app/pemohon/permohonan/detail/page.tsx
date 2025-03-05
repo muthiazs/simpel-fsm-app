@@ -1,260 +1,163 @@
-'use client'
+'use client';
 import React, { useEffect, useState } from 'react';
-import { Row, Col, List, Typography, Card, Space, Badge, Tag } from 'antd';
-import { 
-  DownloadOutlined, 
-  UserOutlined, 
-  GlobalOutlined, 
-  CalendarOutlined,
-  DollarOutlined,
-  FileOutlined 
-} from '@ant-design/icons';
+import { Row, Col, List, Typography, Card, Space, Badge, message } from 'antd';
+import { DownloadOutlined, UserOutlined, GlobalOutlined, FileOutlined } from '@ant-design/icons';
 import Menu from '../../../../components/Menu';
+import axios from 'axios';
 
 const { Title, Text } = Typography;
 
 interface PermohonanDetail {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-    uploadedFiles: string[];
-    negaraTujuan: string;
-    instansiTujuan: string;
+  id_pemohon: number;
+  nama: string;
+  nohp: string;
+  nik: string;
+  jabatan: string;
+  pangkatgol: string;
+  nopaspor: string;
+  prodi: string;
+  nipnim: string;
+  filektp: string;
+  filekarpeg: string;
+  permohonan: Array<{
+    id_permohonan: number;
+    negaratujuan: string;
+    instansitujuan: string;
     keperluan: string;
-    tanggalMulai: string;
-    tanggalBerakhir: string;
-    sumberDana: string;
-    perkiraanBiaya: number;
-    rencanaTindakLanjut: string;
-    undanganLuarNegeri: string;
-    jadwalAgenda: string;
-    kerangkaAcuan: string;
-    ktp: string;
-    karpeg: string;
-    paspor: string;
-    dataDiri: {
-        namaGelar: string;
-        noWhatsApp: string;
-        nik: string;
-        programStudi: string;
-        nipNim: string;
-        pangkatGol: string;
-        jabatan: string;
-        noPaspor: string;
-    };
+    tglmulai: string;
+    tglselesai: string;
+    biaya: number;
+    rencana: string;
+    undangan: string;
+    agenda: string;
+    tor: string;
+  }>;
 }
 
 const PermohonanDetailPage: React.FC = () => {
-    const [detail, setDetail] = useState<PermohonanDetail | null>(null);
-
-    useEffect(() => {
-        const dummyData: PermohonanDetail = {
-            id: '12345',
-            name: 'John Doe',
-            email: 'john.doe@example.com',
-            phone: '123-456-7890',
-            address: '123 Main St, Anytown, USA',
-            uploadedFiles: [
-                'https://example.com/file1.pdf',
-                'https://example.com/file2.pdf'
-            ],
-            negaraTujuan: 'USA',
-            instansiTujuan: 'University of Example',
-            keperluan: 'Research',
-            tanggalMulai: '2025-03-01',
-            tanggalBerakhir: '2025-09-01',
-            sumberDana: 'Government',
-            perkiraanBiaya: 5000000,
-            rencanaTindakLanjut: 'Post-doctoral research publication',
-            undanganLuarNegeri: 'https://example.com/invitation.pdf',
-            jadwalAgenda: 'https://example.com/agenda.pdf',
-            kerangkaAcuan: 'https://example.com/tor.pdf',
-            ktp: 'https://example.com/ktp.pdf',
-            karpeg: 'https://example.com/karpeg.pdf',
-            paspor: 'https://example.com/paspor.pdf',
-            dataDiri: {
-                namaGelar: 'Dr. John Doe',
-                noWhatsApp: '08123456789',
-                nik: '1234567890',
-                programStudi: 'Computer Science',
-                nipNim: 'NIM123456',
-                pangkatGol: 'Lektor',
-                jabatan: 'Lecturer',
-                noPaspor: 'A123456789'
-            }
-        };
-        setDetail(dummyData);
-    }, []);
-
-    if (!detail) {
-        return <div>Loading...</div>;
+  const [detail, setDetail] = useState<PermohonanDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const storedToken = localStorage.getItem('authToken');
+    const storedIdUser = localStorage.getItem('iduser');
+    
+    if (!storedToken || !storedIdUser) {
+      message.error('Token atau ID pengguna tidak ditemukan! Silakan login kembali.');
+      return;
     }
 
-    return (
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', background: '#f0f2f5' }}>
-            <Menu />
-            <div style={{ padding: '24px' }}>
-                <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                    {/* Header Section */}
-                    <Card>
-                        <Space align="center" size="middle">
-                            <Title level={3}>Detail Permohonan</Title>
-                            <Badge status="processing" text="Pending" />
-                        </Space>
-                    </Card>
+    const fetchPermohonanDetail = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/api/permohonan/${storedIdUser}`, {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        });
 
-                    <Row gutter={[24, 24]}>
-                        {/* Data Diri Section */}
-                        <Col xs={24} lg={12}>
-                            <Card 
-                                title={
-                                    <Space>
-                                        <UserOutlined />
-                                        <span>Data Diri</span>
-                                    </Space>
-                                }
-                                bordered={false}
-                            >
-                                <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                                    <div>
-                                        <Text type="secondary">Nama + Gelar Lengkap</Text>
-                                        <div><Text strong>{detail.dataDiri.namaGelar}</Text></div>
-                                    </div>
-                                    <Row gutter={[16, 16]}>
-                                        <Col span={12}>
-                                            <Text type="secondary">Email</Text>
-                                            <div><Text>{detail.email}</Text></div>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Text type="secondary">Nomor WhatsApp</Text>
-                                            <div><Text>{detail.dataDiri.noWhatsApp}</Text></div>
-                                        </Col>
-                                    </Row>
-                                    <Row gutter={[16, 16]}>
-                                        <Col span={12}>
-                                            <Text type="secondary">NIK</Text>
-                                            <div><Text>{detail.dataDiri.nik}</Text></div>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Text type="secondary">NIP/NIM</Text>
-                                            <div><Text>{detail.dataDiri.nipNim}</Text></div>
-                                        </Col>
-                                    </Row>
-                                    <Row gutter={[16, 16]}>
-                                        <Col span={12}>
-                                            <Text type="secondary">Program Studi</Text>
-                                            <div><Text>{detail.dataDiri.programStudi}</Text></div>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Text type="secondary">Jabatan</Text>
-                                            <div><Text>{detail.dataDiri.jabatan}</Text></div>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Text type="secondary">Pangkat/Gol</Text>
-                                            <div><Text>{detail.dataDiri.pangkatGol}</Text></div>
-                                        </Col>
-                                    </Row>
-                                </Space>
-                            </Card>
-                        </Col>
+        if (response.data.success) {
+          setDetail(response.data.data);
+        } else {
+          message.error('Gagal mengambil data permohonan.');
+        }
+      } catch (error) {
+        message.error('Terjadi kesalahan saat mengambil data permohonan.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-                        {/* Informasi Permohonan Section */}
-                        <Col xs={24} lg={12}>
-                            <Card 
-                                title={
-                                    <Space>
-                                        <GlobalOutlined />
-                                        <span>Informasi Permohonan</span>
-                                    </Space>
-                                }
-                                bordered={false}
-                            >
-                                <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                                    <Row gutter={[16, 16]}>
-                                        <Col span={12}>
-                                            <Text type="secondary">Negara Tujuan</Text>
-                                            <div><Text strong>{detail.negaraTujuan}</Text></div>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Text type="secondary">Instansi Tujuan</Text>
-                                            <div><Text>{detail.instansiTujuan}</Text></div>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                    <Col span={12}>
-                                            <Text type="secondary">Keperluan</Text>
-                                            <div><Text strong>{detail.keperluan}</Text></div>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Text type="secondary">Rencana Tindak Lanjut</Text>
-                                            <div><Text>{detail.rencanaTindakLanjut}</Text></div>
-                                        </Col>
-                                    </Row>
-                                    <Row gutter={[16, 16]}>
-                                        <Col span={12}>
-                                            <Text type="secondary">Tanggal Mulai</Text>
-                                            <div><Text>{detail.tanggalMulai}</Text></div>
-                                        </Col>
-                                        <Col span={12}>
-                                            <Text type="secondary">Tanggal Berakhir</Text>
-                                            <div><Text>{detail.tanggalBerakhir}</Text></div>
-                                        </Col>
-                                    </Row>
-                                    <div>
-                                        <Text type="secondary">Sumber Dana</Text>
-                                        <div><Text>{detail.sumberDana}</Text></div>
-                                    </div>
-                                    <div>
-                                        <Text type="secondary">Perkiraan Biaya</Text>
-                                        <div><Text strong>Rp {detail.perkiraanBiaya.toLocaleString()}</Text></div>
-                                    </div>
-                                </Space>
-                            </Card>
-                        </Col>
+    fetchPermohonanDetail();
+  }, []);
 
-                        {/* Dokumen Section */}
-                        <Col span={24}>
-                            <Card 
-                                title={
-                                    <Space>
-                                        <FileOutlined />
-                                        <span>Dokumen Upload</span>
-                                    </Space>
-                                }
-                                bordered={false}
-                            >
-                                <List
-                                    grid={{ gutter: 16, column: 3 }}
-                                    dataSource={[
-                                        { title: 'Undangan dari Luar Negeri', url: detail.undanganLuarNegeri },
-                                        { title: 'Jadwal Agenda', url: detail.jadwalAgenda },
-                                        { title: 'Kerangka Acuan / TOR', url: detail.kerangkaAcuan },
-                                    ]}
-                                    renderItem={item => (
-                                        <List.Item>
-                                            <Card 
-                                                hoverable 
-                                                size="small"
-                                                onClick={() => window.open(item.url, '_blank')}
-                                            >
-                                                <Card.Meta
-                                                    avatar={<DownloadOutlined />}
-                                                    title={item.title}
-                                                    description="Click to download"
-                                                />
-                                            </Card>
-                                        </List.Item>
-                                    )}
-                                />
-                            </Card>
-                        </Col>
-                    </Row>
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!detail) {
+    return <div>Data tidak ditemukan</div>;
+  }
+
+ // Ambil permohonan pertama jika ada, atau gunakan default value
+ const currentPermohonan = detail?.permohonan?.length 
+ ? detail.permohonan[0] 
+ : {
+     id_permohonan: 0,
+     negaratujuan: "",
+     instansitujuan: "",
+     keperluan: "",
+     tglmulai: "",
+     tglselesai: "",
+     biaya: 0,
+     rencana: "",
+     undangan: "",
+     agenda: "",
+     tor: "",
+   };
+
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', background: '#ffffff' }}>
+      <Menu />
+      <div style={{ padding: '24px' }}>
+        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+          <Card>
+            <Space align="center" size="middle">
+              <Title level={3}>Detail Permohonan</Title>
+              <Badge status="processing" text="Pending" />
+            </Space>
+          </Card>
+          <Row gutter={[24, 24]}>
+            <Col xs={24} lg={12}>
+              <Card title={<Space><UserOutlined /><span>Data Diri</span></Space>}>
+                <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                  <Text type="secondary">Nama Lengkap</Text>
+                  <Text strong>{detail.nama}</Text>
+                  <Row gutter={[16, 16]}>
+                    <Col span={12}><Text type="secondary">Nomor HP</Text><Text>{detail.nohp}</Text></Col>
+                    <Col span={12}><Text type="secondary">NIK</Text><Text>{detail.nik}</Text></Col>
+                  </Row>
+                  <Row gutter={[16, 16]}>
+                    <Col span={12}><Text type="secondary">NIP/NIM</Text><Text>{detail.nipnim}</Text></Col>
+                    <Col span={12}><Text type="secondary">Program Studi</Text><Text>{detail.prodi}</Text></Col>
+                  </Row>
                 </Space>
-            </div>
-        </div>
-    );
+              </Card>
+            </Col>
+            <Col xs={24} lg={12}>
+              <Card title={<Space><GlobalOutlined /><span>Informasi Permohonan</span></Space>}>
+                <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                  <Row gutter={[16, 16]}>
+                    <Col span={12}><Text type="secondary">Negara Tujuan</Text><Text strong>{currentPermohonan.negaratujuan}</Text></Col>
+                    <Col span={12}><Text type="secondary">Instansi Tujuan</Text><Text>{currentPermohonan.instansitujuan}</Text></Col>
+                  </Row>
+                </Space>
+              </Card>
+            </Col>
+            <Col span={24}>
+              <Card title={<Space><FileOutlined /><span>Dokumen Upload</span></Space>}>
+                <List
+                  grid={{ gutter: 16, column: 3 }}
+                  dataSource={[
+                    { title: 'Undangan dari Luar Negeri', url: currentPermohonan.undangan },
+                    { title: 'Jadwal Agenda', url: currentPermohonan.agenda },
+                    { title: 'Kerangka Acuan / TOR', url: currentPermohonan.tor },
+                  ]}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <Card hoverable size="small" onClick={() => item.url && window.open(item.url, '_blank')}>
+                        <Card.Meta avatar={<DownloadOutlined />} title={item.title} description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"} />
+                      </Card>
+                    </List.Item>
+                  )}
+                />
+              </Card>
+            </Col>
+          </Row>
+        </Space>
+      </div>
+    </div>
+  );
 };
 
 export default PermohonanDetailPage;

@@ -39,63 +39,18 @@ export async function getPermohonan() {
     }
 }
 
-// /**
-//  * ✅ Get permohonan berdasarkan ID Permohonan
-//  */
-// export async function getPermohonanById(id_permohonan: string) {
-//     try {
-//         const permohonanId = parseInt(id_permohonan);
-//         if (isNaN(permohonanId)) {
-//             return { success: false, message: "Invalid permohonan ID format", data: null };
-//         }
-
-//         const permohonan = await prisma.permohonan.findUnique({
-//             where: { id_permohonan: permohonanId },
-//             select: {
-//                 id_permohonan: true,
-//                 negaratujuan: true,
-//                 instansitujuan: true,
-//                 keperluan: true,
-//                 tglmulai: true,
-//                 tglselesai: true,
-//                 biaya: true,
-//                 createdat: true,
-//                 updatedat: true,
-//                 pemohon: {
-//                     select: { nama: true }
-//                 }
-//             }
-//         });
-
-//         if (!permohonan) {
-//             return { success: false, message: "Permohonan not found!", data: null };
-//         }
-
-//         return { success: true, message: "Detail Permohonan", data: permohonan };
-//     } catch (error) {
-//         console.error(`Error fetching permohonan by ID: ${error}`);
-//         return { success: false, message: "Error fetching permohonan" };
-//     }
-// }
-
 /**
- * Get permohonan by user ID (Login)
+ * ✅ Get permohonan berdasarkan ID Permohonan
  */
-export const getPermohonanByUserId = async (id_user: number) => {
+export async function getPermohonanById(id_permohonan: string) {
     try {
-        // 1. Cari id_pemohon dari tabel pemohon berdasarkan id_user
-        const pemohon = await prisma.pemohon.findUnique({
-            where: { id_user },
-            select: { id_pemohon: true },
-        });
-
-        if (!pemohon) {
-            return { success: false, message: "Pemohon tidak ditemukan", data: null };
+        const permohonanId = parseInt(id_permohonan);
+        if (isNaN(permohonanId)) {
+            return { success: false, message: "Invalid permohonan ID format", data: null };
         }
 
-        // 2. Ambil data permohonan berdasarkan id_pemohon
-        const permohonanData = await prisma.permohonan.findMany({
-            where: { id_pemohon: pemohon.id_pemohon }, // Filter berdasarkan id_pemohon
+        const permohonan = await prisma.permohonan.findUnique({
+            where: { id_permohonan: permohonanId },
             select: {
                 id_permohonan: true,
                 negaratujuan: true,
@@ -107,25 +62,93 @@ export const getPermohonanByUserId = async (id_user: number) => {
                 createdat: true,
                 updatedat: true,
                 pemohon: {
-                    select: { nama: true }, // Ambil nama pemohon jika diperlukan
-                },
-            },
-            orderBy: { createdat: 'desc' }, // Urutkan berdasarkan tanggal pembuatan
+                    select: { nama: true }
+                }
+            }
         });
 
-        
+        if (!permohonan) {
+            return { success: false, message: "Permohonan not found!", data: null };
+        }
 
-        return {
-            success: true,
-            message: "Data permohonan berhasil diambil",
-            data: permohonanData,
-        };
-
+        return { success: true, message: "Detail Permohonan", data: permohonan };
     } catch (error) {
-        console.error('Error fetching permohonan:', error);
-        return { success: false, message: "Terjadi kesalahan saat mengambil data permohonan" };
+        console.error(`Error fetching permohonan by ID: ${error}`);
+        return { success: false, message: "Error fetching permohonan" };
     }
-};
+}
+
+/**
+ * Get permohonan by user ID (Login)
+ */
+
+export const getPermohonanByUserId = async (id_user: number) => {
+    try {
+      // 1. Cari id_pemohon dari tabel pemohon berdasarkan id_user
+      const pemohon = await prisma.pemohon.findUnique({
+        where: { id_user },
+        select: { 
+          id_pemohon: true, 
+          nama: true,
+          nohp: true,
+          nik: true,
+          jabatan: true,
+          pangkatgol: true,
+          nopaspor: true,
+          prodi: true,
+          nipnim: true,
+          filektp: true,
+          filekarpeg: true,
+     },
+      })
+  
+      if (!pemohon) {
+        return { success: false, message: "Pemohon tidak ditemukan", data: null }
+      }
+  
+      // 2. Ambil data permohonan berdasarkan id_pemohon dengan detail lengkap
+      const permohonanData = await prisma.permohonan.findMany({
+        where: { id_pemohon: pemohon.id_pemohon },
+        select: {
+          id_permohonan: true,
+          negaratujuan: true,
+          instansitujuan: true,
+          keperluan: true,
+          tglmulai: true,
+          tglselesai: true,
+          biaya: true,
+          rencana: true,
+          undangan: true,
+          agenda: true,
+          tor: true,
+        },
+        orderBy: { createdat: 'desc' },
+      })
+  
+      // Kombinasikan data pemohon dan permohonan
+      const combinedData = {
+        ...pemohon,
+        permohonan: permohonanData.map(permohonan => ({
+          ...permohonan,
+          tglmulai: permohonan.tglmulai.toISOString(),
+          tglselesai: permohonan.tglselesai.toISOString(),
+        }))
+      }
+  
+      return {
+        success: true,
+        message: "Data permohonan berhasil diambil",
+        data: combinedData,
+      }
+    } catch (error) {
+      console.error('Error fetching permohonan:', error)
+      return { 
+        success: false, 
+        message: "Terjadi kesalahan saat mengambil data permohonan",
+        error: error instanceof Error ? error.message : 'Unknown error'
+      }
+    }
+  }
 
 /**
  * Create a new permohonan

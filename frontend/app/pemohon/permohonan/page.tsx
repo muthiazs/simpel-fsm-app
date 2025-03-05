@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Tag, Button , Card } from 'antd';
+import { Space, Table, Tag, Button , Card , message} from 'antd';
 import {
     PlusOutlined    
   } from '@ant-design/icons';
@@ -80,15 +80,28 @@ const columns: TableProps<DataType>['columns'] = [
 const App: React.FC = () => {
     const [data, setData] = useState<DataType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+     // Ambil token dan iduser dari localStorage
+     const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+     const iduser = typeof window !== 'undefined' ? localStorage.getItem('iduser') : null;
     useEffect(() => {
+        if (!token) {
+            message.error('Token tidak ditemukan! Silakan login kembali.');
+            return;
+        }
+
+        if (!iduser) {
+            message.error('ID pengguna tidak ditemukan! Silakan login kembali.');
+            return;
+        }
         const fetchUserPermohonan = async () => {
             try {
-                const userData = {
-                    id: 2, // ID user yang login
-                };
-    
-                const response = await axios.get(`http://localhost:3001/api/permohonan/${userData.id}`);
+                const response = await axios.get(`http://localhost:3001/api/permohonan/${iduser}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 console.log('Response data:', response.data);
+
     
                 if (response.data.success) {
                     const formattedData = response.data.data.map((item: any, index: number) => ({
