@@ -46,7 +46,9 @@ const App: React.FC = () => {
         // Simpan data user ke localStorage
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('authToken', data.token);
+        localStorage.setItem('iduser', data.user.id);
         console.log("token : " , data.token);
+        console.log("iduser : " , data.id);
         
         // Redirect ke URL yang sesuai
         if (data.redirectUrl) {

@@ -144,13 +144,28 @@ export const createPermohonan = async (options: {
     tor: File;
 }) => {
     try {
+        console.log("📥 Incoming id_user:", options.id_user); // Debugging
+
+        const idUser = Number(options.id_user);
+        console.log("🔢 Converted id_user:", idUser); 
+
+        if (isNaN(idUser) || idUser <= 0) {
+            console.error("❌ ID User tidak valid:", options.id_user);
+            return { success: false, message: "ID User tidak valid" };
+        }
+
         // 🔹 1. Cari id_pemohon berdasarkan id_user
         const pemohon = await prisma.pemohon.findUnique({
-            where: { id_user: options.id_user },
+            where: { id_user: idUser }, 
             select: { id_pemohon: true },
         });
 
-        if (!pemohon) return { success: false, message: "Pemohon tidak ditemukan" };
+        console.log("Found pemohon:", pemohon);
+
+        if (!pemohon) {
+            console.log("Pemohon tidak ditemukan untuk id_user:", idUser);
+            return { success: false, message: "Pemohon tidak ditemukan" };
+        }
 
         // 🔹 2. Upload file ke MinIO
         const [undanganPath, agendaPath, torPath] = await Promise.all([
@@ -158,6 +173,8 @@ export const createPermohonan = async (options: {
             uploadToMinio(options.agenda, "agenda-bucket"),
             uploadToMinio(options.tor, "tor-bucket"),
         ]);
+
+        console.log("Uploaded files:", { undanganPath, agendaPath, torPath });
 
         // 🔹 3. Simpan data permohonan ke database
         const permohonan = await prisma.permohonan.create({
@@ -176,16 +193,19 @@ export const createPermohonan = async (options: {
             },
         });
 
+        console.log("Permohonan created successfully:", permohonan);
+
         return {
             success: true,
             message: "Permohonan created successfully",
             data: permohonan,
         };
     } catch (error) {
-        console.error(`Error creating permohonan: ${error}`);
+        console.error("Error creating permohonan:", error);
         return { success: false, message: "Error creating permohonan" };
     }
 };
+
 /**
  * Update a permohonan
  */
