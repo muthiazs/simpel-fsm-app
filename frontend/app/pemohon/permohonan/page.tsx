@@ -106,7 +106,7 @@ const App: React.FC = () => {
                 const response = await axios.get(`http://localhost:3001/api/permohonan/user/${iduser}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                    },
+                    },  
                 });
                 
                 console.log('Response Data:', response.data);

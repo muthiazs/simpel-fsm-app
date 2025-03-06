@@ -8,7 +8,7 @@ import axios from 'axios';
 interface DataType {
     key: string;
     no: number;
-    namaPemohon: string;
+    nama: string;
     tanggalPengajuan: string;
     negaraTujuan: string;
     instansiTujuan: string;
@@ -17,29 +17,61 @@ interface DataType {
     status: string;
 }
 
+// Map status values to display text and colors
+const statusConfig = {
+    belumdisetujui: { text: 'BELUM DISETUJUI', color: 'blue' },
+    disetujui: { text: 'DISETUJUI', color: 'green' },
+    ditolak: { text: 'DITOLAK', color: 'red' },
+    dalamproses: { text: 'DALAM PROSES', color: 'orange' }
+};
+
 const columns: TableProps<DataType>['columns'] = [
     { title: 'No', dataIndex: 'no', key: 'no' },
-    { title: 'Nama Pemohon', dataIndex: 'namaPemohon', key: 'namaPemohon' },
-    { title: 'Tanggal Pengajuan', dataIndex: 'tanggalPengajuan', key: 'tanggalPengajuan' },
-    { title: 'Negara Tujuan', dataIndex: 'negaraTujuan', key: 'negaraTujuan' },
-    { title: 'Instansi Tujuan', dataIndex: 'instansiTujuan', key: 'instansiTujuan' },
-    { title: 'Waktu Dimulai', dataIndex: 'waktuDimulai', key: 'waktuDimulai' },
-    { title: 'Waktu Berakhir', dataIndex: 'waktuBerakhir', key: 'waktuBerakhir' },
+    { title: 'Nama Pemohon', dataIndex: 'nama', key: 'nama' },
     {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-        render: (status) => {
-            let color = status === 'Approved' ? 'green' : status === 'Pending' ? 'geekblue' : 'volcano';
-            return <Tag color={color}>{status?.toUpperCase() || 'UNKNOWN'}</Tag>;
-        },
+        title: 'Tanggal Pengajuan',
+        dataIndex: 'tanggalPengajuan',
+        key: 'tanggalPengajuan',
     },
+    {
+        title: 'Negara Tujuan',
+        dataIndex: 'negaraTujuan',
+        key: 'negaraTujuan',
+    },
+    {
+        title: 'Instansi Tujuan',
+        dataIndex: 'instansiTujuan',
+        key: 'instansiTujuan',
+    },
+    {
+        title: 'Waktu Dimulai',
+        dataIndex: 'waktuDimulai',
+        key: 'waktuDimulai',
+    },
+    {
+        title: 'Waktu Berakhir',
+        dataIndex: 'waktuBerakhir',
+        key: 'waktuBerakhir',
+    },
+    {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => {
+                const config = statusConfig[status] || { text: status.toUpperCase(), color: 'default' };
+                return (
+                    <Tag color={config.color} key={status}>
+                        {config.text}
+                    </Tag>
+                );
+            },
+ },
     {
         title: 'Aksi',
         key: 'aksi',
         render: (_, record) => (
             <Space size="middle">
-                <a href={`/permohonan/${record.key}`}>Detail</a>
+               <a onClick={() => window.location.href = `/admin/permohonan/detail/${record.key}`}>Detail</a>
                 <a href={`/upload/${record.key}`}>Upload Dokumen</a>
             </Space>
         ),
@@ -54,7 +86,7 @@ const App: React.FC = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://localhost:3001/api/permohonan/', {
-                    withCredentials: true, // ⬅️ Pastikan jika API membutuhkan cookie/session
+                    withCredentials: true, // 
                 });
 
                 console.log("📥 Data dari API:", response.data);
@@ -66,13 +98,13 @@ const App: React.FC = () => {
                 const permohonanData = response.data.data.map((item: any, index: number) => ({
                     key: item.id_permohonan?.toString() || `permohonan-${index}`,
                     no: index + 1,
-                    namaPemohon: item.pemohon?.nama || 'Unknown',
+                    nama: item.pemohon?.nama || 'Unknown',
                     tanggalPengajuan: item.createdat ? new Date(item.createdat).toLocaleDateString() : '-',
                     negaraTujuan: item.negaratujuan || '-',
                     instansiTujuan: item.instansitujuan || '-',
                     waktuDimulai: item.tglmulai ? new Date(item.tglmulai).toLocaleDateString() : '-',
                     waktuBerakhir: item.tglselesai ? new Date(item.tglselesai).toLocaleDateString() : '-',
-                    status: item.status || 'Unknown',
+                    status: item.status || 'belumdisetujui', // Use actual status from DB
                 }));
 
                 setData(permohonanData);

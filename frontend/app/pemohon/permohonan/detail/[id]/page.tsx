@@ -116,7 +116,11 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
     <div style={{ display: "flex", flexDirection: "column", width: "100%", background: "#ffffff" }}>
       <div style={{ padding: "24px" }}>
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
-          <Card>
+          <Card 
+          hoverable
+          variant = "outlined"
+          style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
+          >
           <Space align="center" size="middle">
               <Title level={3}>Detail Permohonan</Title>
               <Badge status={statusInfo.status} text={statusInfo.text} />
@@ -130,9 +134,11 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
             {/* Data Diri */}
             <Col xs={24} lg={12}>
               <Card 
-                title={<Space><UserOutlined /><span>Data Diri</span></Space>}
-                style={{ height: "100%" }}
-              >
+                title={<Space><UserOutlined /><span>Data Diri</span></Space>} 
+                hoverable
+                variant = "outlined"
+                style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
+                >
                 <Space direction="vertical" size="middle" style={{ width: "100%" }}>
                   <Text type="secondary">Nama Lengkap</Text>
                   <Text strong>{pemohon.nama}</Text>
@@ -184,8 +190,10 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
             <Col xs={24} lg={12}>
               <Card 
                 title={<Space><GlobalOutlined /><span>Informasi Permohonan</span></Space>}
-                style={{ height: "100%" }}
-              >
+                hoverable
+                variant = "outlined"
+                style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
+                >
                 <Space direction="vertical" size="middle" style={{ width: "100%" }}>
                   <Row gutter={[16, 16]}>
                     <Col span={12}>
@@ -235,7 +243,12 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
             
             {/* Dokumen Upload */}
             <Col span={24}>
-              <Card title={<Space><FileOutlined /><span>Dokumen Permohonan</span></Space>}>
+              <Card
+               title={<Space><FileOutlined /><span>Dokumen Permohonan</span></Space>}
+               hoverable
+               variant = "outlined"
+               style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
+               >
                 <List
                   grid={{ gutter: 16, column: 3 }}
                   dataSource={[
@@ -260,7 +273,12 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
             
             {/* Dokumen Identitas */}
             <Col span={24}>
-              <Card title={<Space><FileOutlined /><span>Dokumen Identitas</span></Space>}>
+              <Card
+               title={<Space><FileOutlined /><span>Dokumen Identitas</span></Space>}
+               hoverable
+               variant = "outlined"
+               style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
+               >
                 <List
                   grid={{ gutter: 16, column: 3 }}
                   dataSource={[
