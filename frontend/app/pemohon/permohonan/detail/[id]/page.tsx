@@ -89,6 +89,27 @@ const PermohonanDetailPage: React.FC = () => {
     return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
   };
 
+  
+// Map status values to display text and Badge status type
+const statusConfig = {
+  belumdisetujui: { text: 'Belum Disetujui', status: 'processing' },
+  disetujui: { text: 'Disetujui', status: 'success' },
+  ditolak: { text: 'Ditolak', status: 'error' },
+  dalamproses: { text: 'Dalam Proses', status: 'warning' }
+};
+
+// Map status values to Tag colors for the Tag in the information section
+const tagColorMap = {
+  belumdisetujui: 'blue',
+  disetujui: 'green',
+  ditolak: 'red',
+  dalamproses: 'orange'
+};
+
+// Get status configuration or use default
+const status = currentPermohonan.status || 'belumdisetujui';
+const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'processing' };
+
   return (
     <>
    <Menu />
@@ -96,9 +117,9 @@ const PermohonanDetailPage: React.FC = () => {
       <div style={{ padding: "24px" }}>
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
           <Card>
-            <Space align="center" size="middle">
+          <Space align="center" size="middle">
               <Title level={3}>Detail Permohonan</Title>
-              <Badge status="processing" text="Pending" />
+              <Badge status={statusInfo.status} text={statusInfo.text} />
             </Space>
             <Text type="secondary" style={{ display: "block", marginTop: "8px" }}>
               Dibuat: {formatDate(currentPermohonan.createdat)} • Diperbarui: {formatDate(currentPermohonan.updatedat)}

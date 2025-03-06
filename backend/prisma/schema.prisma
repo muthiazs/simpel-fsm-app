@@ -57,11 +57,17 @@ model pemohon {
   permohonan permohonan[]
 }
 
-// Model permohonan
+enum PermohonanStatus {
+  belumdisetujui
+  disetujui
+  ditolak
+  dalamproses
+}
+
 model permohonan {
-  id_permohonan  Int     @id @default(autoincrement())
+  id_permohonan  Int      @id @default(autoincrement())
   id_pemohon     Int 
-  pemohon        pemohon @relation(fields: [id_pemohon], references: [id_pemohon])
+  pemohon        pemohon  @relation(fields: [id_pemohon], references: [id_pemohon])
   negaratujuan   String
   instansitujuan String
   keperluan      String
@@ -72,9 +78,12 @@ model permohonan {
   undangan       String
   agenda         String
   tor            String
+  status         PermohonanStatus @default(belumdisetujui) // ✅ Menggunakan enum
   createdat      DateTime @default(now())
   updatedat      DateTime @updatedAt
 }
+
+
 
 // Model admin
 model admin {
