@@ -8,6 +8,7 @@ import type { TableProps  } from 'antd';
 import Header from '../../../components/Header';
 import Menu from '../../../components/Menu';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 interface DataType {
     key: string;
@@ -69,7 +70,7 @@ const columns: TableProps<DataType>['columns'] = [
         key: 'aksi',
         render: (_, record) => (
             <Space size="middle">
-                <a>Detail</a>
+                <a onClick={() => window.location.href = `/pemohon/permohonan/detail/${record.key}`}>Detail</a>
                 <a>Delete</a>
                 <a>Upload Surat Kemensetneg</a>
             </Space>
@@ -95,27 +96,33 @@ const App: React.FC = () => {
         }
         const fetchUserPermohonan = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/permohonan/${iduser}`, {
+                const response = await axios.get(`http://localhost:3001/api/permohonan/user/${iduser}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                console.log('Response data:', response.data);
-
-    
+                
+                console.log('Response Data:', response.data);
+        
                 if (response.data.success) {
-                    const formattedData = response.data.data.map((item: any, index: number) => ({
-                        key: item.id_permohonan,
-                        no: index + 1,
-                        tanggalPengajuan: new Date(item.createdat).toLocaleDateString(),
-                        negaraTujuan: item.negaratujuan,
-                        instansiTujuan: item.instansitujuan,
-                        waktuDimulai: new Date(item.tglmulai).toLocaleDateString(),
-                        waktuBerakhir: new Date(item.tglselesai).toLocaleDateString(),
-                        status: 'Pending',
-                    }));
-    
-                    setData(formattedData);
+                    // Cek apakah permohonan adalah array
+                    const permohonanData = response.data.data?.permohonan;
+                    if (Array.isArray(permohonanData)) {
+                        const formattedData = permohonanData.map((item: any, index: number) => ({
+                            key: item.id_permohonan,
+                            no: index + 1,
+                            tanggalPengajuan: new Date(item.tglmulai).toLocaleDateString(),
+                            negaraTujuan: item.negaratujuan,
+                            instansiTujuan: item.instansitujuan,
+                            waktuDimulai: new Date(item.tglmulai).toLocaleDateString(),
+                            waktuBerakhir: new Date(item.tglselesai).toLocaleDateString(),
+                            status: 'Pending',
+                        }));
+        
+                        setData(formattedData);
+                    } else {
+                        console.error('Data permohonan tidak dalam bentuk array:', permohonanData);
+                    }
                 } else {
                     console.error('Gagal mengambil data permohonan:', response.data.message);
                 }
@@ -125,14 +132,11 @@ const App: React.FC = () => {
                 setLoading(false);
             }
         };
-    
+        
         fetchUserPermohonan();
     }, []);
 
-    const handleAdd = () => {
-        // Handle the logic for adding a new application
-        console.log('Add new application');
-    };
+
 
     return (
         <>

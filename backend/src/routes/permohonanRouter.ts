@@ -1,7 +1,7 @@
 import { Elysia } from 'elysia';
 import {
     getPermohonan,
-    // getPermohonanById,
+    getPermohonanById,
     getPermohonanByUserId,
     createPermohonan,
     updatePermohonan,
@@ -18,17 +18,17 @@ const permohonanRouter = new Elysia({ prefix: '/permohonan' });
 permohonanRouter.use(cors());
 
 // Endpoint untuk mengambil permohonan berdasarkan id_user
-permohonanRouter.get('/:id_user', async ({ params }) => {
+permohonanRouter.get('/user/:id_user', async ({ params }) => {
     const { id_user } = params;
     console.log("mengambil data permohonan dengan id_user" , id_user)
     return await getPermohonanByUserId(Number(id_user));
 });
 
 // Get permohonan by ID
-// permohonanRouter.get('/:id', async ({ params: { id } }) => {
-//     console.log(`Fetching permohonan with ID: ${id}`);
-//     return await getPermohonanById(id);
-// });
+permohonanRouter.get('/:id', async ({ params: { id } }) => {
+    console.log(`Fetching permohonan with ID: ${id}`);
+    return await getPermohonanById(id);
+});
 
 // Get all permohonan
 permohonanRouter.get('/', async () => {

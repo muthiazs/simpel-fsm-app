@@ -59,10 +59,26 @@ export async function getPermohonanById(id_permohonan: string) {
                 tglmulai: true,
                 tglselesai: true,
                 biaya: true,
+                rencana: true,
+                undangan: true,
+                agenda: true,
+                tor: true,
                 createdat: true,
                 updatedat: true,
                 pemohon: {
-                    select: { nama: true }
+                    select: { 
+                        id_pemohon: true,
+                        nama: true,
+                        nohp: true,
+                        nik: true,
+                        jabatan: true,
+                        pangkatgol: true,
+                        nopaspor: true,
+                        prodi: true,
+                        nipnim: true,
+                        filektp: true,
+                        filekarpeg: true,
+                    }
                 }
             }
         });
@@ -71,7 +87,14 @@ export async function getPermohonanById(id_permohonan: string) {
             return { success: false, message: "Permohonan not found!", data: null };
         }
 
-        return { success: true, message: "Detail Permohonan", data: permohonan };
+        // Format tanggal agar sesuai dengan frontend
+        const formattedPermohonan = {
+            ...permohonan,
+            tglmulai: permohonan.tglmulai.toISOString(),
+            tglselesai: permohonan.tglselesai.toISOString(),
+        };
+
+        return { success: true, message: "Detail Permohonan", data: formattedPermohonan };
     } catch (error) {
         console.error(`Error fetching permohonan by ID: ${error}`);
         return { success: false, message: "Error fetching permohonan" };
