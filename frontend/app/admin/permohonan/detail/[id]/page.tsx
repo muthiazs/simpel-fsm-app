@@ -114,22 +114,32 @@ const PermohonanDetailPage: React.FC = () => {
           return (
             <>
            <Menu />
-            <div style={{ display: "flex", flexDirection: "column", width: "100%", background: "#ffffff" }}>
+            <div style={{ display: "flex", flexDirection: "column", width: "100%", background: "#f5f5f5" }}>
               <div style={{ padding: "24px" }}>
-                <Space direction="vertical" size="large" style={{ width: "100%" }}>
-                  <Card 
-                  hoverable
-                  variant = "outlined"
-                  style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
-                  >
-                  <Space align="center" size="middle">
+              <Space direction="vertical" size="large" style={{ width: "100%" }}>
+                <Card 
+                hoverable
+                variant = "outlined"
+                    style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
+                    >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <Space align="center" size="middle">
                       <Title level={3}>Detail Permohonan</Title>
                       <Badge status={statusInfo.status} text={statusInfo.text} />
-                    </Space>
-                    <Text type="secondary" style={{ display: "block", marginTop: "8px" }}>
+                      </Space>
+                      <Space>
+                      <Button type="primary" style={{ backgroundColor: '#52c41a' }}>
+                        Setuju
+                      </Button>
+                      <Button danger>
+                        Tolak
+                      </Button>
+                      </Space>
+                    </div>
+                    <Text type="secondary" style={{ display: "block" }}>
                       Dibuat: {formatDate(currentPermohonan.createdat)} • Diperbarui: {formatDate(currentPermohonan.updatedat)}
                     </Text>
-                  </Card>
+                    </Card>
                   
                   <Row gutter={[24, 24]}>
                     {/* Data Diri */}

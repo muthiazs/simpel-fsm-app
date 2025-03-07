@@ -30,8 +30,8 @@ export const loginUser = async (email: string, password: string) => {
       data: { password: hashedPassword }
     });
 
-    console.log('Password sebenernya:', user.password);
-    console.log('Password yang diinput:', hashedPassword);
+    // console.log('Password sebenernya:', user.password);
+    // console.log('Password yang diinput:', hashedPassword);
 
     // Setelah itu baru bisa menggunakan bcrypt.compare
     const isValidPassword = await bcrypt.compare(password, hashedPassword);
@@ -52,8 +52,8 @@ export const loginUser = async (email: string, password: string) => {
     const token = createToken(user);
     
     // Menampilkan token dan data user di console
-    console.log('Login successful for email:', email);
-    console.log('Generated JWT Token:', token);
+    // console.log('Login successful for email:', email);
+    // console.log('Generated JWT Token:', token);
     console.log('User Data:', {
       id: user.id,
       email: user.email,

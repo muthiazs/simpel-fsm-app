@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Tag, message } from 'antd';
+import {Card , Space, Table, Tag, message } from 'antd';
 import type { TableProps } from 'antd';
 import Menu from '../../../components/MenuAdmin';
 import axios from 'axios';
@@ -122,10 +122,13 @@ const App: React.FC = () => {
     return (
         <>
             <Menu />
-            <div style={{ padding: '20px 50px' }}>
-                <h1>Permohonan PDLN</h1>
-                <Table<DataType> columns={columns} dataSource={data} loading={loading} />
+            <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}>
+                <Card title="Daftar Permohonan" style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}>
+                    <h1>Permohonan PDLN</h1>
+                    <Table<DataType> columns={columns} dataSource={data} loading={loading} />
+                </Card>
             </div>
+            
         </>
     );
 };

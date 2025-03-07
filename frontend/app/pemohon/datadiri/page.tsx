@@ -218,8 +218,8 @@ const DataDiriPemohon: React.FC = () => {
   return (
     <div>
       <Menu />
-      <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '20px', marginLeft: '50px', width: '90%' }}>
-        <Card title="Form Data Diri" style={{ width: '100%', boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '20px', marginLeft: '50px', width: '90%' , background: "#f5f5f5" }}>
+        <Card title="Form Data Diri" style={{ width: '100%', boxShadow: '6px 6px 6px 6px rgba(0, 0, 0, 0.1)' }}>
           <Form
             {...formItemLayout}
             form={form}

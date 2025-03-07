@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import { Menu } from 'antd';
+import { Menu, Dropdown, Button, Grid } from 'antd';
 import type { MenuProps } from 'antd';
 import { 
   HomeOutlined, 
@@ -8,16 +8,20 @@ import {
   FileDoneOutlined, 
   UserOutlined, 
   DownloadOutlined,
-  LogoutOutlined 
+  LogoutOutlined,
+  MenuOutlined 
 } from '@ant-design/icons';
 import Header from './Header';
 import '@ant-design/v5-patch-for-react-19';
+
+const { useBreakpoint } = Grid;
 
 type MenuItem = Exclude<Required<MenuProps>['items'], undefined>[number];
 
 // Combined Menu Component
 const MainMenu: React.FC = () => {
   const [current, setCurrent] = useState('beranda');
+  const screens = useBreakpoint();
 
   const leftItems: MenuItem[] = [
     {
@@ -63,14 +67,26 @@ const MainMenu: React.FC = () => {
     setCurrent(e.key);
   };
 
+  const menu = (
+    <Menu onClick={onClick} selectedKeys={[current]} mode="vertical" items={allItems} />
+  );
+
   return (
-    <Menu 
-      onClick={onClick} 
-      selectedKeys={[current]} 
-      mode="horizontal" 
-      items={allItems} 
-      style={{ flex: 1 }}
-    />
+    <>
+      {screens.md ? (
+        <Menu 
+          onClick={onClick} 
+          selectedKeys={[current]} 
+          mode="horizontal" 
+          items={allItems} 
+          style={{ flex: 1 }}
+        />
+      ) : (
+        <Dropdown menu={{ items: allItems, onClick }} trigger={['click']}>
+          <Button type="primary" icon={<MenuOutlined />} />
+        </Dropdown>
+      )}
+    </>
   );
 };
 

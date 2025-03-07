@@ -146,14 +146,22 @@ const App: React.FC = () => {
     return (
         <>
             <Menu />
-            <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}>
+            <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px', background : '#f5f5f5' }}>
                 <Card title="Daftar Permohonan" style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginLeft: '50px', marginRight: '50px', marginBottom: '20px' }}>
                         <Button type="primary" onClick={() => window.location.href = '/pemohon/pengajuan'} icon={<PlusOutlined />}>
                             Tambahkan Pengajuan Permohonan
                         </Button>
                     </div>
-                    <Table<DataType> columns={columns} dataSource={data} loading={loading} />
+                    <div style={{ overflowX: 'auto', width: '100%' }}>
+                        <Table<DataType>
+                            columns={columns}
+                            dataSource={data}
+                            loading={loading}
+                            scroll={{ x: 'max-content' }}
+                            style={{ minWidth: '800px' }}
+                        />
+                    </div>
                 </Card>
             </div>
         </>
