@@ -111,6 +111,25 @@ const PermohonanDetailPage: React.FC = () => {
         const status = currentPermohonan.status || 'belumdisetujui';
         const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'processing' };
         
+        const getPresignedUrl = async (bucket: string, filename: string) => {
+          console.log("🔍 Mengirim request untuk presigned URL:", { bucket, filename });
+        
+          try {
+            const response = await axios.get("http://localhost:3001/api/minio/presigned-url", {
+              params: { bucket, filename } // Kirim apa adanya
+            });
+        
+            console.log("✅ Response dari server:", response.data);
+            return response.data.success ? response.data.url : null;
+          } catch (error) {
+            console.error(
+              "❌ Gagal mendapatkan presigned URL",
+              error.response ? error.response.data : error.message
+            );
+            return null;
+          }
+        };
+        
           return (
             <>
            <Menu />
@@ -263,13 +282,20 @@ const PermohonanDetailPage: React.FC = () => {
                         <List
                           grid={{ gutter: 16, column: 3 }}
                           dataSource={[
-                            { title: "Undangan dari Luar Negeri", url: currentPermohonan.undangan },
-                            { title: "Jadwal Agenda", url: currentPermohonan.agenda },
-                            { title: "Kerangka Acuan / TOR", url: currentPermohonan.tor },
+                            { title: "Undangan dari Luar Negeri", url: currentPermohonan.undangan, bucket: "undangan-bucket" },
+                            { title: "Jadwal Agenda", url: currentPermohonan.agenda, bucket: "agenda-bucket" },
+                            { title: "Kerangka Acuan / TOR", url: currentPermohonan.tor, bucket: "tor-bucket" },
                           ]}
                           renderItem={(item) => (
                             <List.Item>
-                              <Card hoverable size="small" onClick={() => item.url && window.open(item.url, "_blank")}>
+                              <Card hoverable size="small" 
+                               onClick={async () => {
+                                if (item.url) {
+                                  const url = await getPresignedUrl(item.bucket, item.url.split("/").pop());
+                                  if (url) window.open(url, "_blank");
+                                }
+                              }}
+                            >
                                 <Card.Meta 
                                   avatar={<DownloadOutlined />} 
                                   title={item.title} 
@@ -293,12 +319,18 @@ const PermohonanDetailPage: React.FC = () => {
                         <List
                           grid={{ gutter: 16, column: 3 }}
                           dataSource={[
-                            { title: "File KTP", url: pemohon.filektp },
-                            { title: "File Kartu Pegawai", url: pemohon.filekarpeg },
+                            { title: "File KTP", url: pemohon.filektp, bucket: "ktp-bucket" },
+                            { title: "File Kartu Pegawai", url: pemohon.filekarpeg, bucket: "karpeg-bucket" },
                           ]}
                           renderItem={(item) => (
                             <List.Item>
-                              <Card hoverable size="small" onClick={() => item.url && window.open(item.url, "_blank")}>
+                              <Card hoverable size="small" 
+                             onClick={async () => {
+                              if (item.url) {
+                                const url = await getPresignedUrl(item.bucket, item.url.split("/").pop());
+                                if (url) window.open(url, "_blank");
+                              }
+                            }}>
                                 <Card.Meta 
                                   avatar={<DownloadOutlined />} 
                                   title={item.title} 
