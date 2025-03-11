@@ -172,44 +172,6 @@ const DataDiriPemohon: React.FC = () => {
     }
   };
 
-  const handlePreview = async (file) => {
-    try {
-      const response = await axios.get("http://localhost:3001/get-file-url", {
-        params: { filePath: file.url },
-      });
-  
-      if (response.data.url) {
-        window.open(response.data.url, "_blank"); // Buka file
-      } else {
-        message.error("Gagal mendapatkan URL file");
-      }
-    } catch (error) {
-      message.error("Terjadi kesalahan saat membuka file");
-    }
-  };
-
-  const handleDownload = async (bucket: string, filePath: string) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3001/get-file-url`
-      );
-      const data = await response.json();
-  
-      if (data.url) {
-        const link = document.createElement("a");
-        link.href = data.url;
-        link.setAttribute("download", filePath.split("/").pop()); // Nama file di download
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        message.error("Gagal mendapatkan URL file");
-      }
-    } catch (err) {
-      console.error("Error:", err);
-      message.error("Terjadi kesalahan saat mengunduh file");
-    }
-  };
   
   const getPresignedUrl = async (bucket: string, filename: string) => {
     console.log("🔍 Mengirim request untuk presigned URL:", { bucket, filename });

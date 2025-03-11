@@ -9,7 +9,7 @@ import {
 } from '../controllers/permohonan.controller';
 import { cors } from '@elysiajs/cors';
 import { authMiddleware } from '../middleware/authMiddleware';
-
+import { PermohonanStatus } from "@prisma/client"; // Pastikan enum diambil dari Prisma
 
 // Create router for permohonan
 const permohonanRouter = new Elysia({ prefix: '/permohonan' });
@@ -89,6 +89,7 @@ permohonanRouter.post(
 // Update permohonan by ID (requires authentication)
 permohonanRouter.patch('/:id', authMiddleware(async ({ params: { id }, body }) => {
     try {
+        // Pastikan data sesuai dengan model
         const data = body as {
             id_pemohon?: number;
             negaratujuan?: string;
@@ -101,7 +102,18 @@ permohonanRouter.patch('/:id', authMiddleware(async ({ params: { id }, body }) =
             undangan?: string;
             agenda?: string;
             tor?: string;
+            status?: string; // ✅ Tambahkan status
         };
+
+        // Konversi status string menjadi enum Prisma
+          let statusEnum: PermohonanStatus | undefined;
+        // Jika ada status, validasi dan ubah ke enum Prisma
+        if (data.status) {
+            if (!Object.values(PermohonanStatus).includes(data.status as PermohonanStatus)) {
+                return { success: false, message: "Invalid status value" };
+            }
+        }
+
         return await updatePermohonan(id, data);
     } catch (error) {
         console.error(`Error updating permohonan: ${error}`);

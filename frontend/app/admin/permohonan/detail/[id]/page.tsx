@@ -8,7 +8,7 @@ import {
     FileOutlined 
 } from '@ant-design/icons';
 import Menu from '../../../../../components/MenuAdmin';
-import { useParams } from "next/navigation";
+import { useParams , useRouter } from "next/navigation";
 import axios from 'axios';
 
 const { Title, Text } = Typography;
@@ -28,6 +28,7 @@ interface PermohonanDetailResponse {
       undangan: string;
       agenda: string;
       tor: string;
+      status : string;
       createdat: string;
       updatedat: string;
       pemohon: {
@@ -49,30 +50,30 @@ interface PermohonanDetailResponse {
 const PermohonanDetailPage: React.FC = () => {
         const params = useParams();
         const id = params.id as string;
+        const router = useRouter();
         const [detail, setDetail] = useState(null);
         const [loading, setLoading] = useState(true);
 
+        
+
         useEffect(() => {
-            
-
-            const fetchPermohonanDetail = async () => {
-                try {
-                    const response = await axios.get<PermohonanDetailResponse>(`http://localhost:3001/api/permohonan/${id}`);
-
-                    if (response.data.success) {
-                        setDetail(response.data);
-                    } else {
-                        message.error("Gagal mengambil data permohonan.");
-                    }
-                } catch (error) {
-                    message.error("Terjadi kesalahan saat mengambil data permohonan.");
-                } finally {
-                    setLoading(false);
-                }
-            };
-
-            fetchPermohonanDetail();
-        }, [id]);
+          const fetchPermohonanDetail = async () => {
+            try {
+              const response = await axios.get<PermohonanDetailResponse>(`http://localhost:3001/api/permohonan/${id}`);
+              if (response.data.success) {
+                setDetail(response.data);
+              } else {
+                message.error("Gagal mengambil data permohonan.");
+              }
+            } catch (error) {
+              message.error("Terjadi kesalahan saat mengambil data permohonan.");
+            } finally {
+              setLoading(false);
+            }
+          };
+        
+          fetchPermohonanDetail();
+        }, [id]); // 🔥 Tambahkan detail agar otomatis fetch ulang setelah update
 
         if (loading) {
             return <div>Loading...</div>;
@@ -98,6 +99,7 @@ const PermohonanDetailPage: React.FC = () => {
           ditolak: { text: 'Ditolak', status: 'error' },
           dalamproses: { text: 'Dalam Proses', status: 'warning' }
         };
+        
         
         // Map status values to Tag colors for the Tag in the information section
         const tagColorMap = {
@@ -129,6 +131,39 @@ const PermohonanDetailPage: React.FC = () => {
             return null;
           }
         };
+        const updateStatus = async (status: string) => {
+          if (!id) {
+            message.error("ID permohonan tidak ditemukan");
+            return;
+          }
+
+          const token = localStorage.getItem("authToken");
+          console.log("🔹 Token sebelum dikirim:", token);
+        
+          try {
+            const response = await fetch(`http://localhost:3001/api/permohonan/${id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization":`Bearer ${token}`,
+              },
+              body: JSON.stringify({ status }),
+            });
+        
+            const data = await response.json();
+            console.log("Response dari backend:", data); // 🔍 Debug response
+        
+            if (data.success) {
+              message.success(`Permohonan telah ${status === "disetujui" ? "disetujui" : "ditolak"}`);
+              window.location.reload(); // Reload halaman untuk memperbarui data
+            } else {
+              message.error("Gagal mengupdate status");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            message.error("Terjadi kesalahan saat mengupdate status");
+          }
+        };
         
           return (
             <>
@@ -147,10 +182,17 @@ const PermohonanDetailPage: React.FC = () => {
                       <Badge status={statusInfo.status} text={statusInfo.text} />
                       </Space>
                       <Space>
-                      <Button type="primary" style={{ backgroundColor: '#52c41a' }}>
+                      <Button 
+                        type="primary" 
+                        style={{ backgroundColor: "#52c41a" }}
+                        onClick={() => updateStatus("disetujui")}
+                      >
                         Setuju
                       </Button>
-                      <Button danger>
+                      <Button 
+                        danger
+                        onClick={() => updateStatus("ditolak")}
+                      >
                         Tolak
                       </Button>
                       </Space>

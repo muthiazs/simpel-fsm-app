@@ -1,7 +1,7 @@
 import prisma from '../../prisma/client';
 import { uploadToMinio } from './upload.controller';
 import type { Context } from 'elysia'; // or the appropriate library providing Context
-
+import { PermohonanStatus } from "@prisma/client"; // Pastikan enum diambil dari Prisma
 /**
  * ✅ Get all permohonan (Tanpa filter)
  */
@@ -255,6 +255,8 @@ export const createPermohonan = async (options: {
 /**
  * Update a permohonan
  */
+
+
 export async function updatePermohonan(id: string, data: {
     id_pemohon?: number;
     negaratujuan?: string;
@@ -267,10 +269,15 @@ export async function updatePermohonan(id: string, data: {
     undangan?: string;
     agenda?: string;
     tor?: string;
+    status?: string;
 }) {
     try {
+        console.log("📝 Updating permohonan with ID:", id);
+        console.log("📦 Update data received:", data);
+
         const permohonanId = parseInt(id);
         if (isNaN(permohonanId)) {
+            console.error("❌ Invalid ID format:", id);
             return { success: false, message: "Invalid permohonan ID format" };
         }
 
@@ -279,16 +286,47 @@ export async function updatePermohonan(id: string, data: {
         });
 
         if (!existingPermohonan) {
+            console.error("❌ Permohonan not found for ID:", permohonanId);
             return { success: false, message: "Permohonan not found" };
         }
 
+        console.log("🔍 Found existing permohonan:", existingPermohonan);
+
+        let statusEnum: PermohonanStatus | undefined;
+        if (data.status) {
+            console.log("📊 Processing status update:", data.status);
+            if (Object.values(PermohonanStatus).includes(data.status as PermohonanStatus)) {
+                statusEnum = data.status as PermohonanStatus;
+            } else {
+                console.error("❌ Invalid status value:", data.status);
+                return { success: false, message: "Invalid status value" };
+            }
+        }
+
+        const updateData = {
+            id_pemohon: data.id_pemohon ?? undefined,
+            negaratujuan: data.negaratujuan ?? undefined,
+            instansitujuan: data.instansitujuan ?? undefined,
+            keperluan: data.keperluan ?? undefined,
+            tglmulai: data.tglmulai ?? undefined,
+            tglselesai: data.tglselesai ?? undefined,
+            biaya: data.biaya ?? undefined,
+            rencana: data.rencana ?? undefined,
+            undangan: data.undangan ?? undefined,
+            agenda: data.agenda ?? undefined,
+            tor: data.tor ?? undefined,
+            status: statusEnum,
+            updatedat: new Date(),
+        };
+
+        console.log("🔄 Applying updates with data:", updateData);
+
         const permohonan = await prisma.permohonan.update({
             where: { id_permohonan: permohonanId },
-            data: {
-                ...data,
-                updatedat: new Date(),
-            },
+            data: updateData,
         });
+
+        console.log("✅ Update successful. Updated permohonan:", permohonan);
 
         return {
             success: true,
@@ -296,7 +334,7 @@ export async function updatePermohonan(id: string, data: {
             data: permohonan,
         };
     } catch (error) {
-        console.error(`Error updating permohonan: ${error}`);
+        console.error("❌ Error updating permohonan:", error);
         return { success: false, message: "Error updating permohonan" };
     }
 }
