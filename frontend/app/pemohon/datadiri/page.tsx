@@ -211,6 +211,24 @@ const DataDiriPemohon: React.FC = () => {
     }
   };
   
+  const getPresignedUrl = async (bucket: string, filename: string) => {
+    console.log("🔍 Mengirim request untuk presigned URL:", { bucket, filename });
+  
+    try {
+      const response = await axios.get("http://localhost:3001/api/minio/presigned-url", {
+        params: { bucket, filename } // Kirim apa adanya
+      });
+  
+      console.log("✅ Response dari server:", response.data);
+      return response.data.success ? response.data.url : null;
+    } catch (error) {
+      console.error(
+        "❌ Gagal mendapatkan presigned URL",
+        error.response ? error.response.data : error.message
+      );
+      return null;
+    }
+  };
   
   
 
@@ -336,17 +354,16 @@ const DataDiriPemohon: React.FC = () => {
                       message.error(`${file.name} bukan file PDF`);
                     }
                     return isPdf || Upload.LIST_IGNORE;
-                  }}
-                  onPreview={(file) => handleDownload("ktp-bucket", file.name)} // Klik preview untuk download
-                >
+                    }}
+                    onPreview={async (file) => {
+                    if (file.url) {
+                      const url = await getPresignedUrl("ktp-bucket", file.url.split("/").pop());
+                      if (url) window.open(url, "_blank");
+                    }
+                    }}
+                  >
                   <Button icon={<UploadOutlined />}>Upload KTP (PDF)</Button>
                 </Upload>
-
-                {fileList.ktpFile.length > 0 && (
-                  <Button type="link" onClick={() => handleDownload("ktp-bucket", fileList.ktpFile[0].name)}>
-                    Download KTP
-                  </Button>
-                )}
               </Form.Item>
               <Form.Item
                 label="Scan Karpeg"
@@ -370,16 +387,15 @@ const DataDiriPemohon: React.FC = () => {
                     }
                     return isPdf || Upload.LIST_IGNORE;
                   }}
-                  onPreview={(file) => handleDownload("karpeg-bucket", file.name)}
+                  onPreview={async (file) => {
+                    if (file.url) {
+                      const url = await getPresignedUrl("karpeg-bucket", file.url.split("/").pop());
+                      if (url) window.open(url, "_blank");
+                    }
+                    }}
                 >
                   <Button icon={<UploadOutlined />}>Upload Kartu Pegawai (PDF)</Button>
                 </Upload>
-
-                {fileList.karpegFile.length > 0 && (
-                  <Button type="link" onClick={() => handleDownload("karpeg-bucket", fileList.karpegFile[0].name)}>
-                    Download Karpeg
-                  </Button>
-                )}
               </Form.Item>
 
               </Col>
