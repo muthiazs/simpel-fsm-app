@@ -266,63 +266,43 @@ const getPresignedUrl = async (bucket: string, filename: string) => {
             {/* Dokumen Upload */}
             <Col span={24}>
               <Card
-               title={<Space><FileOutlined /><span>Dokumen Permohonan</span></Space>}
-               hoverable
-               variant = "outlined"
-               style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
-               >
+                title={
+                  <Space>
+                    <FileOutlined />
+                    <span>Dokumen Permohonan</span>
+                  </Space>
+                }
+                hoverable
+                variant="outlined"
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  boxShadow: "0 4px 6px 0 rgba(0, 0, 0, 0.1)",
+                }}
+              >
                 <List
                   grid={{ gutter: 16, column: 3 }}
                   dataSource={[
-                    { title: "Undangan dari Luar Negeri", url: currentPermohonan.undangan },
-                    { title: "Jadwal Agenda", url: currentPermohonan.agenda },
-                    { title: "Kerangka Acuan / TOR", url: currentPermohonan.tor },
+                    { title: "Undangan dari Luar Negeri", url: currentPermohonan.undangan, bucket: "undangan-bucket" },
+                    { title: "Jadwal Agenda", url: currentPermohonan.agenda, bucket: "agenda-bucket" },
+                    { title: "Kerangka Acuan / TOR", url: currentPermohonan.tor, bucket: "tor-bucket" },
                   ]}
                   renderItem={(item) => (
                     <List.Item>
-                    <Card
-                      hoverable
-                      size="small"
-                      onClick={async () => {
-                        if (item.url) {  // Ubah dari item.path ke item.url
-                          const url = await getPresignedUrl("undangan-bucket", item.url.split("/").pop());
-                          if (url) window.open(url, "_blank");
-                        }
-                      }}                      
-                    >
-                      <Card.Meta
-                        avatar={<DownloadOutlined />}
-                        title={item.title}
-                        description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"}
-                      />
-                    </Card>
-                  </List.Item>
-                  )}
-                />
-              </Card>
-            </Col>
-            
-            {/* Dokumen Identitas */}
-            <Col span={24}>
-              <Card
-               title={<Space><FileOutlined /><span>Dokumen Identitas</span></Space>}
-               hoverable
-               variant = "outlined"
-               style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
-               >
-                <List
-                  grid={{ gutter: 16, column: 3 }}
-                  dataSource={[
-                    { title: "File KTP", url: pemohon.filektp },
-                    { title: "File Kartu Pegawai", url: pemohon.filekarpeg },
-                  ]}
-                  renderItem={(item) => (
-                    <List.Item>
-                      <Card hoverable size="small" onClick={() => item.url && window.open(item.url, "_blank")}>
-                        <Card.Meta 
-                          avatar={<DownloadOutlined />} 
-                          title={item.title} 
-                          description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"} 
+                      <Card
+                        hoverable
+                        size="small"
+                        onClick={async () => {
+                          if (item.url) {
+                            const url = await getPresignedUrl(item.bucket, item.url.split("/").pop());
+                            if (url) window.open(url, "_blank");
+                          }
+                        }}
+                      >
+                        <Card.Meta
+                          avatar={<DownloadOutlined />}
+                          title={item.title}
+                          description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"}
                         />
                       </Card>
                     </List.Item>
@@ -330,6 +310,55 @@ const getPresignedUrl = async (bucket: string, filename: string) => {
                 />
               </Card>
             </Col>
+
+                        
+            {/* Dokumen Identitas */}
+            <Col span={24}>
+              <Card
+                title={
+                  <Space>
+                    <FileOutlined />
+                    <span>Dokumen Identitas</span>
+                  </Space>
+                }
+                hoverable
+                variant="outlined"
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  boxShadow: "0 4px 6px 0 rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <List
+                  grid={{ gutter: 16, column: 2 }}
+                  dataSource={[
+                    { title: "File KTP", url: pemohon.filektp, bucket: "ktp-bucket" },
+                    { title: "File Kartu Pegawai", url: pemohon.filekarpeg, bucket: "karpeg-bucket" },
+                  ]}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <Card
+                        hoverable
+                        size="small"
+                        onClick={async () => {
+                          if (item.url) {
+                            const url = await getPresignedUrl(item.bucket, item.url.split("/").pop());
+                            if (url) window.open(url, "_blank");
+                          }
+                        }}
+                      >
+                        <Card.Meta
+                          avatar={<DownloadOutlined />}
+                          title={item.title}
+                          description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"}
+                        />
+                      </Card>
+                    </List.Item>
+                  )}
+                />
+              </Card>
+            </Col>
+
           </Row>
         </Space>
       </div>

@@ -8,4 +8,4 @@ const MinioClient = new Minio.Client({
   secretKey: "minioadmin",
 });
 
-export default MinioClient;
+export default MinioClient; 
