@@ -110,6 +110,28 @@ const tagColorMap = {
 const status = currentPermohonan.status || 'belumdisetujui';
 const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'processing' };
 
+const getPresignedUrl = async (bucket: string, filename: string) => {
+  console.log("🔍 Mengirim request untuk presigned URL:", { bucket, filename });
+
+  try {
+    const response = await axios.get("http://localhost:3001/api/minio/presigned-url", {
+      params: { bucket, filename } // Kirim apa adanya
+    });
+
+    console.log("✅ Response dari server:", response.data);
+    return response.data.success ? response.data.url : null;
+  } catch (error) {
+    console.error(
+      "❌ Gagal mendapatkan presigned URL",
+      error.response ? error.response.data : error.message
+    );
+    return null;
+  }
+};
+
+
+
+
   return (
     <>
    <Menu />
@@ -258,14 +280,23 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                   ]}
                   renderItem={(item) => (
                     <List.Item>
-                      <Card hoverable size="small" onClick={() => item.url && window.open(item.url, "_blank")}>
-                        <Card.Meta 
-                          avatar={<DownloadOutlined />} 
-                          title={item.title} 
-                          description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"} 
-                        />
-                      </Card>
-                    </List.Item>
+                    <Card
+                      hoverable
+                      size="small"
+                      onClick={async () => {
+                        if (item.url) {  // Ubah dari item.path ke item.url
+                          const url = await getPresignedUrl("undangan-bucket", item.url.split("/").pop());
+                          if (url) window.open(url, "_blank");
+                        }
+                      }}                      
+                    >
+                      <Card.Meta
+                        avatar={<DownloadOutlined />}
+                        title={item.title}
+                        description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"}
+                      />
+                    </Card>
+                  </List.Item>
                   )}
                 />
               </Card>
