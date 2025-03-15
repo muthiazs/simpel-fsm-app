@@ -83,7 +83,7 @@ const App: React.FC = () => {
             render: (_, record) => (
                 <Space size="middle">
                     <a onClick={() => window.location.href = `/pemohon/permohonan/detail/${record.key}`}>Detail</a>
-                    <a>Delete</a>
+                    {/* <a>Delete</a> */}
                     {record.status === 'disetujui' && <a>Upload Surat Kemensetneg</a>}
                 </Space>
             ),

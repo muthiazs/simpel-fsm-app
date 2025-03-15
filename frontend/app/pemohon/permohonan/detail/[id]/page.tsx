@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import { useParams } from "next/navigation";
 import axios from "axios";
-import { Card, Space, Row, Col, Typography, List, Badge, message } from "antd";
-import { UserOutlined, GlobalOutlined, FileOutlined, DownloadOutlined } from "@ant-design/icons";
+import { Card, Space, Row, Col, Typography, List, Badge, message , Button } from "antd";
+import { UserOutlined, GlobalOutlined, FileOutlined, DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import Menu from "../../../../../components/Menu";
+import Link from "antd/es/typography/Link";
 
 const { Title, Text } = Typography;
 
@@ -46,6 +48,8 @@ const PermohonanDetailPage: React.FC = () => {
   const id = params.id as string;
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
 
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
@@ -138,20 +142,26 @@ const getPresignedUrl = async (bucket: string, filename: string) => {
     <div style={{ display: "flex", flexDirection: "column", width: "100%", background: "#ffffff" }}>
       <div style={{ padding: "24px" }}>
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
-          <Card 
-          hoverable
-          variant = "outlined"
-          style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
-          >
-          <Space align="center" size="middle">
-              <Title level={3}>Detail Permohonan</Title>
-              <Badge status={statusInfo.status} text={statusInfo.text} />
-            </Space>
-            <Text type="secondary" style={{ display: "block", marginTop: "8px" }}>
-              Dibuat: {formatDate(currentPermohonan.createdat)} • Diperbarui: {formatDate(currentPermohonan.updatedat)}
-            </Text>
-          </Card>
-          
+        <Card 
+      hoverable
+      variant="outlined"
+      style={{ height: '100%', width: '100%', boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}
+    >
+      <Space align="center" size="middle" style={{ display: 'flex', alignItems: 'center' }}>
+        {/* Gunakan button untuk navigasi kembali */}
+        <Button 
+          type="text" 
+          icon={<ArrowLeftOutlined style={{ fontSize: '20px' }} />} 
+          onClick={() => router.push('/pemohon/permohonan')}
+        />
+
+        <Title level={3} style={{ margin: 0 }}>Detail Permohonan</Title>
+        <Badge status={statusInfo.status} text={statusInfo.text} />
+      </Space>
+      <Text type="secondary" style={{ display: "block", marginTop: "8px" }}>
+        Dibuat: {formatDate(currentPermohonan.createdat)} • Diperbarui: {formatDate(currentPermohonan.updatedat)}
+      </Text>
+    </Card>
           <Row gutter={[24, 24]}>
             {/* Data Diri */}
             <Col xs={24} lg={12}>

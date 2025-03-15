@@ -5,7 +5,8 @@ import {
     DownloadOutlined, 
     UserOutlined, 
     GlobalOutlined, 
-    FileOutlined 
+    FileOutlined, 
+    ArrowLeftOutlined
 } from '@ant-design/icons';
 import Menu from '../../../../../components/MenuAdmin';
 import { useParams , useRouter } from "next/navigation";
@@ -73,7 +74,7 @@ const PermohonanDetailPage: React.FC = () => {
           };
         
           fetchPermohonanDetail();
-        }, [id]); // 🔥 Tambahkan detail agar otomatis fetch ulang setelah update
+        }, [id]); 
 
         if (loading) {
             return <div>Loading...</div>;
@@ -177,10 +178,17 @@ const PermohonanDetailPage: React.FC = () => {
                     style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
                     >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                      <Space align="center" size="middle">
-                      <Title level={3}>Detail Permohonan</Title>
+                    <Space align="center" size="middle" style={{ display: 'flex', alignItems: 'center' }}>
+                      {/* Gunakan button untuk navigasi kembali */}
+                      <Button 
+                        type="text" 
+                        icon={<ArrowLeftOutlined style={{ fontSize: '20px' }} />} 
+                        onClick={() => router.push('/admin/permohonan')}
+                      />
+
+                      <Title level={3} style={{ margin: 0 }}>Detail Permohonan</Title>
                       <Badge status={statusInfo.status} text={statusInfo.text} />
-                      </Space>
+                    </Space>
                       <Space>
                       <Button 
                         type="primary" 

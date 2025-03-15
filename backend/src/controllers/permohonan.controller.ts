@@ -18,6 +18,8 @@ export async function getPermohonan() {
                 tglmulai: true,
                 tglselesai: true,
                 biaya: true,
+                status  : true,
+                rencana: true,
                 createdat: true,
                 updatedat: true,
                 pemohon: {
@@ -63,6 +65,7 @@ export async function getPermohonanById(id_permohonan: string) {
                 undangan: true,
                 agenda: true,
                 tor: true,
+                status: true,
                 createdat: true,
                 updatedat: true,
                 pemohon: {
@@ -144,6 +147,8 @@ export const getPermohonanByUserId = async (id_user: number) => {
           undangan: true,
           agenda: true,
           tor: true,
+          status: true,
+          createdat: true,
         },
         orderBy: { createdat: 'desc' },
       })

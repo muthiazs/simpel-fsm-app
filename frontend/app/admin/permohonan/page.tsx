@@ -22,7 +22,8 @@ const statusConfig = {
     belumdisetujui: { text: 'BELUM DISETUJUI', color: 'blue' },
     disetujui: { text: 'DISETUJUI', color: 'green' },
     ditolak: { text: 'DITOLAK', color: 'red' },
-    dalamproses: { text: 'DALAM PROSES', color: 'orange' }
+    dalamproses: { text: 'DALAM PROSES', color: 'orange' },
+    tidakdiketahui: { text: 'TIDAK DIKETAHUI', color: 'gray' }, // ✅ Tambahkan ini
 };
 
 const columns: TableProps<DataType>['columns'] = [
@@ -54,18 +55,20 @@ const columns: TableProps<DataType>['columns'] = [
         key: 'waktuBerakhir',
     },
     {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => {
-                const config = statusConfig[status] || { text: status.toUpperCase(), color: 'default' };
-                return (
-                    <Tag color={config.color} key={status}>
-                        {config.text}
-                    </Tag>
-                );
-            },
- },
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        render: (status) => {
+            if (!status) return <Tag color="default">TIDAK DIKETAHUI</Tag>;
+    
+            const config = statusConfig[status] || { text: status.toUpperCase(), color: 'default' };
+            return (
+                <Tag color={config.color} key={status}>
+                    {config.text}
+                </Tag>
+            );
+        },
+    },
     {
         title: 'Aksi',
         key: 'aksi',
@@ -104,8 +107,9 @@ const App: React.FC = () => {
                     instansiTujuan: item.instansitujuan || '-',
                     waktuDimulai: item.tglmulai ? new Date(item.tglmulai).toLocaleDateString() : '-',
                     waktuBerakhir: item.tglselesai ? new Date(item.tglselesai).toLocaleDateString() : '-',
-                    status: item.status || 'belumdisetujui', // Use actual status from DB
+                    status: item.status || 'tidakdiketahui', // ✅ Pastikan status tidak undefined
                 }));
+                
 
                 setData(permohonanData);
             } catch (error: any) {
