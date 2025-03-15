@@ -192,13 +192,35 @@ const PermohonanDetailPage: React.FC = () => {
                       <Space>
                       <Button 
                         type="primary" 
-                        style={{ backgroundColor: "#52c41a" }}
+                        style={{ 
+                          backgroundColor: currentPermohonan.status === "dalamproses"  ? "#d9d9d9" : "#52c41a", 
+                          color: "#fff", 
+                          cursor: currentPermohonan.status === "dalamproses" ? "not-allowed" : "pointer" 
+                        }}
                         onClick={() => updateStatus("disetujui")}
                       >
                         Setuju
                       </Button>
                       <Button 
+                        type="primary" 
+                        style={{ 
+                          backgroundColor: currentPermohonan.status === "belumdisetujui" || currentPermohonan.status === "ditolak" ? "#d9d9d9" : "#060270",
+                          color: "#fff",
+                          cursor: "not-allowed"
+                        }}
+                        disabled={currentPermohonan.status === "belumdisetujui" || currentPermohonan.status === "ditolak"}
+                        onClick={() => updateStatus("dalamproses")}
+                      >
+                        Proses Permohonan
+                      </Button>
+                      <Button 
                         danger
+                        style={{ 
+                          backgroundColor: currentPermohonan.status === "dalamproses"  ? "#d9d9d9" : "#ff4d4f", 
+                          color: "#fff", 
+                          cursor: currentPermohonan.status === "dalamproses" ? "not-allowed" : "pointer" 
+                        }}
+                        disabled={currentPermohonan.status === "dalamproses"}
                         onClick={() => updateStatus("ditolak")}
                       >
                         Tolak
