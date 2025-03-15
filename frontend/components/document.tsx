@@ -51,6 +51,8 @@ const GenerateDocument: React.FC<GenerateDocumentProps> = ({ permohonanId, disab
     if (downloadUrl) {
       saveAs(downloadUrl, filename || 'permohonan_izin.docx');
     }
+    console.log('Download URL:', downloadUrl);
+    console.log('Filename:', filename);
   };
 
   return (

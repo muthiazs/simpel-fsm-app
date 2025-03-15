@@ -1,4 +1,3 @@
-// /routes/generateDocumentRoute.ts
 import { Elysia } from 'elysia';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import * as mammoth from 'mammoth';
@@ -53,24 +52,54 @@ const generateDocumentRoute = new Elysia()
       const doc = new Docxtemplater(zip, {
         paragraphLoop: true,
         linebreaks: true,
+        delimiters: {
+            start: '{',
+            end: '}',
+          }
       });
       
       // Render the document with data
-      doc.render({
-        'Nama + Gelar Lengkap': pemohon.nama,
-        'NIP/NIM': pemohon.nipnim,
-        'Pangkat/Gol': pemohon.pangkatgol,
-        'Jabatan': pemohon.jabatan,
-        'NIK': pemohon.nik,
-        'Email': pemohon.email || '',
-        'Nomor WA': pemohon.nohp,
-        'Keperluan': permohonanData.keperluan,
-        'Waktu Kegiatan': formattedDateRange,
-        'Instansi Tujuan': permohonanData.instansitujuan,
-        'Negara Tujuan': permohonanData.negaratujuan,
-        'Kota Tujuan': permohonanData.kotatujuan || permohonanData.negaratujuan,
-        'No Paspor': pemohon.nopaspor,
-        'Perkiraan Biaya (Rupiah)': permohonanData.biaya,
+      try {
+        doc.render({
+          nama: pemohon.nama,
+          nipnim: pemohon.nipnim,
+          pangkatgol: pemohon.pangkatgol,
+          jabatan: pemohon.jabatan,
+          nik: pemohon.nik,
+          email: pemohon.email || '',
+          nohp: pemohon.nohp,
+          keperluan: permohonanData.keperluan,
+          tglmulai: startDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+          tglselesai: endDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+          instansitujuan: permohonanData.instansitujuan,
+          negaratujuan: permohonanData.negaratujuan,
+          kotatujuan: permohonanData.kotatujuan || permohonanData.negaratujuan,
+          nopaspor: pemohon.nopaspor,
+          biaya: permohonanData.biaya,
+          tglsurat: permohonanData.createdat
+        });
+      } catch (error) {
+        console.error('Error rendering document:', error);
+        throw error;
+      }
+
+      console.log('Template content loaded, size:', content.length);
+      console.log('Data being applied:', {
+        nama :pemohon.nama,
+        nipnim: pemohon.nipnim,
+        pangkatgol: pemohon.pangkatgol,
+        jabatan: pemohon.jabatan,
+        nik: pemohon.nik,
+        email: pemohon.email || '',
+        nohp: pemohon.nohp,
+        keperluan: permohonanData.keperluan,
+        tglmulai: startDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        tglselesai: endDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        instansitujuan: permohonanData.instansitujuan,
+        negaratujuan: permohonanData.negaratujuan,
+        kotatujuan: permohonanData.kotatujuan || permohonanData.negaratujuan,
+        nopaspor: pemohon.nopaspor,
+        biaya: permohonanData.biaya,
       });
       
       // Get the zip file as binary content
