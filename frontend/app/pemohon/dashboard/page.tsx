@@ -195,55 +195,39 @@ const DashboardPemohon: React.FC = () => {
 
                     {/* Quick Access Cards */}
                     <Col span={24}>
-                    <Row gutter={[24, 24]}>
-                        <Col xs={24} sm={8}>
-                        <Card 
+                      <Row gutter={[24, 24]} justify="space-between">
+                        <Col xs={24} sm={12}>
+                          <Card 
                             hoverable
                             variant="outlined"
-                            style={{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
-                        >
+                            style={{ height: '100%', width: '100%', boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}
+                          >
                             <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
-                            <FileAddOutlined style={{ fontSize: '32px', color: '#1890ff' }} />
-                            <Title level={4} style={{ margin: 0 }}>Ajukan Permohonan Baru</Title>
-                            <Button type="primary" icon={<RightOutlined />}>
-                                <a href="/pemohon/pengajuan">Ajukan Sekarang</a>
-                            </Button>
+                              <FileAddOutlined style={{ fontSize: '32px', color: '#1890ff' }} />
+                              <Title level={4} style={{ margin: 0 }}>Ajukan Permohonan Baru</Title>
+                              <Button type="primary" icon={<RightOutlined />} href="/pemohon/pengajuan">
+                                Ajukan Sekarang
+                              </Button>
                             </Space>
-                        </Card>
+                          </Card>
                         </Col>
 
-                        <Col xs={24} sm={8}>
-                        <Card
+                        <Col xs={24} sm={12}>
+                          <Card
                             hoverable
                             variant="outlined"
-                            style={{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
-                        >
+                            style={{ height: '100%', width: '100%', boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}
+                          >
                             <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
-                            <HistoryOutlined style={{ fontSize: '32px', color: '#1890ff' }} />
-                            <Title level={4} style={{ margin: 0 }}>Riwayat Pengajuan</Title>
-                            <Button type="primary" icon={<RightOutlined />}>
-                                <a href="/pemohon/permohonan">Lihat Riwayat</a>
-                            </Button>
+                              <HistoryOutlined style={{ fontSize: '32px', color: '#1890ff' }} />
+                              <Title level={4} style={{ margin: 0 }}>Riwayat Pengajuan</Title>
+                              <Button type="primary" icon={<RightOutlined />} href="/pemohon/permohonan">
+                                Lihat Riwayat
+                              </Button>
                             </Space>
-                        </Card>
+                          </Card>
                         </Col>
-
-                        <Col xs={24} sm={8}>
-                        <Card
-                            hoverable
-                            variant="outlined"
-                            style={{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
-                        >
-                            <Space direction="vertical" size="middle" align="center" style={{ width: '100%' }}>
-                            <DownloadOutlined style={{ fontSize: '32px', color: '#1890ff' }} />
-                            <Title level={4} style={{ margin: 0 }}>Unduh Surat</Title>
-                            <Button type="primary" icon={<RightOutlined />}>
-                                Unduh Sekarang
-                            </Button>
-                            </Space>
-                        </Card>
-                        </Col>
-                    </Row>
+                      </Row>
                     </Col>
                 </Row>
                 </Space>

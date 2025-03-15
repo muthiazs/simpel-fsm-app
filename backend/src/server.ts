@@ -13,6 +13,7 @@ import { Client } from "minio";
 import uploadRouter from './routes/uploadRoutes';
 import fileRouter from './routes/fileRoutes'
 import urlRouter from './routes/geturlminio';
+import generateDocumentRoute from './routes/generateDocumentRoute';
 
 export const MinioClient = new Client({
   endPoint: "127.0.0.1",
@@ -57,7 +58,8 @@ app.group('/api', (app) => {
   app.use(permohonanRouter)
   app.use(uploadRouter);
   app.use(fileRouter);
-  app.use(urlRouter)
+  app.use(urlRouter);
+  app.use(generateDocumentRoute);
   return app;
 });
 

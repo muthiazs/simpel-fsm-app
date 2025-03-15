@@ -75,7 +75,7 @@ const columns: TableProps<DataType>['columns'] = [
         render: (_, record) => (
             <Space size="middle">
                <a onClick={() => window.location.href = `/admin/permohonan/detail/${record.key}`}>Detail</a>
-                <a href={`/upload/${record.key}`}>Upload Dokumen</a>
+                {/* <a href={`/upload/${record.key}`}>Upload Dokumen</a> */}
             </Space>
         ),
     },

@@ -7,6 +7,7 @@ import { Card, Space, Row, Col, Typography, List, Badge, message , Button } from
 import { UserOutlined, GlobalOutlined, FileOutlined, DownloadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import Menu from "../../../../../components/Menu";
 import Link from "antd/es/typography/Link";
+import GenerateDocument from '../../../../../components/document';
 
 const { Title, Text } = Typography;
 
@@ -143,25 +144,33 @@ const getPresignedUrl = async (bucket: string, filename: string) => {
       <div style={{ padding: "24px" }}>
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <Card 
-      hoverable
-      variant="outlined"
-      style={{ height: '100%', width: '100%', boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}
-    >
-      <Space align="center" size="middle" style={{ display: 'flex', alignItems: 'center' }}>
-        {/* Gunakan button untuk navigasi kembali */}
-        <Button 
-          type="text" 
-          icon={<ArrowLeftOutlined style={{ fontSize: '20px' }} />} 
-          onClick={() => router.push('/pemohon/permohonan')}
-        />
+            hoverable
+            variant="outlined"
+            style={{ height: '100%', width: '100%', boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)' }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              {/* Kiri: Tombol kembali + Title */}
+              <Space align="center" size="middle">
+                <Button 
+                  type="text" 
+                  icon={<ArrowLeftOutlined style={{ fontSize: '20px' }} />} 
+                  onClick={() => router.push('/pemohon/permohonan')}
+                />
+                <Title level={3} style={{ margin: 0 }}>Detail Permohonan</Title>
+                <Badge status={statusInfo.status} text={statusInfo.text} />
+              </Space>
 
-        <Title level={3} style={{ margin: 0 }}>Detail Permohonan</Title>
-        <Badge status={statusInfo.status} text={statusInfo.text} />
-      </Space>
-      <Text type="secondary" style={{ display: "block", marginTop: "8px" }}>
-        Dibuat: {formatDate(currentPermohonan.createdat)} • Diperbarui: {formatDate(currentPermohonan.updatedat)}
-      </Text>
-    </Card>
+              {/* Kanan: Tombol Generate Surat */}
+              <div className="flex flex-wrap justify-end mb-4">
+                <GenerateDocument permohonanId={id} />
+              </div>
+      
+            </div>
+
+            <Text type="secondary" style={{ display: "block", marginTop: "8px" }}>
+              Dibuat: {formatDate(currentPermohonan.createdat)} • Diperbarui: {formatDate(currentPermohonan.updatedat)}
+            </Text>
+          </Card>
           <Row gutter={[24, 24]}>
             {/* Data Diri */}
             <Col xs={24} lg={12}>
