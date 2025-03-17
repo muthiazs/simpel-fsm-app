@@ -89,7 +89,7 @@ pemohonRouter.patch('/', async (context) => {
             return { success: false, message: "Internal server error" };
         }
     })(context);
-}, { type: "multipart" }); // Add multipart type configuration
+}); // Add multipart type configuration
 
 // Route to delete pemohon
 pemohonRouter.delete('/:id', async (req) => {

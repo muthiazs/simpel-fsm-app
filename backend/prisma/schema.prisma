@@ -62,6 +62,7 @@ enum PermohonanStatus {
   disetujui
   ditolak
   dalamproses
+  selesai
 }
 
 model permohonan {
@@ -78,6 +79,7 @@ model permohonan {
   undangan       String
   agenda         String
   tor            String
+  surat          String? 
   status         PermohonanStatus @default(belumdisetujui) // ✅ Menggunakan enum
   createdat      DateTime @default(now())
   updatedat      DateTime @updatedAt

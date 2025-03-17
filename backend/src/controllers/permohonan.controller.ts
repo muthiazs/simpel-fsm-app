@@ -260,8 +260,6 @@ export const createPermohonan = async (options: {
 /**
  * Update a permohonan
  */
-
-
 export async function updatePermohonan(id: string, data: {
     id_pemohon?: number;
     negaratujuan?: string;
@@ -271,11 +269,12 @@ export async function updatePermohonan(id: string, data: {
     tglselesai?: Date;
     biaya?: string;
     rencana?: string;
-    undangan?: string;
-    agenda?: string;
-    tor?: string;
+    undangan?: File;  // 📌 HARUS File, bukan string
+    agenda?: File;
+    tor?: File;
+    surat?: File;
     status?: string;
-}) {
+}) { 
     try {
         console.log("📝 Updating permohonan with ID:", id);
         console.log("📦 Update data received:", data);
@@ -308,6 +307,14 @@ export async function updatePermohonan(id: string, data: {
             }
         }
 
+        // 🔹 Upload file ke MinIO
+        const [undanganPath, agendaPath, torPath, suratPath] = await Promise.all([
+            data.undangan ? uploadToMinio(data.undangan, "undangan-bucket") : Promise.resolve(existingPermohonan.undangan),
+            data.agenda ? uploadToMinio(data.agenda, "agenda-bucket") : Promise.resolve(existingPermohonan.agenda),
+            data.tor ? uploadToMinio(data.tor, "tor-bucket") : Promise.resolve(existingPermohonan.tor),
+            data.surat ? uploadToMinio(data.surat, "surat-bucket") : Promise.resolve(existingPermohonan.surat),
+        ]);
+
         const updateData = {
             id_pemohon: data.id_pemohon ?? undefined,
             negaratujuan: data.negaratujuan ?? undefined,
@@ -317,9 +324,10 @@ export async function updatePermohonan(id: string, data: {
             tglselesai: data.tglselesai ?? undefined,
             biaya: data.biaya ?? undefined,
             rencana: data.rencana ?? undefined,
-            undangan: data.undangan ?? undefined,
-            agenda: data.agenda ?? undefined,
-            tor: data.tor ?? undefined,
+            undangan: undanganPath,
+            agenda: agendaPath,
+            tor: torPath,
+            surat: suratPath,
             status: statusEnum,
             updatedat: new Date(),
         };
@@ -343,6 +351,7 @@ export async function updatePermohonan(id: string, data: {
         return { success: false, message: "Error updating permohonan" };
     }
 }
+
 
 /**
  * Delete a permohonan

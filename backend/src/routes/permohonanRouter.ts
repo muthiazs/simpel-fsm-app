@@ -82,44 +82,56 @@ permohonanRouter.post(
             return { success: false, message: "Internal server error" };
         }
     }),
-    { type: "multipart" }
+
 );
 
 
 // Update permohonan by ID (requires authentication)
-permohonanRouter.patch('/:id', authMiddleware(async ({ params: { id }, body }) => {
-    try {
-        // Pastikan data sesuai dengan model
-        const data = body as {
-            id_pemohon?: number;
-            negaratujuan?: string;
-            instansitujuan?: string;
-            keperluan?: string;
-            tglmulai?: Date;
-            tglselesai?: Date;
-            biaya?: string;
-            rencana?: string;
-            undangan?: string;
-            agenda?: string;
-            tor?: string;
-            status?: string; // ✅ Tambahkan status
-        };
-
-        // Konversi status string menjadi enum Prisma
-          let statusEnum: PermohonanStatus | undefined;
-        // Jika ada status, validasi dan ubah ke enum Prisma
-        if (data.status) {
-            if (!Object.values(PermohonanStatus).includes(data.status as PermohonanStatus)) {
-                return { success: false, message: "Invalid status value" };
+permohonanRouter.patch('/:id', async (context) => {
+    return authMiddleware(async (ctx) => {
+        try {
+            if (!ctx.user || !ctx.user.id) {
+                return { success: false, message: "User not found" };
             }
-        }
 
-        return await updatePermohonan(id, data);
-    } catch (error) {
-        console.error(`Error updating permohonan: ${error}`);
-        return { success: false, message: 'Internal server error' };
-    }
-}));
+            const { id } = ctx.params;
+            const formData = ctx.body as {
+                id_pemohon?: number;
+                negaratujuan?: string;
+                instansitujuan?: string;
+                keperluan?: string;
+                tglmulai?: Date;
+                tglselesai?: Date;
+                biaya?: string;
+                rencana?: string;
+                undangan?: File; // ✅ Ubah ke tipe File
+                agenda?: File; // ✅ Ubah ke tipe File
+                tor?: File; // ✅ Ubah ke tipe File
+                status?: string;
+            };
+
+            console.log("Request received with data:", formData);
+
+            if (Object.keys(formData).length === 0) {
+                return { success: false, message: "At least one field is required to update" };
+            }
+
+            // ✅ Validasi status jika ada
+            if (formData.status) {
+                if (!Object.values(PermohonanStatus).includes(formData.status as PermohonanStatus)) {
+                    return { success: false, message: "Invalid status value" };
+                }
+            }
+
+            console.log("Fields are present. Updating permohonan...");
+
+            return await updatePermohonan(id, formData);
+        } catch (error) {
+            console.error(`Error handling PATCH request: ${error}`);
+            return { success: false, message: "Internal server error" };
+        }
+    })(context);
+});
 
 // Delete permohonan by ID (requires authentication)
 permohonanRouter.delete('/:id', authMiddleware(async ({ params: { id } }) => {
