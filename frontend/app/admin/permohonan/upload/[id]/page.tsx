@@ -1,29 +1,81 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, Space, Upload, Button, message, Typography } from 'antd';
-import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
-import Menu from '../../../../components/MenuAdmin';
+import { UploadOutlined } from '@ant-design/icons';
+import Menu from '../../../../../components/MenuAdmin';
+import { useParams , useRouter } from "next/navigation";
 
 const { Title, Text } = Typography;
 const { Dragger } = Upload;
 
 const App: React.FC = () => {
-    const handleUpload = (file: any) => {
-        message.success(`${file.name} file uploaded successfully`);
+    const params = useParams();
+    const id = params.id as string;
+    const router = useRouter();
+    const [file, setFile] = useState<File | null>(null);
+    const [loading, setLoading] = useState(false);
+    const permohonanId = "1"; // Ganti dengan ID permohonan yang sesuai
+
+    const handleUpload = (file: File) => {
+        setFile(file);
+        message.success(`${file.name} siap diunggah`);
         return false;
+        
     };
+
+    const token = localStorage.getItem("authToken");
+
+    const handleSubmit = async () => {
+        if (!file) {
+            message.error("Harap pilih file sebelum mengunggah");
+            return;
+        }
+    
+        setLoading(true);
+        const formData = new FormData();
+        formData.append("surat", file);
+        formData.append("status", "selesai"); // ✅ Tambahkan status
+    
+        // 🔍 Debugging: Cek isi FormData sebelum dikirim
+        console.log("📂 File yang dikirim:", file);
+        console.log("📦 FormData sebelum dikirim:", formData);
+    
+        try {
+            const response = await fetch(`http://localhost:3001/api/permohonan/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    // ❌ Jangan tambahkan 'Content-Type': 'multipart/form-data' karena otomatis diatur oleh FormData
+                },
+                body: formData
+            });
+    
+            if (!response.ok) {
+                throw new Error("Gagal memperbarui permohonan");
+            }
+    
+            message.success("Surat berhasil diunggah dan status diperbarui menjadi 'selesai'");
+             router.push(`/admin/permohonan/detail/${id}`);
+        } catch (error) {
+            console.error("❌ Error updating permohonan:", error);
+            message.error("Terjadi kesalahan saat memperbarui permohonan");
+        } finally {
+            setLoading(false);
+        }
+    };
+    
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', background: '#f0f2f5', minHeight: '100vh' }}>
             <Menu />
             <div style={{ padding: '24px' }}>
                 <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                    <Card bordered={false}>
+                    <Card variant='outlined' style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
                         <Title level={2} style={{ margin: 0 }}>Upload Dokumen Surat</Title>
                     </Card>
 
                     <Card 
-                        bordered={false}
+                       variant='outlined'
                         style={{ 
                             textAlign: 'center',
                             maxWidth: '800px',
@@ -32,7 +84,7 @@ const App: React.FC = () => {
                     >
                         <Space direction="vertical" size="large" style={{ width: '100%' }}>
                             <Dragger
-                                customRequest={handleUpload}
+                                beforeUpload={handleUpload}
                                 showUploadList={false}
                                 style={{ 
                                     padding: '40px',
@@ -53,6 +105,15 @@ const App: React.FC = () => {
                                     </Button>
                                 </Space>
                             </Dragger>
+                            
+                            <Button 
+                                type="primary" 
+                                onClick={handleSubmit} 
+                                loading={loading} 
+                                disabled={!file}
+                            >
+                                Unggah Surat
+                            </Button>
                             
                             <Space direction="vertical" style={{ width: '100%', textAlign: 'left' }}>
                                 <Text type="secondary">Catatan:</Text>

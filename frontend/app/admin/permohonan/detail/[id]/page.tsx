@@ -11,6 +11,8 @@ import {
 import Menu from '../../../../../components/MenuAdmin';
 import { useParams , useRouter } from "next/navigation";
 import axios from 'axios';
+import DocumentList from "../../../../../components/listDokumen";
+import GenerateDocument from '../../../../../components/document';
 
 const { Title, Text } = Typography;
 
@@ -98,10 +100,10 @@ const PermohonanDetailPage: React.FC = () => {
           belumdisetujui: { text: 'Belum Disetujui', status: 'processing' },
           disetujui: { text: 'Disetujui', status: 'success' },
           ditolak: { text: 'Ditolak', status: 'error' },
-          dalamproses: { text: 'Dalam Proses', status: 'warning' }
+          dalamproses: { text: 'Dalam Proses', status: 'warning' },
+          selesai: { text: 'Selesai', status: 'success' }
         };
-        
-        
+
         // Map status values to Tag colors for the Tag in the information section
         const tagColorMap = {
           belumdisetujui: 'blue',
@@ -110,9 +112,9 @@ const PermohonanDetailPage: React.FC = () => {
           dalamproses: 'orange'
         };
         
-        // Get status configuration or use default
-        const status = currentPermohonan.status || 'belumdisetujui';
-        const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'processing' };
+       // Get status configuration or use default
+const status = currentPermohonan.status || 'belumdisetujui';
+const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'processing' };
         
         const getPresignedUrl = async (bucket: string, filename: string) => {
           console.log("🔍 Mengirim request untuk presigned URL:", { bucket, filename });
@@ -193,22 +195,26 @@ const PermohonanDetailPage: React.FC = () => {
                       <Button 
                         type="primary" 
                         style={{ 
-                          backgroundColor: currentPermohonan.status === "dalamproses"  ? "#d9d9d9" : "#52c41a", 
+                          backgroundColor:  "#52c41a", 
                           color: "#fff", 
                           cursor: currentPermohonan.status === "dalamproses" ? "not-allowed" : "pointer" 
                         }}
+                        // disabled={currentPermohonan.status === "dalamproses"|| currentPermohonan.status === "selesai"}
                         onClick={() => updateStatus("disetujui")}
                       >
+                      <div className="flex flex-wrap justify-end mb-4">
+                        <GenerateDocument permohonanId={id} />
+                      </div>
                         Setuju
                       </Button>
                       <Button 
                         type="primary" 
                         style={{ 
-                          backgroundColor: currentPermohonan.status === "belumdisetujui" || currentPermohonan.status === "ditolak" ? "#d9d9d9" : "#060270",
+                          backgroundColor:  "#060270",
                           color: "#fff",
                           cursor: "not-allowed"
                         }}
-                        disabled={currentPermohonan.status === "belumdisetujui" || currentPermohonan.status === "ditolak"}
+                        // disabled={currentPermohonan.status === "belumdisetujui" || currentPermohonan.status === "ditolak" || currentPermohonan.status === "selesai"}
                         onClick={() => updateStatus("dalamproses")}
                       >
                         Proses Permohonan
@@ -216,11 +222,11 @@ const PermohonanDetailPage: React.FC = () => {
                       <Button 
                         danger
                         style={{ 
-                          backgroundColor: currentPermohonan.status === "dalamproses"  ? "#d9d9d9" : "#ff4d4f", 
+                          backgroundColor: ["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status) ? "#d9d9d9" : "#ff4d4f",
                           color: "#fff", 
-                          cursor: currentPermohonan.status === "dalamproses" ? "not-allowed" : "pointer" 
+                          cursor: ["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status) ? "not-allowed" : "pointer" 
                         }}
-                        disabled={currentPermohonan.status === "dalamproses"}
+                        disabled={["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status)}
                         onClick={() => updateStatus("ditolak")}
                       >
                         Tolak
@@ -343,78 +349,42 @@ const PermohonanDetailPage: React.FC = () => {
                       </Card>
                     </Col>
                     
-                    {/* Dokumen Upload */}
-                    <Col span={24}>
-                      <Card
-                       title={<Space><FileOutlined /><span>Dokumen Permohonan</span></Space>}
-                       hoverable
-                       variant = "outlined"
-                       style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
-                       >
-                        <List
-                          grid={{ gutter: 16, column: 3 }}
+                   {/* Dokumen Upload */}
+                 <Col span={24}>
+                  <DocumentList
+                          title="Dokumen Permohonan"
                           dataSource={[
                             { title: "Undangan dari Luar Negeri", url: currentPermohonan.undangan, bucket: "undangan-bucket" },
                             { title: "Jadwal Agenda", url: currentPermohonan.agenda, bucket: "agenda-bucket" },
                             { title: "Kerangka Acuan / TOR", url: currentPermohonan.tor, bucket: "tor-bucket" },
                           ]}
-                          renderItem={(item) => (
-                            <List.Item>
-                              <Card hoverable size="small" 
-                               onClick={async () => {
-                                if (item.url) {
-                                  const url = await getPresignedUrl(item.bucket, item.url.split("/").pop());
-                                  if (url) window.open(url, "_blank");
-                                }
-                              }}
-                            >
-                                <Card.Meta 
-                                  avatar={<DownloadOutlined />} 
-                                  title={item.title} 
-                                  description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"} 
-                                />
-                              </Card>
-                            </List.Item>
-                          )}
+                          grid={{ gutter: 16, column: 3 }}
                         />
-                      </Card>
                     </Col>
-                    
+
+                                
                     {/* Dokumen Identitas */}
                     <Col span={24}>
-                      <Card
-                       title={<Space><FileOutlined /><span>Dokumen Identitas</span></Space>}
-                       hoverable
-                       variant = "outlined"
-                       style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
-                       >
-                        <List
-                          grid={{ gutter: 16, column: 3 }}
+                    <DocumentList
+                          title="Dokumen Identitas"
                           dataSource={[
                             { title: "File KTP", url: pemohon.filektp, bucket: "ktp-bucket" },
                             { title: "File Kartu Pegawai", url: pemohon.filekarpeg, bucket: "karpeg-bucket" },
                           ]}
-                          renderItem={(item) => (
-                            <List.Item>
-                              <Card hoverable size="small" 
-                             onClick={async () => {
-                              if (item.url) {
-                                const url = await getPresignedUrl(item.bucket, item.url.split("/").pop());
-                                if (url) window.open(url, "_blank");
-                              }
-                            }}>
-                                <Card.Meta 
-                                  avatar={<DownloadOutlined />} 
-                                  title={item.title} 
-                                  description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"} 
-                                />
-                              </Card>
-                            </List.Item>
-                          )}
+                          grid={{ gutter: 16, column: 3 }}
                         />
-                      </Card>
                     </Col>
-                  </Row>
+                    {/* Dokumen Identitas */}
+                    <Col span={24}>
+                    <DocumentList
+                          title="File Surat Yang Sudah Ditandatangani"
+                          dataSource={[
+                            { title: "File Dokumen yang sudah di tanda tangan", url: currentPermohonan.surat, bucket: "surat-bucket" },
+                          ]}
+                          grid={{ gutter: 16, column: 3 }}
+                        />
+                    </Col>
+                        </Row>
                 </Space>
               </div>
             </div>

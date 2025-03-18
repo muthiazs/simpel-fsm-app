@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, Dropdown, Button, Grid } from 'antd';
 import type { MenuProps } from 'antd';
 import { 
@@ -23,6 +23,23 @@ const MainMenu: React.FC = () => {
   const [current, setCurrent] = useState('beranda');
   const screens = useBreakpoint();
 
+  // Effect to update the selected menu item based on the current URL path
+  useEffect(() => {
+    // Get the current path
+    const path = window.location.pathname;
+    
+    // Map path to menu key
+    if (path.includes('/pemohon/dashboard')) {
+      setCurrent('beranda');
+    } else if (path.includes('/pemohon/permohonan')) {
+      setCurrent('permohonan');
+    } else if (path.includes('/pemohon/laporan')) {
+      setCurrent('laporan');
+    } else if (path.includes('/pemohon/profile')) {
+      setCurrent('profile');
+    }
+  }, []);
+
   const leftItems: MenuItem[] = [
     {
       label: <a href="/pemohon/dashboard">Beranda</a>,
@@ -38,11 +55,6 @@ const MainMenu: React.FC = () => {
       label: <a href="/pemohon/laporan">Laporan</a>,
       key: 'laporan',
       icon: <FileDoneOutlined />,
-    },
-    {
-      label: <a href="/pemohon/unduhSurat">Download Surat</a>,
-      key: 'surat',
-      icon: <DownloadOutlined />,
     },
   ];
 
@@ -65,11 +77,8 @@ const MainMenu: React.FC = () => {
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
     setCurrent(e.key);
+    // No need to setCurrent here as the page will reload and useEffect will set it
   };
-
-  const menu = (
-    <Menu onClick={onClick} selectedKeys={[current]} mode="vertical" items={allItems} />
-  );
 
   return (
     <>
@@ -82,7 +91,7 @@ const MainMenu: React.FC = () => {
           style={{ flex: 1 }}
         />
       ) : (
-        <Dropdown menu={{ items: allItems, onClick }} trigger={['click']}>
+        <Dropdown menu={{ items: allItems, onClick, selectedKeys: [current] }} trigger={['click']}>
           <Button type="primary" icon={<MenuOutlined />} />
         </Dropdown>
       )}

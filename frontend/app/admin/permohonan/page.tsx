@@ -4,6 +4,7 @@ import {Card , Space, Table, Tag, message } from 'antd';
 import type { TableProps } from 'antd';
 import Menu from '../../../components/MenuAdmin';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 interface DataType {
     key: string;
@@ -16,6 +17,9 @@ interface DataType {
     waktuBerakhir: string;
     status: string;
 }
+
+
+
 
 // Map status values to display text and colors
 const statusConfig = {
@@ -75,7 +79,7 @@ const columns: TableProps<DataType>['columns'] = [
         render: (_, record) => (
             <Space size="middle">
                <a onClick={() => window.location.href = `/admin/permohonan/detail/${record.key}`}>Detail</a>
-                {/* <a href={`/upload/${record.key}`}>Upload Dokumen</a> */}
+               <a onClick={() => window.location.href = `/admin/permohonan/upload/${record.key}`}>Upload</a>
             </Space>
         ),
     },

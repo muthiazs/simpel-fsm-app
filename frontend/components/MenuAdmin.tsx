@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, Dropdown, Button, Grid } from 'antd';
 import type { MenuProps } from 'antd';
 import {
@@ -24,6 +24,23 @@ const MainMenu: React.FC = () => {
   const [current, setCurrent] = useState('');
   const screens = useBreakpoint(); // Menggunakan hook useBreakpoint untuk mendeteksi ukuran layar
 
+  // Effect to update the selected menu item based on the current URL path
+  useEffect(() => {
+    // Get the current path
+    const path = window.location.pathname;
+    
+    // Map path to menu key
+    if (path.includes('/admin/dashboard')) {
+      setCurrent('beranda');
+    } else if (path.includes('/admin/permohonan')) {
+      setCurrent('permohonan');
+    } else if (path.includes('/admin/laporan')) {
+      setCurrent('laporan');
+    } else if (path.includes('/admin/pengguna')) {
+      setCurrent('user');
+    }
+  }, []);
+
   const leftItems: MenuItem[] = [
     {
       label: <a href="/admin/dashboard">Beranda</a>,
@@ -39,11 +56,6 @@ const MainMenu: React.FC = () => {
       label: <a href="/admin/laporan">Laporan</a>,
       key: 'laporan',
       icon: <FileDoneOutlined />,
-    },
-    {
-      label: <a href="/admin/generatesurat">GenerateSurat</a>,
-      key: 'generate',
-      icon: <FileSyncOutlined />,
     },
     {
       label: <a href="/admin/pengguna">Pengguna</a>,
@@ -66,12 +78,8 @@ const MainMenu: React.FC = () => {
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
     setCurrent(e.key);
+    // No need to setCurrent here as the page will reload and useEffect will set it
   };
-
-  // Menu untuk dropdown (saat layar kecil)
-  const dropdownMenu = (
-    <Menu onClick={onClick} selectedKeys={[current]} mode="vertical" items={allItems} />
-  );
 
   return (
     <>
@@ -84,7 +92,7 @@ const MainMenu: React.FC = () => {
           style={{ flex: 1 }}
         />
       ) : ( // Jika layar kecil, tampilkan dropdown
-        <Dropdown menu={{ items: allItems, onClick }} trigger={['click']}>
+        <Dropdown menu={{ items: allItems, onClick, selectedKeys: [current] }} trigger={['click']}>
           <Button type="primary" icon={<MenuOutlined />} />
         </Dropdown>
       )}

@@ -8,6 +8,7 @@ import { UserOutlined, GlobalOutlined, FileOutlined, DownloadOutlined, ArrowLeft
 import Menu from "../../../../../components/Menu";
 import Link from "antd/es/typography/Link";
 import GenerateDocument from '../../../../../components/document';
+import DocumentList from "../../../../../components/listDokumen";
 
 const { Title, Text } = Typography;
 
@@ -26,6 +27,7 @@ interface PermohonanDetailResponse {
     undangan: string;
     agenda: string;
     tor: string;
+    surat: string;
     createdat: string;
     updatedat: string;
     pemohon: {
@@ -66,6 +68,8 @@ const PermohonanDetailPage: React.FC = () => {
           headers: { Authorization: `Bearer ${storedToken}` },
         });
 
+        console.log("data yang diterima : ", response.data);
+
         if (response.data.success) {
           setDetail(response.data);
         } else {
@@ -100,7 +104,8 @@ const statusConfig = {
   belumdisetujui: { text: 'Belum Disetujui', status: 'processing' },
   disetujui: { text: 'Disetujui', status: 'success' },
   ditolak: { text: 'Ditolak', status: 'error' },
-  dalamproses: { text: 'Dalam Proses', status: 'warning' }
+  dalamproses: { text: 'Dalam Proses', status: 'warning' },
+  selesai: { text: 'Selesai', status: 'success' }
 };
 
 // Map status values to Tag colors for the Tag in the information section
@@ -284,98 +289,39 @@ const getPresignedUrl = async (bucket: string, filename: string) => {
             
             {/* Dokumen Upload */}
             <Col span={24}>
-              <Card
-                title={
-                  <Space>
-                    <FileOutlined />
-                    <span>Dokumen Permohonan</span>
-                  </Space>
-                }
-                hoverable
-                variant="outlined"
-                style={{
-                  height: "100%",
-                  width: "100%",
-                  boxShadow: "0 4px 6px 0 rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                <List
-                  grid={{ gutter: 16, column: 3 }}
+              
+                <DocumentList
+                  title="Dokumen Permohonan"
                   dataSource={[
                     { title: "Undangan dari Luar Negeri", url: currentPermohonan.undangan, bucket: "undangan-bucket" },
                     { title: "Jadwal Agenda", url: currentPermohonan.agenda, bucket: "agenda-bucket" },
                     { title: "Kerangka Acuan / TOR", url: currentPermohonan.tor, bucket: "tor-bucket" },
                   ]}
-                  renderItem={(item) => (
-                    <List.Item>
-                      <Card
-                        hoverable
-                        size="small"
-                        onClick={async () => {
-                          if (item.url) {
-                            const url = await getPresignedUrl(item.bucket, item.url.split("/").pop());
-                            if (url) window.open(url, "_blank");
-                          }
-                        }}
-                      >
-                        <Card.Meta
-                          avatar={<DownloadOutlined />}
-                          title={item.title}
-                          description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"}
-                        />
-                      </Card>
-                    </List.Item>
-                  )}
+                  grid={{ gutter: 16, column: 3 }}
                 />
-              </Card>
             </Col>
 
                         
             {/* Dokumen Identitas */}
             <Col span={24}>
-              <Card
-                title={
-                  <Space>
-                    <FileOutlined />
-                    <span>Dokumen Identitas</span>
-                  </Space>
-                }
-                hoverable
-                variant="outlined"
-                style={{
-                  height: "100%",
-                  width: "100%",
-                  boxShadow: "0 4px 6px 0 rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                <List
-                  grid={{ gutter: 16, column: 2 }}
+            <DocumentList
+                  title="Dokumen Identitas"
                   dataSource={[
                     { title: "File KTP", url: pemohon.filektp, bucket: "ktp-bucket" },
                     { title: "File Kartu Pegawai", url: pemohon.filekarpeg, bucket: "karpeg-bucket" },
                   ]}
-                  renderItem={(item) => (
-                    <List.Item>
-                      <Card
-                        hoverable
-                        size="small"
-                        onClick={async () => {
-                          if (item.url) {
-                            const url = await getPresignedUrl(item.bucket, item.url.split("/").pop());
-                            if (url) window.open(url, "_blank");
-                          }
-                        }}
-                      >
-                        <Card.Meta
-                          avatar={<DownloadOutlined />}
-                          title={item.title}
-                          description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"}
-                        />
-                      </Card>
-                    </List.Item>
-                  )}
+                  grid={{ gutter: 16, column: 3 }}
                 />
-              </Card>
+            </Col>
+            {/* Dokumen Identitas */}
+            <Col span={24}>
+            <DocumentList
+                  title="File Surat Yang Sudah Ditandatangani"
+                  dataSource={[
+                    { title: "File Dokumen yang sudah di tanda tangan", url: currentPermohonan.surat, bucket: "surat-bucket" },
+                  ]}
+                  grid={{ gutter: 16, column: 3 }}
+                />
             </Col>
 
           </Row>
