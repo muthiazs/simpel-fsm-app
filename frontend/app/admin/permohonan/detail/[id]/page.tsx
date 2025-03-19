@@ -180,26 +180,6 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                 variant = "outlined"
                     style = {{ height: '100%'  ,  width: '100%' , boxShadow: '0 4px 6px 0 rgba(0, 0, 0, 0.1)'}}
                     >
-                    {currentPermohonan.status === "dalamproses" && (
-                      <div style={{ 
-                        backgroundColor: '#fffbe6', 
-                        border: '1px solid #ffe58f', 
-                        padding: '12px', 
-                        borderRadius: '4px', 
-                        marginBottom: '16px',
-                        width: '100%'
-                      }}>
-                        <Text strong style={{ color: '#faad14' }}>
-                          ⚠️ Pemberitahuan :  
-                        </Text>
-                        <Text>
-                          Pemohon diharapkan untuk melakukan tanda tangan dokumen permohonan PDLN di bagian kerjasama gedung AP lantai 2, dan diharapkan untuk membawa materai 10.000 sebanyak 1 buah.
-                        </Text>
-                        <Text>
-                         Apabila ada yang perlu ditanyakan bisa menghubungi 085875096508(Muthia)
-                        </Text>
-                      </div>
-                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <Space align="center" size="middle" style={{ display: 'flex', alignItems: 'center' }}>
                       {/* Gunakan button untuk navigasi kembali */}
