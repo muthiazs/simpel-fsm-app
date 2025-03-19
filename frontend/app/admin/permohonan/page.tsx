@@ -6,6 +6,7 @@ import Menu from '../../../components/MenuAdmin';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import BackButton from '../../../components/BackButton';
+import AppFooter from '../../../components/Footer';
 
 interface DataType {
     key: string;
@@ -131,20 +132,24 @@ const App: React.FC = () => {
 
     return (
         <>
-            <Menu />
-            <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}>
-                <Card title={
+    <Menu />
+    <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '24px', display: 'flex', flexDirection: 'column' }}>
+        <Card 
+            title={
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     <BackButton path="/admin/dashboard" />
                     <span>Daftar Laporan</span>
                 </div>
-            }  style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}>
-                    <h1>Permohonan PDLN</h1>
-                    <Table<DataType> columns={columns} dataSource={data} loading={loading} />
-                </Card>
-            </div>
-            
-        </>
+            }  
+            style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}
+        >
+            <h1>Permohonan PDLN</h1>
+            <Table<DataType> columns={columns} dataSource={data} loading={loading} />
+        </Card>
+        <AppFooter  />
+    </div>
+</>
+
     );
 };
 

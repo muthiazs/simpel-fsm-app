@@ -5,6 +5,8 @@ import type { UploadProps, UploadFile } from 'antd';
 import axios from 'axios';
 import Menu from '../../../components/Menu';
 import { UploadOutlined } from '@ant-design/icons';
+import BackButton from '../../../components/BackButton';
+import AppFooter from '../../../components/Footer';
 
 const formItemLayout = {
   labelCol: {
@@ -198,8 +200,15 @@ const DataDiriPemohon: React.FC = () => {
   return (
     <div>
       <Menu />
+     
       <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '20px', marginLeft: '50px', width: '90%' , background: "#f5f5f5" }}>
-        <Card title="Form Data Diri" style={{ width: '100%', boxShadow: '6px 6px 6px 6px rgba(0, 0, 0, 0.1)' }}>
+        
+        <Card  title={
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <BackButton path="/pemohon/dashboard" />
+                    <span>Form Data Diri</span>
+                </div>
+            }   style={{ width: '100%', boxShadow: '6px 6px 6px 6px rgba(0, 0, 0, 0.1)' }}>
           <Form
             {...formItemLayout}
             form={form}
@@ -374,6 +383,7 @@ const DataDiriPemohon: React.FC = () => {
           </Form>
         </Card>
       </div>
+      <AppFooter />
     </div>
   );
   };

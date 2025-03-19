@@ -5,6 +5,8 @@ import { PlusOutlined } from '@ant-design/icons';
 import type { TableProps } from 'antd';
 import Menu from '../../../components/Menu';
 import axios from 'axios';
+import BackButton from '../../../components/BackButton';
+import AppFooter from '../../../components/Footer';
 
 interface DataType {
     key: string;
@@ -147,7 +149,12 @@ const App: React.FC = () => {
         <>
             <Menu />
             <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px', background : '#f5f5f5' }}>
-                <Card title="Daftar Permohonan" style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}>
+                <Card  title={
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <BackButton path="/pemohon/dashboard" />
+                    <span>Form Data Diri</span>
+                </div>
+            } style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginLeft: '50px', marginRight: '50px', marginBottom: '20px' }}>
                         <Button type="primary" onClick={() => window.location.href = '/pemohon/pengajuan'} icon={<PlusOutlined />}>
                             Tambahkan Pengajuan Permohonan
@@ -164,6 +171,7 @@ const App: React.FC = () => {
                     </div>
                 </Card>
             </div>
+            <AppFooter />
         </>
     );
 };

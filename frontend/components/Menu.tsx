@@ -51,22 +51,22 @@ const MainMenu: React.FC = () => {
       key: 'permohonan',
       icon: <FileOutlined />,
     },
-    {
-      label: <a href="/pemohon/laporan">Laporan</a>,
-      key: 'laporan',
-      icon: <FileDoneOutlined />,
-    },
+    // {
+    //   label: <a href="/pemohon/laporan">Laporan</a>,
+    //   key: 'laporan',
+    //   icon: <FileDoneOutlined />,
+    // },
   ];
 
   const rightItems: MenuItem[] = [
     {
-      label: <a href="/pemohon/profile">Edit Profile</a>,
+      label: <a href="/pemohon/datadiri">Edit Profile</a>,
       key: 'profile',
       icon: <UserOutlined />,
       style: { marginLeft: 'auto' }
     },
     {
-      label: <a href="/logout">Logout</a>,
+      label: <a href="/auth/login">Logout</a>,
       key: 'logout',
       icon: <LogoutOutlined />,
     },

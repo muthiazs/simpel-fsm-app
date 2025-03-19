@@ -52,11 +52,11 @@ const MainMenu: React.FC = () => {
       key: 'permohonan',
       icon: <FileOutlined />,
     },
-    {
-      label: <a href="/admin/laporan">Laporan</a>,
-      key: 'laporan',
-      icon: <FileDoneOutlined />,
-    },
+    // {
+    //   label: <a href="/admin/laporan">Laporan</a>,
+    //   key: 'laporan',
+    //   icon: <FileDoneOutlined />,
+    // },
     {
       label: <a href="/admin/pengguna">Pengguna</a>,
       key: 'user',
@@ -66,7 +66,7 @@ const MainMenu: React.FC = () => {
 
   const rightItems: MenuItem[] = [
     {
-      label: <a href="/logout">Logout</a>,
+      label: <a href="/auth/login">Logout</a>,
       key: 'logout',
       icon: <LogoutOutlined />,
       style: { marginLeft: 'auto' } // Ini mendorong logout ke kanan

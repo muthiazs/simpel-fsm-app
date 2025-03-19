@@ -31,8 +31,6 @@ const DashboardAdmin: React.FC = () => {
                     <Title level={2} style={{ margin: 0 }}>Dashboard Admin 👩🏻‍💻</Title>
                     </Space>
                 </Card>
-
-                {/* Statistics Cards */}
                 <Row gutter={[24, 24]}>
                     <PermohonanStats />
                     <QuickAccessAdmin />

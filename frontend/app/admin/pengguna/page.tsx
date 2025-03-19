@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Input, Select, Space, Typography } from 'antd';
+import { Table, Button, Input, Select, Space, Typography , Card} from 'antd';
 import Menu from '../../../components/MenuAdmin';
 import Header from '../../../components/Header';
 import axios from 'axios';
 import '@ant-design/v5-patch-for-react-19';
+import AppFooter from '../../../components/Footer';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -125,44 +126,47 @@ const UserPage = () => {
   return (
     <div>
       <Menu />
-      <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '50px', marginLeft: '50px' }}>
-        <Title level={2}>Permohonan PDLN</Title>
-      </div>
-      <div style={{ marginTop: '20px', marginLeft: '50px', marginRight: '50px' }}>
-        <Input
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={{ marginBottom: '10px' }}
-        />
-        <Input
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ marginBottom: '10px' }}
-        />
-        <Input.Password
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ marginBottom: '10px' }}
-        />
-        <Select value={role} onChange={(value) => setRole(value)} style={{ marginBottom: '10px', width: '100%' }}>
-          <Option value="PEMOHON">PEMOHON</Option>
-          <Option value="ADMIN">ADMIN</Option>
-        </Select>
-        {editingUser ? (
-          <Button type="primary" onClick={() => updateUser(editingUser)}>
-            Update User
-          </Button>
-        ) : (
-          <Button type="primary" onClick={createUser}>
-            Create User
-          </Button>
-        )}
-      </div>
-      <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}>
-        <Table columns={columns} dataSource={users} rowKey="id" />
+      <div style={{ background: '#f0f2f5', minHeight: '100vh', padding: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '50px', marginLeft: '50px' }}>
+          <Title level={2}>Permohonan PDLN</Title>
+        </div>
+        <Card style={{ margin: '20px 50px' }}>
+          <Input
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        style={{ marginBottom: '10px' }}
+          />
+          <Input
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        style={{ marginBottom: '10px' }}
+          />
+          <Input.Password
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ marginBottom: '10px' }}
+          />
+          <Select value={role} onChange={(value) => setRole(value)} style={{ marginBottom: '10px', width: '100%' }}>
+        <Option value="PEMOHON">PEMOHON</Option>
+        <Option value="ADMIN">ADMIN</Option>
+          </Select>
+          {editingUser ? (
+        <Button type="primary" onClick={() => updateUser(editingUser)}>
+          Update User
+        </Button>
+          ) : (
+        <Button type="primary" onClick={createUser}>
+          Create User
+        </Button>
+          )}
+        </Card>
+        <Card style={{ margin: '20px 50px' }}>
+          <Table columns={columns} dataSource={users} rowKey="id" />
+        </Card>
+        <AppFooter />
       </div>
     </div>
   );

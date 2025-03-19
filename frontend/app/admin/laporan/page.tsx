@@ -5,6 +5,7 @@ import type { TableProps  } from 'antd';
 import Header from '../../../components/Header';
 import Menu from '../../../components/MenuAdmin';
 import BackButton from '../../../components/BackButton';
+import AppFooter from '../../../components/Footer';
 
 const { Title, Text } = Typography;
 
@@ -119,7 +120,7 @@ const data: DataType[] = [
 const laporan: React.FC = () => (
     <>
     <Menu />
-    <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}> 
+    <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '24px', display: 'flex', flexDirection: 'column' }}>
         <Card 
             title={
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -132,8 +133,10 @@ const laporan: React.FC = () => (
             <Title level={3}>Laporan Perjalanan Dinas Luar Negeri</Title>
             <Table<DataType> columns={columns} dataSource={data} />
         </Card>
+        <AppFooter  />
     </div>
 </>
+
 );
 
 export default laporan;

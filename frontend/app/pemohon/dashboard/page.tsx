@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import Menu from '../../../components/Menu';
 import '@ant-design/v5-patch-for-react-19';
+import AppFooter from '../../../components/Footer';
 
 const { Title, Text } = Typography;
 
@@ -233,6 +234,7 @@ const DashboardPemohon: React.FC = () => {
                 </Space>
             </Card>
             </div>
+            <AppFooter />
         </div>
     );
 };

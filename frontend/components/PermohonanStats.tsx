@@ -37,10 +37,10 @@ const PermohonanStats = () => {
             <Col xs={24} md={8}>
                 <Card hoverable>
                     <Space direction="horizontal" size="large" style={{ width: '100%', justifyContent: 'center' }}>
-                        <FileExclamationOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
-                        <Statistic title="Belum Disetujui" value={stats.belumDisetujui} valueStyle={{ color: '#1890ff' }} />
+                        <FileExclamationOutlined style={{ fontSize: '36px', color: '#F57317' }} />
+                        <Statistic title="Belum Disetujui" value={stats.belumDisetujui} valueStyle={{ color: '#F57317' }} />
                     </Space>
-                    <Button type="link" icon={<RightOutlined />} style={{ width: '100%', marginTop: '16px' }}>
+                    <Button type="link" icon={<RightOutlined />} style={{ width: '100%', marginTop: '16px' }} href='/admin/permohonan'>
                         Lihat Detail
                     </Button>
                 </Card>
@@ -49,10 +49,10 @@ const PermohonanStats = () => {
             <Col xs={24} md={8}>
                 <Card hoverable>
                     <Space direction="horizontal" size="large" style={{ width: '100%', justifyContent: 'center' }}>
-                        <FileSyncOutlined style={{ fontSize: '36px', color: '#fa8c16' }} />
-                        <Statistic title="Dalam Proses" value={stats.dalamProses} valueStyle={{ color: '#fa8c16' }} />
+                        <FileSyncOutlined style={{ fontSize: '36px', color: '#0870E0' }} />
+                        <Statistic title="Dalam Proses" value={stats.dalamProses} valueStyle={{ color: '#0870E0' }} />
                     </Space>
-                    <Button type="link" icon={<RightOutlined />} style={{ width: '100%', marginTop: '16px' }}>
+                    <Button type="link" icon={<RightOutlined />} style={{ width: '100%', marginTop: '16px' }} href='/admin/permohonan'>
                         Lihat Detail
                     </Button>
                 </Card>
@@ -64,7 +64,7 @@ const PermohonanStats = () => {
                         <FileDoneOutlined style={{ fontSize: '36px', color: '#52c41a' }} />
                         <Statistic title="Selesai" value={stats.selesai} valueStyle={{ color: '#52c41a' }} />
                     </Space>
-                    <Button type="link" icon={<RightOutlined />} style={{ width: '100%', marginTop: '16px' }}>
+                    <Button type="link" icon={<RightOutlined />} style={{ width: '100%', marginTop: '16px' }} href='/admin/permohonan'>
                         Lihat Detail
                     </Button>
                 </Card>
