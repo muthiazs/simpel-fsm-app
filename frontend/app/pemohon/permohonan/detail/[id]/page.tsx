@@ -336,9 +336,10 @@ const getPresignedUrl = async (bucket: string, filename: string) => {
                     {/* Dokumen Identitas */}
                     <Col span={24}>
                     <DocumentList
-                          title="File Surat Yang Sudah Ditandatangani"
+                          title="File Dokumen Final"
                           dataSource={[
                             { title: "File Dokumen yang sudah di tanda tangan", url: currentPermohonan.surat, bucket: "surat-bucket" },
+                            { title: "File Laporan", url: currentPermohonan.laporan, bucket: "laporan-bucket" },
                           ]}
                           grid={{ gutter: 16, column: 3 }}
                         />

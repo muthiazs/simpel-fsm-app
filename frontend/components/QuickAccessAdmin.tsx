@@ -24,7 +24,7 @@ const QuickAccessAdmin = () => {
         </Col>
 
         {/* Kartu Laporan */}
-        {/* <Col xs={24} sm={8}>
+        <Col xs={24} sm={8}>
           <Card
             hoverable
             style={{ height: "100%", width: "100%", boxShadow: "0 4px 6px 0 rgba(0, 0, 0, 0.1)" }}
@@ -37,7 +37,7 @@ const QuickAccessAdmin = () => {
               </Button>
             </Space>
           </Card>
-        </Col> */}
+        </Col>
 
         {/* Kartu Kelola Pengguna */}
         <Col xs={24} sm={8}>

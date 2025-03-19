@@ -102,7 +102,8 @@ const PermohonanDetailPage: React.FC = () => {
           disetujui: { text: 'Disetujui', status: 'success' },
           ditolak: { text: 'Ditolak', status: 'error' },
           dalamproses: { text: 'Dalam Proses', status: 'warning' },
-          selesai: { text: 'Selesai', status: 'success' }
+          selesai: { text: 'Selesai', status: 'success' },
+          lengkap: { text: 'Lengkap', status: 'success' }
         };
 
         // Map status values to Tag colors for the Tag in the information section
@@ -114,8 +115,8 @@ const PermohonanDetailPage: React.FC = () => {
         };
         
        // Get status configuration or use default
-const status = currentPermohonan.status || 'belumdisetujui';
-const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'processing' };
+        const status = currentPermohonan.status || 'belumdisetujui';
+        const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'processing' };
         
         const getPresignedUrl = async (bucket: string, filename: string) => {
           console.log("🔍 Mengirim request untuk presigned URL:", { bucket, filename });
@@ -182,10 +183,8 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                     >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <Space align="center" size="middle" style={{ display: 'flex', alignItems: 'center' }}>
-                      {/* Gunakan button untuk navigasi kembali */}
-                      <BackButton path="/admin/permohonan" />
-
-      
+                        {/* Back button with dynamic navigation */}
+                        <BackButton path={document.referrer.includes('/laporan') ? '/admin/laporan' : '/admin/permohonan'} />
                       <Title level={3} style={{ margin: 0 }}>Detail Permohonan</Title>
                       <Badge status={statusInfo.status} text={statusInfo.text} />
                     </Space>
@@ -193,11 +192,14 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                     <Button 
                       type="primary" 
                       style={{ 
-                        backgroundColor: ["dalamproses", "selesai"].includes(currentPermohonan.status) ? "#d9d9d9" : "#52c41a",
+                        // backgroundColor: ["dalamproses", "selesai"].includes(currentPermohonan.status) ? "#d9d9d9" : "#52c41a",
+                        backgroundColor: ["dalamproses", "selesai","lengkap"].includes(currentPermohonan.status) ? "#d9d9d9" : "#52c41a",
                         color: "#fff", 
-                        cursor: ["dalamproses"].includes(currentPermohonan.status) ? "not-allowed" : "pointer"
+                        // cursor: ["dalamproses"].includes(currentPermohonan.status) ? "not-allowed" : "pointer"
+                        cursor: ["dalamproses",'selesai','lengkap'].includes(currentPermohonan.status) ? "not-allowed" : "pointer"
                       }}
-                      disabled={["dalamproses"].includes(currentPermohonan.status)}
+                      // disabled={["dalamproses"].includes(currentPermohonan.status)}
+                      disabled={["dalamproses",'selesai','lengkap'].includes(currentPermohonan.status)}
                       onClick={() => updateStatus("disetujui")}
                     >
                       Setuju
@@ -206,11 +208,15 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                     <Button 
                       type="primary" 
                       style={{ 
-                        backgroundColor: "#060270",
+                        // backgroundColor: "#060270",
+                        backgroundColor: ["belumdisetujui", "selesai", "lengkap"].includes(currentPermohonan.status) ? "#d9d9d9" : "#060270",
                         color: "#fff",
-                        cursor: currentPermohonan.status === "belumdisetujui" ? "not-allowed" : "pointer"
+                        // cursor: currentPermohonan.status === "belumdisetujui" ? "not-allowed" : "pointer"
+                        // cursor: currentPermohonan.status === "belumdisetujui" || "selesai" || "lengkap" ? "not-allowed" : "pointer"
+                        cursor: ["dalamproses", "selesai", "belumdisetujui", "lengkap"].includes(currentPermohonan.status) ? "not-allowed" : "pointer"
                       }}
-                      disabled={currentPermohonan.status === "belumdisetujui"}
+                      disabled={["belumdisetujui", "selesai", "lengkap"].includes(currentPermohonan.status)}
+                      // disabled={currentPermohonan.status === "belumdisetujui"||"selesai"||"lengkap"}
                       onClick={() => updateStatus("dalamproses")}
                     >
                       Proses Permohonan
@@ -219,9 +225,10 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                     <Button 
                       danger
                       style={{ 
-                        backgroundColor: ["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status) ? "#d9d9d9" : "#ff4d4f",
+                        // backgroundColor: ["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status) ? "#d9d9d9" : "#ff4d4f",
+                        backgroundColor: ["dalamproses", "selesai", "ditolak",'lengkap'].includes(currentPermohonan.status) ? "#d9d9d9" : "#ff4d4f",
                         color: "#fff", 
-                        cursor: ["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status) ? "not-allowed" : "pointer"
+                        cursor: ["dalamproses", "selesai", "ditolak",'lengkap'].includes(currentPermohonan.status) ? "not-allowed" : "pointer"
                       }}
                       disabled={["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status)}
                       onClick={() => updateStatus("ditolak")}
@@ -383,6 +390,7 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                           title="File Surat Yang Sudah Ditandatangani"
                           dataSource={[
                             { title: "File Dokumen yang sudah di tanda tangan", url: currentPermohonan.surat, bucket: "surat-bucket" },
+                            { title: "File Laporan", url: currentPermohonan.laporan, bucket: "laporan-bucket" },
                           ]}
                           grid={{ gutter: 16, column: 3 }}
                         />

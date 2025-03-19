@@ -1,9 +1,12 @@
 'use client'
-import React from 'react';
-import { Space, Table, Tag } from 'antd';
+import React, { useEffect, useState , useRef }  from 'react';
+import { Space, Table, Tag, Button, Card, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import type { TableProps } from 'antd';
-import Header from '../../../components/Header';
 import Menu from '../../../components/Menu';
+import axios from 'axios';
+import BackButton from '../../../components/BackButton';
+import AppFooter from '../../../components/Footer';
 
 interface DataType {
     key: string;
@@ -16,105 +19,163 @@ interface DataType {
     status: string;
 }
 
-const columns: TableProps<DataType>['columns'] = [
-    {
-        title: 'No',
-        dataIndex: 'no',
-        key: 'no',
-    },
-    {
-        title: 'Tanggal Pengajuan',
-        dataIndex: 'tanggalPengajuan',
-        key: 'tanggalPengajuan',
-    },
-    {
-        title: 'Negara Tujuan',
-        dataIndex: 'negaraTujuan',
-        key: 'negaraTujuan',
-    },
-    {
-        title: 'Instansi Tujuan',
-        dataIndex: 'instansiTujuan',
-        key: 'instansiTujuan',
-    },
-    {
-        title: 'Waktu Dimulai',
-        dataIndex: 'waktuDimulai',
-        key: 'waktuDimulai',
-    },
-    {
-        title: 'Waktu Berakhir',
-        dataIndex: 'waktuBerakhir',
-        key: 'waktuBerakhir',
-    },
-    {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-        render: (status) => {
-            let color = status === 'Sudah Upload Laporan' ? 'green' : status === 'Belum Upload Laporan' ? 'volcano' : 'geekblue';
-            return (
-                <Tag color={color} key={status}>
-                    {status.toUpperCase()}
-                </Tag>
-            );
+// Map status values to display text and colors
+const statusConfig = {
+    tidakdiketahui: { text: 'TIDAK DIKETAHUI', color: 'gray' }, // ✅ Tambahkan ini
+    selesai: { text: 'BELUM UPLOAD LAPORAN', color: 'red' }, // ✅ Tambahkan ini
+    lengkap: { text: 'LENGKAP', color: 'green' }, // ✅ Tambahkan ini
+};
+
+const App: React.FC = () => {
+    const [data, setData] = useState<DataType[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const isMounted = useRef(true); // Flag untuk mengecek apakah komponen masih ter-mount
+
+    
+    // Ambil token dan iduser dari localStorage
+    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+    const iduser = typeof window !== 'undefined' ? localStorage.getItem('iduser') : null;
+    
+    const columns: TableProps<DataType>['columns'] = [
+        {
+            title: 'No',
+            dataIndex: 'no',
+            key: 'no',
         },
-    },
-    {
-        title: 'Aksi',
-        key: 'aksi',
-        render: (_, record) => (
-            <Space size="middle">
-                <a>Upload Laporan</a>
-            </Space>
-        ),
-    },
-];
+        {
+            title: 'Tanggal Pengajuan',
+            dataIndex: 'tanggalPengajuan',
+            key: 'tanggalPengajuan',
+        },
+        {
+            title: 'Negara Tujuan',
+            dataIndex: 'negaraTujuan',
+            key: 'negaraTujuan',
+        },
+        {
+            title: 'Instansi Tujuan',
+            dataIndex: 'instansiTujuan',
+            key: 'instansiTujuan',
+        },
+        {
+            title: 'Waktu Dimulai',
+            dataIndex: 'waktuDimulai',
+            key: 'waktuDimulai',
+        },
+        {
+            title: 'Waktu Berakhir',
+            dataIndex: 'waktuBerakhir',
+            key: 'waktuBerakhir',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status) => {
+                const config = statusConfig[status] || { text: status.toUpperCase(), color: 'default' };
+                return (
+                    <Tag color={config.color} key={status}>
+                        {config.text}
+                    </Tag>
+                );
+            },
+        },
+        {
+            title: 'Aksi',
+            key: 'aksi',
+            render: (_, record) => (
+                <Space size="middle">
+                    <a onClick={() => window.location.href = `/pemohon/permohonan/detail/${record.key}`}>Detail</a>
+                    <a onClick={() => window.location.href = `/pemohon/laporan/upload/${record.key}`}>Upload Laporan</a>
+                </Space>
+            ),
+        },
+    ];
 
-const data: DataType[] = [
-    {
-        key: '1',
-        no: 1,
-        tanggalPengajuan: '2023-01-01',
-        negaraTujuan: 'USA',
-        instansiTujuan: 'Harvard University',
-        waktuDimulai: '2023-02-01',
-        waktuBerakhir: '2023-02-10',
-        status: 'Sudah Upload Laporan',
-    },
-    {
-        key: '2',
-        no: 2,
-        tanggalPengajuan: '2023-01-05',
-        negaraTujuan: 'UK',
-        instansiTujuan: 'Oxford University',
-        waktuDimulai: '2023-03-01',
-        waktuBerakhir: '2023-03-15',
-        status: 'Belum Upload Laporan',
-    },
-    {
-        key: '3',
-        no: 3,
-        tanggalPengajuan: '2023-01-10',
-        negaraTujuan: 'Australia',
-        instansiTujuan: 'University of Sydney',
-        waktuDimulai: '2023-04-01',
-        waktuBerakhir: '2023-04-10',
-        status: 'Sudah Upload Laporan',
-    },
-];
+    useEffect(() => {
+        const fetchUserPermohonan = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/api/permohonan/user/${iduser}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
-const laporan: React.FC = () => (
-    <>
-        <Menu />
-        <div style={{ display: 'flex', justifyContent: 'flex-start' , marginTop : '50px', marginLeft : '50px' }}>
-            <h1 >Laporan </h1>
-        </div>
-        <div style={{ marginTop : '50px', marginLeft : '50px', marginRight : '50px' }}>
-            <Table<DataType> columns={columns} dataSource={data} />
-        </div>
-        
-    </>
-);
+                console.log('Response Data:', response.data);
 
-export default laporan;
+                if (response.data.success) {
+                    const permohonanData = response.data.data?.permohonan;
+                    if (Array.isArray(permohonanData)) {
+                        const formattedData = permohonanData
+                        .filter((item) => item.status == 'selesai'||item.status == 'lengkap')
+                        .map((item, index) => ({
+                            key: item.id_permohonan,
+                            no: index + 1,
+                            tanggalPengajuan: new Date(item.createdat).toLocaleDateString(),
+                            negaraTujuan: item.negaratujuan,
+                            instansiTujuan: item.instansitujuan,
+                            waktuDimulai: new Date(item.tglmulai).toLocaleDateString(),
+                            waktuBerakhir: new Date(item.tglselesai).toLocaleDateString(),
+                            status: item.status || 'belumdisetujui',
+                        }));
+
+                        // Periksa apakah komponen masih ter-mount sebelum memperbarui state
+                        if (isMounted.current) {
+                            setData(formattedData);
+                        }
+                    } else {
+                        console.error('Data permohonan tidak dalam bentuk array:', permohonanData);
+                    }
+                } else {
+                    console.error('Gagal mengambil data permohonan:', response.data.message);
+                }
+            } catch (error) {
+                console.error('Error mengambil data permohonan:', error);
+            } finally {
+                // Periksa apakah komponen masih ter-mount sebelum memperbarui state
+                if (isMounted.current) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchUserPermohonan();
+
+        // Cleanup function untuk mengubah flag isMounted menjadi false saat komponen unmount
+        return () => {
+            isMounted.current = false;
+        };
+    }, [iduser, token]); // Tambahkan iduser dan token sebagai dependency
+
+
+    return (
+        <>
+            <Menu />
+            <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px', background: '#f5f5f5' }}>
+                <Card
+                    title={
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <BackButton path="/pemohon/dashboard" />
+                            <span>Form Data Diri</span>
+                        </div>
+                    }
+                    style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}
+                >
+                    <div style={{ overflowX: 'auto', width: '100%' }}>
+                        <Table
+                            columns={columns}
+                            dataSource={data}
+                            loading={loading}
+                            scroll={{ x: 'max-content' }}
+                            style={{ minWidth: '800px' }}
+                        />
+                    </div>
+                </Card>
+            </div>
+            <AppFooter />
+        </>
+    );
+};
+
+
+export default App;

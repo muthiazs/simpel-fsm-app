@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState , useRef }  from 'react';
 import { Space, Table, Tag, Button, Card, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { TableProps } from 'antd';
@@ -21,15 +21,19 @@ interface DataType {
 
 // Map status values to display text and colors
 const statusConfig = {
-    belumdisetujui: { text: 'BELUM DISETUJUI', color: 'blue' },
+    belumdisetujui: { text: 'BELUM DISETUJUI', color: 'yellow' },
     disetujui: { text: 'DISETUJUI', color: 'green' },
     ditolak: { text: 'DITOLAK', color: 'red' },
-    dalamproses: { text: 'DALAM PROSES', color: 'orange' }
+    dalamproses: { text: 'DALAM PROSES', color: 'orange' },
+    tidakdiketahui: { text: 'TIDAK DIKETAHUI', color: 'gray' }, // ✅ Tambahkan ini
+    selesai: { text: 'SELESAI', color: 'blue' }, // ✅ Tambahkan ini
 };
 
 const App: React.FC = () => {
     const [data, setData] = useState<DataType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const isMounted = useRef(true); // Flag untuk mengecek apakah komponen masih ter-mount
+
     
     // Ambil token dan iduser dari localStorage
     const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
@@ -93,42 +97,34 @@ const App: React.FC = () => {
     ];
 
     useEffect(() => {
-        if (!token) {
-            message.error('Token tidak ditemukan! Silakan login kembali.');
-            return;
-        }
-
-        if (!iduser) {
-            message.error('ID pengguna tidak ditemukan! Silakan login kembali.');
-            return;
-        }
-        
         const fetchUserPermohonan = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/api/permohonan/user/${iduser}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                    },  
+                    },
                 });
-                
+
                 console.log('Response Data:', response.data);
-        
+
                 if (response.data.success) {
-                    // Cek apakah permohonan adalah array
                     const permohonanData = response.data.data?.permohonan;
                     if (Array.isArray(permohonanData)) {
-                        const formattedData = permohonanData.map((item: any, index: number) => ({
+                        const formattedData = permohonanData.map((item, index) => ({
                             key: item.id_permohonan,
                             no: index + 1,
-                            tanggalPengajuan: new Date(item.createdat).toLocaleDateString(), // Changed to createdat for accurate submission date
+                            tanggalPengajuan: new Date(item.createdat).toLocaleDateString(),
                             negaraTujuan: item.negaratujuan,
                             instansiTujuan: item.instansitujuan,
                             waktuDimulai: new Date(item.tglmulai).toLocaleDateString(),
                             waktuBerakhir: new Date(item.tglselesai).toLocaleDateString(),
-                            status: item.status || 'belumdisetujui', // Use actual status from DB
+                            status: item.status || 'belumdisetujui',
                         }));
-        
-                        setData(formattedData);
+
+                        // Periksa apakah komponen masih ter-mount sebelum memperbarui state
+                        if (isMounted.current) {
+                            setData(formattedData);
+                        }
                     } else {
                         console.error('Data permohonan tidak dalam bentuk array:', permohonanData);
                     }
@@ -138,30 +134,42 @@ const App: React.FC = () => {
             } catch (error) {
                 console.error('Error mengambil data permohonan:', error);
             } finally {
-                setLoading(false);
+                // Periksa apakah komponen masih ter-mount sebelum memperbarui state
+                if (isMounted.current) {
+                    setLoading(false);
+                }
             }
         };
-        
+
         fetchUserPermohonan();
-    }, []);
+
+        // Cleanup function untuk mengubah flag isMounted menjadi false saat komponen unmount
+        return () => {
+            isMounted.current = false;
+        };
+    }, [iduser, token]); // Tambahkan iduser dan token sebagai dependency
+
 
     return (
         <>
             <Menu />
-            <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px', background : '#f5f5f5' }}>
-                <Card  title={
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <BackButton path="/pemohon/dashboard" />
-                    <span>Form Data Diri</span>
-                </div>
-            } style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}>
+            <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px', background: '#f5f5f5' }}>
+                <Card
+                    title={
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <BackButton path="/pemohon/dashboard" />
+                            <span>Form Data Diri</span>
+                        </div>
+                    }
+                    style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}
+                >
                     <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginLeft: '50px', marginRight: '50px', marginBottom: '20px' }}>
                         <Button type="primary" onClick={() => window.location.href = '/pemohon/pengajuan'} icon={<PlusOutlined />}>
                             Tambahkan Pengajuan Permohonan
                         </Button>
                     </div>
                     <div style={{ overflowX: 'auto', width: '100%' }}>
-                        <Table<DataType>
+                        <Table
                             columns={columns}
                             dataSource={data}
                             loading={loading}
@@ -175,5 +183,6 @@ const App: React.FC = () => {
         </>
     );
 };
+
 
 export default App;

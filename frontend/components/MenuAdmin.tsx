@@ -52,11 +52,11 @@ const MainMenu: React.FC = () => {
       key: 'permohonan',
       icon: <FileOutlined />,
     },
-    // {
-    //   label: <a href="/admin/laporan">Laporan</a>,
-    //   key: 'laporan',
-    //   icon: <FileDoneOutlined />,
-    // },
+    {
+      label: <a href="/admin/laporan">Laporan</a>,
+      key: 'laporan',
+      icon: <FileDoneOutlined />,
+    },
     {
       label: <a href="/admin/pengguna">Pengguna</a>,
       key: 'user',

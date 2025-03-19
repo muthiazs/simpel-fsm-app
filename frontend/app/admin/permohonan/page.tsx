@@ -31,7 +31,9 @@ const statusConfig = {
     dalamproses: { text: 'DALAM PROSES', color: 'orange' },
     tidakdiketahui: { text: 'TIDAK DIKETAHUI', color: 'gray' }, // ✅ Tambahkan ini
     selesai: { text: 'SELESAI', color: 'blue' }, // ✅ Tambahkan ini
+    lengkap: { text: 'SELESAI', color: 'blue' }, // ✅ Tambahkan ini
 };
+
 
 const columns: TableProps<DataType>['columns'] = [
     { title: 'No', dataIndex: 'no', key: 'no' },
@@ -138,7 +140,7 @@ const App: React.FC = () => {
             title={
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     <BackButton path="/admin/dashboard" />
-                    <span>Daftar Laporan</span>
+                    <span>Daftar Permohonan</span>
                 </div>
             }  
             style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}

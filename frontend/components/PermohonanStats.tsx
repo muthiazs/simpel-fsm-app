@@ -19,7 +19,7 @@ const PermohonanStats = () => {
                 const countByStatus = {
                     belumDisetujui: data.filter(p => p.status === 'belumdisetujui').length,
                     dalamProses: data.filter(p => p.status === 'dalamproses').length,
-                    selesai: data.filter(p => p.status === 'selesai').length
+                    selesai: data.filter(p => p.status === 'selesai'||p.status === 'lengkap').length
                 };
                 
                 setStats(countByStatus);

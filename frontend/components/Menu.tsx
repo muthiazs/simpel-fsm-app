@@ -51,11 +51,11 @@ const MainMenu: React.FC = () => {
       key: 'permohonan',
       icon: <FileOutlined />,
     },
-    // {
-    //   label: <a href="/pemohon/laporan">Laporan</a>,
-    //   key: 'laporan',
-    //   icon: <FileDoneOutlined />,
-    // },
+    {
+      label: <a href="/pemohon/laporan">Laporan</a>,
+      key: 'laporan',
+      icon: <FileDoneOutlined />,
+    },
   ];
 
   const rightItems: MenuItem[] = [
