@@ -66,6 +66,7 @@ export async function getPermohonanById(id_permohonan: string) {
                 agenda: true,
                 tor: true,
                 surat: true,
+                laporan: true,
                 status: true,
                 createdat: true,
                 updatedat: true,
@@ -149,6 +150,7 @@ export const getPermohonanByUserId = async (id_user: number) => {
           agenda: true,
           tor: true,
           surat: true,
+          laporan: true,
           status: true,
           createdat: true,
         },
@@ -275,6 +277,7 @@ export async function updatePermohonan(id: string, data: {
     agenda?: File;
     tor?: File;
     surat?: File;
+    laporan?: File;
     status?: string;
 }) { 
     try {
@@ -310,11 +313,12 @@ export async function updatePermohonan(id: string, data: {
         }
 
         // 🔹 Upload file ke MinIO
-        const [undanganPath, agendaPath, torPath, suratPath] = await Promise.all([
+        const [undanganPath, agendaPath, torPath, suratPath, laporanPath] = await Promise.all([
             data.undangan ? uploadToMinio(data.undangan, "undangan-bucket") : Promise.resolve(existingPermohonan.undangan),
             data.agenda ? uploadToMinio(data.agenda, "agenda-bucket") : Promise.resolve(existingPermohonan.agenda),
             data.tor ? uploadToMinio(data.tor, "tor-bucket") : Promise.resolve(existingPermohonan.tor),
             data.surat ? uploadToMinio(data.surat, "surat-bucket") : Promise.resolve(existingPermohonan.surat),
+            data.laporan ? uploadToMinio(data.laporan, "laporan-bucket") : Promise.resolve(existingPermohonan.laporan),
         ]);
 
         const updateData = {
@@ -330,6 +334,7 @@ export async function updatePermohonan(id: string, data: {
             agenda: agendaPath,
             tor: torPath,
             surat: suratPath,
+            laporan: laporanPath,
             status: statusEnum,
             updatedat: new Date(),
         };
