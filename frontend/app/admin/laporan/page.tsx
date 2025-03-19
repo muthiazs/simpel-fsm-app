@@ -1,9 +1,12 @@
 'use client'
 import React from 'react';
-import { Space, Table, Tag } from 'antd';
-import type { TableProps } from 'antd';
+import { Space, Table, Tag ,  Typography , Card} from 'antd';
+import type { TableProps  } from 'antd';
 import Header from '../../../components/Header';
 import Menu from '../../../components/MenuAdmin';
+import BackButton from '../../../components/BackButton';
+
+const { Title, Text } = Typography;
 
 interface DataType {
     key: string;
@@ -115,15 +118,22 @@ const data: DataType[] = [
 
 const laporan: React.FC = () => (
     <>
-        <Menu />
-        <div style={{ display: 'flex', justifyContent: 'flex-start' , marginTop : '50px', marginLeft : '50px' }}>
-            <h1 >Laporan </h1>
-        </div>
-        <div style={{ marginTop : '50px', marginLeft : '50px', marginRight : '50px' }}>
+    <Menu />
+    <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}> 
+        <Card 
+            title={
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <BackButton path="/admin/dashboard" />
+                    <span>Daftar Laporan</span>
+                </div>
+            } 
+            style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}
+        >
+            <Title level={3}>Laporan Perjalanan Dinas Luar Negeri</Title>
             <Table<DataType> columns={columns} dataSource={data} />
-        </div>
-        
-    </>
+        </Card>
+    </div>
+</>
 );
 
 export default laporan;

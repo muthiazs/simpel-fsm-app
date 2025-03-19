@@ -5,6 +5,7 @@ import type { TableProps } from 'antd';
 import Menu from '../../../components/MenuAdmin';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import BackButton from '../../../components/BackButton';
 
 interface DataType {
     key: string;
@@ -23,11 +24,12 @@ interface DataType {
 
 // Map status values to display text and colors
 const statusConfig = {
-    belumdisetujui: { text: 'BELUM DISETUJUI', color: 'blue' },
+    belumdisetujui: { text: 'BELUM DISETUJUI', color: 'yellow' },
     disetujui: { text: 'DISETUJUI', color: 'green' },
     ditolak: { text: 'DITOLAK', color: 'red' },
     dalamproses: { text: 'DALAM PROSES', color: 'orange' },
     tidakdiketahui: { text: 'TIDAK DIKETAHUI', color: 'gray' }, // ✅ Tambahkan ini
+    selesai: { text: 'SELESAI', color: 'blue' }, // ✅ Tambahkan ini
 };
 
 const columns: TableProps<DataType>['columns'] = [
@@ -131,7 +133,12 @@ const App: React.FC = () => {
         <>
             <Menu />
             <div style={{ marginTop: '50px', marginLeft: '50px', marginRight: '50px' }}>
-                <Card title="Daftar Permohonan" style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}>
+                <Card title={
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <BackButton path="/admin/dashboard" />
+                    <span>Daftar Laporan</span>
+                </div>
+            }  style={{ width: '100%', boxShadow: '4px 4px 4px 4px rgba(0, 0, 0, 0.1)' }}>
                     <h1>Permohonan PDLN</h1>
                     <Table<DataType> columns={columns} dataSource={data} loading={loading} />
                 </Card>

@@ -13,6 +13,7 @@ import { useParams , useRouter } from "next/navigation";
 import axios from 'axios';
 import DocumentList from "../../../../../components/listDokumen";
 import GenerateDocument from '../../../../../components/document';
+import BackButton from '../../../../../components/BackButton';
 
 const { Title, Text } = Typography;
 
@@ -189,21 +190,21 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                         width: '100%'
                       }}>
                         <Text strong style={{ color: '#faad14' }}>
-                          ⚠️ Pemberitahuan: 
+                          ⚠️ Pemberitahuan :  
                         </Text>
                         <Text>
-                          Pemohon diharapkan untuk melakukan tanda tangan dokumen permohonan PDLN di bagian kerjasama gedung AP lantai 2, dan diharapkan untuk membawa materai 10.000 sebanyak 1 buah
+                          Pemohon diharapkan untuk melakukan tanda tangan dokumen permohonan PDLN di bagian kerjasama gedung AP lantai 2, dan diharapkan untuk membawa materai 10.000 sebanyak 1 buah.
+                        </Text>
+                        <Text>
+                         Apabila ada yang perlu ditanyakan bisa menghubungi 085875096508(Muthia)
                         </Text>
                       </div>
                     )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <Space align="center" size="middle" style={{ display: 'flex', alignItems: 'center' }}>
                       {/* Gunakan button untuk navigasi kembali */}
-                      <Button 
-                        type="text" 
-                        icon={<ArrowLeftOutlined style={{ fontSize: '20px' }} />} 
-                        onClick={() => router.push('/admin/permohonan')}
-                      />
+                      <BackButton path="/admin/permohonan" />
+
       
                       <Title level={3} style={{ margin: 0 }}>Detail Permohonan</Title>
                       <Badge status={statusInfo.status} text={statusInfo.text} />
@@ -212,7 +213,7 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                     <Button 
                       type="primary" 
                       style={{ 
-                        backgroundColor: "#52c41a", 
+                        backgroundColor: ["dalamproses", "selesai"].includes(currentPermohonan.status) ? "#d9d9d9" : "#52c41a",
                         color: "#fff", 
                         cursor: ["dalamproses"].includes(currentPermohonan.status) ? "not-allowed" : "pointer"
                       }}
