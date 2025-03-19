@@ -191,47 +191,52 @@ const statusInfo = statusConfig[status] || { text: 'Belum Disetujui', status: 'p
                       <Title level={3} style={{ margin: 0 }}>Detail Permohonan</Title>
                       <Badge status={statusInfo.status} text={statusInfo.text} />
                     </Space>
-                      <Space>
-                      <Button 
-                        type="primary" 
-                        style={{ 
-                          backgroundColor:  "#52c41a", 
-                          color: "#fff", 
-                          cursor: currentPermohonan.status === "dalamproses" ? "not-allowed" : "pointer" 
-                        }}
-                        // disabled={currentPermohonan.status === "dalamproses"|| currentPermohonan.status === "selesai"}
-                        onClick={() => updateStatus("disetujui")}
-                      >
-                      <div className="flex flex-wrap justify-end mb-4">
-                        <GenerateDocument permohonanId={id} />
-                      </div>
-                        Setuju
-                      </Button>
-                      <Button 
-                        type="primary" 
-                        style={{ 
-                          backgroundColor:  "#060270",
-                          color: "#fff",
-                          cursor: "not-allowed"
-                        }}
-                        // disabled={currentPermohonan.status === "belumdisetujui" || currentPermohonan.status === "ditolak" || currentPermohonan.status === "selesai"}
-                        onClick={() => updateStatus("dalamproses")}
-                      >
-                        Proses Permohonan
-                      </Button>
-                      <Button 
-                        danger
-                        style={{ 
-                          backgroundColor: ["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status) ? "#d9d9d9" : "#ff4d4f",
-                          color: "#fff", 
-                          cursor: ["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status) ? "not-allowed" : "pointer" 
-                        }}
-                        disabled={["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status)}
-                        onClick={() => updateStatus("ditolak")}
-                      >
-                        Tolak
-                      </Button>
-                      </Space>
+                    <Space>
+                    <Button 
+                      type="primary" 
+                      style={{ 
+                        backgroundColor: "#52c41a", 
+                        color: "#fff", 
+                        cursor: ["dalamproses"].includes(currentPermohonan.status) ? "not-allowed" : "pointer"
+                      }}
+                      disabled={["dalamproses"].includes(currentPermohonan.status)}
+                      onClick={() => updateStatus("disetujui")}
+                    >
+                      Setuju
+                    </Button>
+
+                    <Button 
+                      type="primary" 
+                      style={{ 
+                        backgroundColor: "#060270",
+                        color: "#fff",
+                        cursor: currentPermohonan.status === "belumdisetujui" ? "not-allowed" : "pointer"
+                      }}
+                      disabled={currentPermohonan.status === "belumdisetujui"}
+                      onClick={() => updateStatus("dalamproses")}
+                    >
+                      Proses Permohonan
+                    </Button>
+
+                    <Button 
+                      danger
+                      style={{ 
+                        backgroundColor: ["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status) ? "#d9d9d9" : "#ff4d4f",
+                        color: "#fff", 
+                        cursor: ["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status) ? "not-allowed" : "pointer"
+                      }}
+                      disabled={["dalamproses", "selesai", "ditolak"].includes(currentPermohonan.status)}
+                      onClick={() => updateStatus("ditolak")}
+                    >
+                      Tolak
+                    </Button>
+                    {currentPermohonan.status === "dalamproses" && (
+                        <div className="flex flex-wrap justify-end mb-4">
+                          <GenerateDocument permohonanId={id} />
+                        </div>
+                      )}
+                  </Space>
+
                     </div>
                     <Text type="secondary" style={{ display: "block" }}>
                       Dibuat: {formatDate(currentPermohonan.createdat)} • Diperbarui: {formatDate(currentPermohonan.updatedat)}
