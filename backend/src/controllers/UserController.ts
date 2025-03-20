@@ -1,4 +1,5 @@
 import prisma from '../../prisma/client';
+import * as bcrypt from 'bcrypt';
 
 /**
  * Get all users
@@ -25,18 +26,21 @@ export async function createUser(options: { username: string, email: string, pas
     try {
         const { username, email, password } = options;
 
+        // Hash password sebelum disimpan ke database
+        const hashedPassword = await bcrypt.hash(password, 10); // 10 adalah salt rounds
+
         // Buat user menggunakan Prisma
         const user = await prisma.user.create({
             data: {
-                username: username, // Jangan lupa untuk menyertakan username
+                username: username,
                 email: email,
-                password: password,
+                password: hashedPassword, // Simpan password yang sudah di-hash
                 role: 'pemohon', // Add the role property
             },
         });
 
-         // Log setelah user berhasil dibuat
-         console.log("User successfully created:", user);
+        // Log setelah user berhasil dibuat
+        console.log("User successfully created:", user);
 
         return {
             success: true,
@@ -109,13 +113,16 @@ export async function updateUser(id: string, options: { username?: string; email
         // Get fields to update
         const { username, email, password } = options;
 
+        // Jika password diupdate, hash password baru
+        const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+
         // Update user with prisma
         const user = await prisma.user.update({
             where: { id: userId },
             data: {
                 ...(username ? { username } : {}),
                 ...(email ? { email } : {}),
-                ...(password ? { password } : {}),
+                ...(hashedPassword ? { password: hashedPassword } : {}), // Simpan password yang sudah di-hash
             },
         });
 

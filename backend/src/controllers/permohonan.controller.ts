@@ -28,7 +28,7 @@ export async function getPermohonan() {
             }
         });
 
-        console.log("Success fetching all permohonan:", permohonan);
+        // console.log("Success fetching all permohonan:", permohonan);
 
         return {
             success: true,
