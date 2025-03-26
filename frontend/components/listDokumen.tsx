@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Card, Space } from 'antd';
+import { List, Card, Space, Tag } from 'antd';
 import { DownloadOutlined, FileOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -62,7 +62,16 @@ const DocumentList = ({ title, dataSource, grid }: { title: string; dataSource: 
             >
               <Card.Meta
                 avatar={<DownloadOutlined />}
-                title={item.title}
+                title={
+                  <Space>
+                    {item.title}
+                    {item.url ? (
+                      <Tag color="green">File Tersedia</Tag>
+                    ) : (
+                      <Tag color="red">File Tidak Tersedia</Tag>
+                    )}
+                  </Space>
+                }
                 description={item.url ? "Klik untuk mengunduh" : "Tidak ada file"}
               />
             </Card>

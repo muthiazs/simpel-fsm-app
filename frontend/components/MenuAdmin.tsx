@@ -41,6 +41,42 @@ const MainMenu: React.FC = () => {
     }
   }, []);
 
+  async function handleLogout() {
+    try {
+      // Ambil token dari localStorage
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        console.warn("No auth token found. User may already be logged out.");
+        return;
+      }
+  
+      // Kirim request ke logout API
+      const response = await fetch('http://localhost:3001/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Logout failed: ${response.status} - ${errorText}`);
+        throw new Error(errorText);
+      }
+  
+      // Hapus token dari localStorage setelah logout berhasil
+      localStorage.removeItem('authToken');
+  
+      // Redirect user ke halaman login atau home
+      window.location.href = 'http://localhost:3000/auth/login'; // Sesuaikan dengan rute login kamu
+  
+      console.log('Logout successful');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  }
+
   const leftItems: MenuItem[] = [
     {
       label: <a href="/admin/dashboard">Beranda</a>,
@@ -64,9 +100,11 @@ const MainMenu: React.FC = () => {
     },
   ];
 
+  
+
   const rightItems: MenuItem[] = [
     {
-      label: <a href="/auth/login">Logout</a>,
+      label: <span onClick={handleLogout}>Logout</span>,
       key: 'logout',
       icon: <LogoutOutlined />,
       style: { marginLeft: 'auto' } // Ini mendorong logout ke kanan
