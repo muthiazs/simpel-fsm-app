@@ -14,6 +14,7 @@ import axios from 'axios';
 import DocumentList from "../../../../../components/listDokumen";
 import GenerateDocument from '../../../../../components/document';
 import BackButton from '../../../../../components/BackButton';
+import Loading from '../../../../../components/Loading';
 
 const { Title, Text } = Typography;
 

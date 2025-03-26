@@ -1,13 +1,13 @@
 'use client'
 import React from 'react';
-import { Form, Input, DatePicker, InputNumber, Upload, Button, Row, Col, message } from 'antd';
+import { Form, Input, DatePicker, InputNumber, Upload, Button, Row, Col, message , Card } from 'antd';
 import {PlusOutlined } from '@ant-design/icons';
 import Header from '../../../components/Header';
 import Menu from '../../../components/Menu';
 import { Color } from 'antd/es/color-picker';
 import '@ant-design/v5-patch-for-react-19';
 import axios from 'axios';
-
+import BackButton from '../../../components/BackButton';
 
 const { TextArea } = Input;
 
@@ -82,9 +82,16 @@ const PengajuanPermohonan: React.FC = () => {
 return (
   <div>
     <Menu />
-    <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '50px', marginLeft: '50px' }}>
-      <h1>Permohonan PDLN</h1>
-    </div>
+    <div >
+    <Card
+                    title={
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <BackButton path="/pemohon/permohonan" />
+                            <span>Permohonan PDLN</span>
+                        </div>
+                    }
+                    style={{ width: '90%', margin: '50px auto' }}
+                >
     <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '20px', marginLeft: '50px', width: '90%' }}>
       <Form form={form} onFinish={onFinish} layout="vertical" style={{ width: '100%' }}>
         <Row gutter={16}>
@@ -202,7 +209,9 @@ return (
         </Col>
       </Form>
     </div>
+  </Card>
   </div>
+  </div>  
 );
 }
 export default PengajuanPermohonan;

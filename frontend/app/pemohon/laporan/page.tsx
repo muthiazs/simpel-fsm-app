@@ -7,6 +7,7 @@ import Menu from '../../../components/Menu';
 import axios from 'axios';
 import BackButton from '../../../components/BackButton';
 import AppFooter from '../../../components/Footer';
+import Loading from '../../../components/Loading';
 
 interface DataType {
     key: string;
@@ -28,7 +29,7 @@ const statusConfig = {
 
 const App: React.FC = () => {
     const [data, setData] = useState<DataType[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState(true);
     const isMounted = useRef(true); // Flag untuk mengecek apakah komponen masih ter-mount
 
     
@@ -93,6 +94,7 @@ const App: React.FC = () => {
     ];
 
     useEffect(() => {
+        setTimeout(() => setLoading(false), 1000); 
         const fetchUserPermohonan = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/api/permohonan/user/${iduser}`, {
@@ -147,6 +149,9 @@ const App: React.FC = () => {
         };
     }, [iduser, token]); // Tambahkan iduser dan token sebagai dependency
 
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <>

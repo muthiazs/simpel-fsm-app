@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { Table, Button, Input, Select, Space, Typography , Card} from 'antd';
 import Menu from '../../../components/MenuAdmin';
 import Header from '../../../components/Header';
 import axios from 'axios';
 import '@ant-design/v5-patch-for-react-19';
 import AppFooter from '../../../components/Footer';
+import Loading from '../../../components/Loading';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -18,6 +19,11 @@ const UserPage = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('PEMOHON');
   const [editingUser, setEditingUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 3000);
+  }, []);
 
   useEffect(() => {
     fetchUsers();
@@ -25,6 +31,7 @@ const UserPage = () => {
 
   const fetchUsers = async () => {
     try {
+      setLoading(true);
       const response = await axios.get('http://localhost:3001/api/users/all');
       if (Array.isArray(response.data.data)) {
         setUsers(response.data.data);
@@ -33,11 +40,14 @@ const UserPage = () => {
       }
     } catch (error) {
       console.error('Error fetching users:', error);
-    }
+    }finally {
+      setLoading(false); // Matikan loading
+    } 
   };
 
   const createUser = async () => {
     try {
+      setLoading(true);
       const response = await axios.post('http://localhost:3001/api/users/', {
         username,
         email,
@@ -48,11 +58,14 @@ const UserPage = () => {
       clearForm();
     } catch (error) {
       console.error('Error creating user:', error);
-    }
+    }finally {
+      setLoading(false); // Matikan loading
+    } 
   };
 
   const updateUser = async (id) => {
     try {
+      setLoading(true);
       const response = await axios.patch(`http://localhost:3001/api/users/${id}`, {
         username,
         email,
@@ -64,31 +77,40 @@ const UserPage = () => {
       clearForm();
     } catch (error) {
       console.error('Error updating user:', error);
-    }
+    }finally {
+      setLoading(false); // Matikan loading
+    } 
   };
 
   const deleteUser = async (id) => {
+    setLoading(true);
     try {
       await axios.delete(`http://localhost:3001/api/users/${id}`);
       setUsers(users.filter((user) => user.id !== id));
     } catch (error) {
       console.error('Error deleting user:', error);
-    }
+    }finally {
+      setLoading(false); // Matikan loading
+    } 
   };
 
   const handleEdit = (user) => {
+    setLoading(true);
     setEditingUser(user.id);
     setUsername(user.username);
     setEmail(user.email);
     setPassword(user.password);
     setRole(user.role);
+    setLoading(false);
   };
 
   const clearForm = () => {
+    setLoading(true);
     setUsername('');
     setEmail('');
     setPassword('');
     setRole('PEMOHON');
+    setLoading(false);
   };
 
   const columns = [
@@ -122,6 +144,11 @@ const UserPage = () => {
       ),
     },
   ];
+
+  if (loading) {
+    return <Loading />;
+}
+
 
   return (
     <div>

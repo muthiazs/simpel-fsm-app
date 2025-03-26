@@ -22,3 +22,13 @@ export const createToken = (payload: object) => {
         return null;
     }
   };
+
+  const blacklistedTokens = new Set<string>(); // Gunakan Set agar pencarian lebih cepat
+
+export const addToBlacklist = (token: string) => {
+    blacklistedTokens.add(token);
+};
+
+export const isTokenBlacklisted = (token: string): boolean => {
+    return blacklistedTokens.has(token);
+};

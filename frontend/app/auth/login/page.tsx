@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Card, Typography, message } from 'antd';
 import type { FormProps } from 'antd';
 import {
@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
+import Loading from '../../../components/Loading';
 
 const { Title, Text } = Typography;
 
@@ -23,7 +24,11 @@ type FieldType = {
 
 const App: React.FC = () => {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 500); // Matikan loading setelah 500ms
+  }, []);
   
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     setLoading(true);
@@ -35,27 +40,33 @@ const App: React.FC = () => {
         },
         body: JSON.stringify(values),
       });
-
+  
+      if (!response.ok) {
+        // Handle non-2xx responses better
+        const errorText = await response.text();
+        console.error(`Error response (${response.status}):`, errorText);
+        throw new Error(`Server returned ${response.status}: ${errorText}`);
+      }
+  
       const data = await response.json();
-      console.log('Response data:', data); // Untuk debugging
-      console.log('Full response:', data);
-      console.log('Redirect URL:', data.redirectUrl);
-
+      console.log('Login response data:', data);
+  
       if (data.success) {
         message.success('Login berhasil!');
-        // Simpan data user ke localStorage
+        
+        // Store user data correctly
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('authToken', data.token);
-        localStorage.setItem('iduser', data.user.id);
-        console.log("token : " , data.token);
-        console.log("iduser : " , data.id);
+        localStorage.setItem('iduser', data.user.id.toString());
         
-        // Redirect ke URL yang sesuai
+        console.log("token : ", data.token);
+        console.log("iduser : ", data.user.id); // Fixed from data.id to data.user.id
+        
+        // Redirect based on the response
         if (data.redirectUrl) {
-          console.log('Redirecting to:', data.redirectUrl); // Untuk debugging
-          router.push(data.redirectUrl); // Gunakan URL redirect langsung dari response
+          console.log('Redirecting to:', data.redirectUrl);
+          router.push(data.redirectUrl);
         } else {
-          // Default fallback jika tidak ada redirectUrl
           router.push('/dashboard');
         }
       } else {
@@ -68,6 +79,10 @@ const App: React.FC = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+}
 
   const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
     console.log('Failed:', errorInfo);

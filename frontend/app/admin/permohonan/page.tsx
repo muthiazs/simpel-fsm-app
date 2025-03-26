@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import BackButton from '../../../components/BackButton';
 import AppFooter from '../../../components/Footer';
+import Loading from '../../../components/Loading';
 
 interface DataType {
     key: string;
@@ -92,9 +93,10 @@ const columns: TableProps<DataType>['columns'] = [
 
 const App: React.FC = () => {
     const [data, setData] = useState<DataType[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setTimeout(() => setLoading(false), 1000); 
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://localhost:3001/api/permohonan/', {
@@ -131,6 +133,11 @@ const App: React.FC = () => {
 
         fetchData();
     }, []);
+
+    if (loading) {
+        return <Loading />;
+    }
+
 
     return (
         <>
