@@ -27,12 +27,6 @@ _Transforming applications into seamless experiences effortlessly._
 - [Overview](#overview)
 - [PKL Description](#pkl-description)
 - [Features](#features)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Testing](#testing)
-
 ---
 
 ## Overview
@@ -63,10 +57,6 @@ The result of this PKL is a web application that facilitates the digital submiss
 - 🗂 **File Handling**: Integrated with MinIO for efficient file uploads and retrieval.
 - 🔄 **Dynamic Data Handling**: Prisma ORM enables smooth interactions with PostgreSQL.
 - 🎨 **Responsive UI**: Built with Next.js and Ant Design for a clean and modern interface.
-
----
-
-## Getting Started
 
 ### Prerequisites
 
