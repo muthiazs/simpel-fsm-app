@@ -61,4 +61,4 @@ The result of this PKL is a web application that facilitates the digital submiss
 ### Prerequisites
 
 - **Programming Language**: TypeScript  
-- **Package Manager**: npm
+- **Package Manager**: bun
