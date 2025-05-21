@@ -9,7 +9,7 @@ _Transforming applications into seamless experiences effortlessly._
 **Built with the tools and technologies:**
 
 ![JSON](https://img.shields.io/badge/-JSON-informational)
-![npm](https://img.shields.io/badge/-npm-red)
+![bun](https://img.shields.io/badge/-bun-red)
 ![TOML](https://img.shields.io/badge/-TOML-orange)
 ![JavaScript](https://img.shields.io/badge/-JavaScript-yellow)
 ![React](https://img.shields.io/badge/-React-61DAFB)
