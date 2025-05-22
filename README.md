@@ -10,14 +10,9 @@ _Transforming applications into seamless experiences effortlessly._
 
 ![JSON](https://img.shields.io/badge/-JSON-informational)
 ![bun](https://img.shields.io/badge/-bun-red)
-![TOML](https://img.shields.io/badge/-TOML-orange)
-![JavaScript](https://img.shields.io/badge/-JavaScript-yellow)
-![React](https://img.shields.io/badge/-React-61DAFB)
+![AntDesign](https://img.shields.io/badge/-AntDesign-61DAFB)
 ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6)
 ![Prisma](https://img.shields.io/badge/-Prisma-2D3748)
-![ESLint](https://img.shields.io/badge/-ESLint-purple)
-![Axios](https://img.shields.io/badge/-Axios-blueviolet)
-![CSS](https://img.shields.io/badge/-CSS-blue)
 ![MinIO](https://img.shields.io/badge/-MinIO-red)
 
 ---
