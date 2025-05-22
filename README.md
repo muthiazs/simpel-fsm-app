@@ -9,8 +9,9 @@ _Transforming applications into seamless experiences effortlessly._
 **Built with the tools and technologies:**
 
 ![ElysiaJs](https://img.shields.io/badge/-Elysiajs-purple)
+![ElysiaJs](https://img.shields.io/badge/-NextJs-black)
 ![bun](https://img.shields.io/badge/-bun-white)
-![AntDesign](https://img.shields.io/badge/-AntDesign-black)
+![AntDesign](https://img.shields.io/badge/-AntDesign-pink)
 ![TypeScript](https://img.shields.io/badge/-TypeScript-blue)
 ![Prisma](https://img.shields.io/badge/-Prisma-green)
 ![MinIO](https://img.shields.io/badge/-MinIO-red)
