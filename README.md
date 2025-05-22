@@ -8,11 +8,11 @@ _Transforming applications into seamless experiences effortlessly._
 
 **Built with the tools and technologies:**
 
-![JSON](https://img.shields.io/badge/-JSON-informational)
-![bun](https://img.shields.io/badge/-bun-red)
-![AntDesign](https://img.shields.io/badge/-AntDesign-61DAFB)
-![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6)
-![Prisma](https://img.shields.io/badge/-Prisma-2D3748)
+![ElysiaJs](https://img.shields.io/badge/-Elysiajs-purple)
+![bun](https://img.shields.io/badge/-bun-white)
+![AntDesign](https://img.shields.io/badge/-AntDesign-black)
+![TypeScript](https://img.shields.io/badge/-TypeScript-blue)
+![Prisma](https://img.shields.io/badge/-Prisma-green)
 ![MinIO](https://img.shields.io/badge/-MinIO-red)
 
 ---
